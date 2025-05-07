@@ -13,31 +13,65 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ##### Cấu trúc dự án reactjs
 my-react-app/
-├── index.html               # File HTML chính của ứng dụng
-├── package.json             # Thông tin dự án và các dependencies
-├── public/                  # Chứa các tệp công khai như hình ảnh, favicon, v.v.
+├── index.html                         # File HTML chính của app
+├── package.json                       # Thông tin project + dependencies
+├── vite.config.js                     # Cấu hình cho Vite
+├── .gitignore                         # Bỏ qua thư mục/tập tin khi dùng Git
+├── public/                            # Chứa favicon, robots.txt, ảnh công khai
 │   └── favicon.ico
-├── src/                     # Chứa mã nguồn ứng dụng
-│   ├── assets/              # Thư mục chứa các tài nguyên tĩnh như hình ảnh, CSS, v.v.
-│   │   ├── images/          # Các hình ảnh và icon
-│   │   └── styles/          # Các file CSS chung hoặc SASS
-│   ├── vendor/              # Các tài nguyên bên ngoài (JS, CSS của bên thứ ba)
-│   │   ├── js/              # Các thư viện JS từ bên ngoài
-│   │   └── css/             # Các tệp CSS từ bên ngoài
-│   ├── components/          # Thư mục chứa các component React
+│
+├── src/                               # Nơi chứa mã nguồn chính
+│   ├── main.jsx                       # Điểm khởi động React (ReactDOM)
+│   ├── App.jsx                        # Root App component chứa layout/route
+│
+│   ├── assets/                        # Tài nguyên tĩnh: ảnh, font, CSS
+│   │   ├── images/                    # Ảnh và icon
+│   │   └── styles/                    # Biến SCSS, reset.css, global.css,...
+│   │       ├── _variables.scss
+│   │       └── global.scss
+│
+│   ├── vendor/                        # Thư viện ngoài (jQuery, toastify css,...)
+│   │   ├── js/
+│   │   └── css/
+│
+│   ├── components/                    # Component tái sử dụng toàn app
 │   │   ├── Header.jsx
 │   │   ├── Footer.jsx
 │   │   └── Button.jsx
-│   ├── contexts/            # Các context của React (nếu sử dụng Context API)
-│   ├── hooks/               # Các custom hook
-│   ├── pages/               # Các trang của ứng dụng (dùng cho Routing)
+│
+│   ├── layouts/                       # Layouts chính (nhiều layout nếu cần)
+│   │   └── MainLayout.jsx
+│
+│   ├── router/                        # Cấu hình router
+│   │   └── index.jsx
+│
+│   ├── pages/                         # Các trang chính
 │   │   ├── Home.jsx
 │   │   ├── About.jsx
-│   │   └── Contact.jsx
-│   ├── utils/               # Các tiện ích (helper functions)
-│   ├── App.jsx              # Component gốc của ứng dụng
-│   ├── main.jsx             # File chính để khởi động ứng dụng React
-│   └── styles/              # Các file CSS hoặc SASS cho component, module, hoặc theme
-├── .gitignore               # Các tệp cần bỏ qua khi sử dụng Git
-├── vite.config.js           # Cấu hình của Vite
-└── node_modules/            # Thư mục chứa các package node
+│   │   ├── Contact.jsx
+│   │   └── NotFound.jsx
+│
+│   ├── features/                      # Module tách biệt: user, auth, product,...
+│   │   └── users/
+│   │       ├── pages/                 # Trang liên quan đến user (UserList, UserForm)
+│   │       ├── components/           # Component phụ chỉ cho user
+│   │       ├── userApi.js            # Gọi API (axios)
+│   │       ├── userSlice.js          # Redux slice hoặc Zustand store
+│   │       └── validation.js         # Yup schema / rule validate riêng
+│
+│   ├── services/                      # Gọi API tập trung (axios client, interceptors)
+│   │   └── axiosClient.js
+│
+│   ├── hooks/                         # Custom hooks dùng lại (useDebounce, useAuth,...)
+│   │   └── useUserForm.js
+│
+│   ├── utils/                         # Hàm tiện ích (formatDate, validateEmail,...)
+│   │   └── helpers.js
+│
+│   ├── contexts/                      # Context API (Theme, Auth, Language,...)
+│   │   └── AuthContext.jsx
+│
+│   └── store/                         # Redux hoặc Zustand (global state)
+│       ├── index.js                   # Cấu hình store
+│       └── rootReducer.js            # Kết hợp reducer nếu dùng Redux
+
