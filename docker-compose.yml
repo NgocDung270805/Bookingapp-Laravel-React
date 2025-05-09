@@ -4,7 +4,7 @@ services:
   backend:
     build:
       context: ./backend
-    container_name: laravel_app
+    container_name: Booking-Laravel&React
     volumes:
       - ./backend:/var/www:cached  # Tối ưu tốc độ đọc ghi trên Windows/macOS
     ports:
