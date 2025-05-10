@@ -13,13 +13,6 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ##### Cấu trúc dự án reactjs
 my-react-app/
-├── index.html                         # File HTML chính của app
-├── package.json                       # Thông tin project + dependencies
-├── vite.config.js                     # Cấu hình cho Vite
-├── .gitignore                         # Bỏ qua thư mục/tập tin khi dùng Git
-├── public/                            # Chứa favicon, robots.txt, ảnh công khai
-│   └── favicon.ico
-│
 ├── src/                               # Nơi chứa mã nguồn chính
 │   ├── main.jsx                       # Điểm khởi động React (ReactDOM)
 │   ├── App.jsx                        # Root App component chứa layout/route
@@ -74,4 +67,10 @@ my-react-app/
 │   └── store/                         # Redux hoặc Zustand (global state)
 │       ├── index.js                   # Cấu hình store
 │       └── rootReducer.js            # Kết hợp reducer nếu dùng Redux
-
+├── index.html                         # File HTML chính của app
+├── package.json                       # Thông tin project + dependencies
+├── vite.config.js                     # Cấu hình cho Vite
+├── .gitignore                         # Bỏ qua thư mục/tập tin khi dùng Git
+├── public/                            # Chứa favicon, robots.txt, ảnh công khai
+│   └── favicon.ico
+│
