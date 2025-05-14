@@ -19,17 +19,17 @@
                             <ul class="nav collapse parent show" data-bs-parent="#navbarVerticalCollapse"
                                 id="nv-home">
                                 <li class="collapsed-nav-item-title d-none">Home</li>
-                                <li class="nav-item"><a class="nav-link active" href="index.html">
+                                <li class="nav-item"><a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
                                         <div class="d-flex align-items-center"><span class="nav-link-text">Dashboard</span></div>
                                     </a><!-- more inner pages-->
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="dashboard/project-management.html">
+                                <li class="nav-item"><a class="nav-link {{ request()->routeIs('pJM') ? 'active' : '' }}" href="{{ route('pJM') }}">
                                         <div class="d-flex align-items-center"><span class="nav-link-text">Project
                                                 management</span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="dashboard/crm.html">
+                                <li class="nav-item"><a class="nav-link " href="dashboard/crm.html">
                                         <div class="d-flex align-items-center"><span class="nav-link-text">CRM</span>
                                         </div>
                                     </a><!-- more inner pages-->
@@ -77,8 +77,11 @@
                         <div class="parent-wrapper label-1">
                             <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse" id="nv-e-commerce">
                                 <li class="collapsed-nav-item-title d-none">E commerce</li>
-                                <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-admin"
-                                        data-bs-toggle="collapse" aria-expanded="true" aria-controls="nv-admin">
+                                <li class="nav-item">
+                                    <a class="nav-link dropdown-indicator" 
+                                        href="#nv-admin"
+                                        data-bs-toggle="collapse"
+                                        aria-expanded="true" aria-controls="nv-admin">
                                         <div class="d-flex align-items-center">
                                             <div class="dropdown-indicator-icon-wrapper"><span
                                                     class="fas fa-caret-right dropdown-indicator-icon"></span></div>
@@ -88,14 +91,14 @@
                                     <div class="parent-wrapper">
                                         <ul class="nav collapse parent show" data-bs-parent="#e-commerce"
                                             id="nv-admin">
-                                            <li class="nav-item"><a class="nav-link"
+                                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('addProduct') ? 'active' : '' }}"
                                                     href="{{ route('addProduct')}}">
                                                     <div class="d-flex align-items-center"><span
                                                             class="nav-link-text">Add product</span>
                                                     </div>
                                                 </a><!-- more inner pages-->
                                             </li>
-                                            <li class="nav-item"><a class="nav-link"
+                                            <li class="nav-item"><a class="nav-link {{ request()->routeIs('product') ? 'active' : '' }}"
                                                     href="{{ route('product')}}">
                                                     <div class="d-flex align-items-center"><span
                                                             class="nav-link-text">Products</span></div>

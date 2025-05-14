@@ -109,10 +109,10 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-1">New customers<span
+                                            <h5 class="mb-1">Khách hàng mới<span
                                                     class="badge badge-phoenix badge-phoenix-warning rounded-pill fs-9 ms-2">
                                                     <span class="badge-label">+26.5%</span></span></h5>
-                                            <h6 class="text-body-tertiary">Last 7 days</h6>
+                                            <h6 class="text-body-tertiary">7 ngày qua</h6>
                                         </div>
                                         <h4>356</h4>
                                     </div>
@@ -189,8 +189,8 @@
             <div data-list='{"valueNames":["product","customer","rating","review","time"],"page":6}'>
                 <div class="row align-items-end justify-content-between pb-5 g-3">
                     <div class="col-auto">
-                        <h3>Latest reviews</h3>
-                        <p class="text-body-tertiary lh-sm mb-0">Payment received across all channels</p>
+                        <h3>Đánh giá mới nhất</h3>
+                        <p class="text-body-tertiary lh-sm mb-0">Thanh toán được nhận trên tất cả các kênh</p>
                     </div>
                     <div class="col-12 col-md-auto">
                         <div class="row g-2 gy-3">
@@ -384,7 +384,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/3.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/3.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Apple MacBook Pro 13
@@ -394,7 +394,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle"
-                                                src="assets/img/team/40x40/58.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/58.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Woodrow Burton</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -449,7 +449,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/4.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/4.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Apple iMac 24&quot; 4K Retina
@@ -459,7 +459,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle avatar-placeholder"
-                                                src="assets/img/team/40x40/avatar.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/avatar.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Eric McGee</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -514,7 +514,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/5.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/5.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Razer Kraken v3 x Wired 7.1
@@ -524,7 +524,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle avatar-placeholder"
-                                                src="assets/img/team/40x40/avatar.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/avatar.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Kim Carroll</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -578,7 +578,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/6.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/6.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">PlayStation 5 DualSense
@@ -588,7 +588,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle"
-                                                src="assets/img/team/40x40/57.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/57.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Barbara Lucas</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -642,7 +642,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/7.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/7.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">2021 Apple 12.9-inch iPad Pro
@@ -652,7 +652,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle"
-                                                src="assets/img/team/40x40/3.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/3.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Ansolo Lazinatov</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -706,7 +706,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/8.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/8.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Amazon Basics Matte Black Wired
@@ -716,7 +716,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle"
-                                                src="assets/img/team/40x40/26.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/26.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Emma watson</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -770,7 +770,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/9.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/9.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Amazon Basics Mesh, Mid-Back,
@@ -780,7 +780,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle"
-                                                src="assets/img/team/40x40/29.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/29.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Rowen Atkinson</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -835,7 +835,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/10.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/10.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Apple Magic Mouse (Wireless,
@@ -901,7 +901,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/11.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/11.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Echo Dot (4th Gen) _ Smart
@@ -911,7 +911,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle"
-                                                src="assets/img/team/40x40/8.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/8.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Jennifer Schramm</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -965,7 +965,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/12.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/12.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">HORI Racing Wheel Apex for
@@ -975,7 +975,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle avatar-placeholder"
-                                                src="assets/img/team/40x40/avatar.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/avatar.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Raymond Mims</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -1030,7 +1030,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/13.png" alt="" width="53" /></a>
+                                            src="{{ asset('img/products/60x60/13.png') }}" alt="" width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Nintendo Switch with Neon Blue
@@ -1040,7 +1040,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle"
-                                                src="assets/img/team/40x40/9.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/9.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Michael Jenkins</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -1097,7 +1097,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/14.png" alt=""
+                                            src="{{ asset('img/products/60x60/14.png') }}" alt=""
                                             width="53" /></a></td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Oculus Rift S PC-Powered VR
@@ -1107,7 +1107,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle avatar-placeholder"
-                                                src="assets/img/team/40x40/avatar.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/avatar.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Kristine Cadena</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -1163,7 +1163,7 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/15.png" alt=""
+                                            src="{{ asset('img/products/60x60/15.png') }}" alt=""
                                             width="53" /></a></td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Sony X85J 75 Inch Sony 4K
@@ -1173,7 +1173,7 @@
                                         class="d-flex align-items-center text-body"
                                         href="apps/e-commerce/landing/profile.html">
                                         <div class="avatar avatar-l"><img class="rounded-circle"
-                                                src="assets/img/team/40x40/24.webp" alt="" /></div>
+                                                src="{{ asset('img/team/40x40/24.webp') }}" alt="" /></div>
                                         <h6 class="mb-0 ms-3 text-body">Suzanne Martinez</h6>
                                     </a></td>
                                 <td class="align-middle rating white-space-nowrap fs-10"><span

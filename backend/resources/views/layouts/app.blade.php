@@ -31,6 +31,9 @@
     <link href="{{ asset('plugins/dropzone/dropzone.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/choices/choices.min.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/flatpickr/flatpickr.min.css') }}" rel="stylesheet">
+
+    <link href="{{ asset('plugins/dhtmlx-gantt/dhtmlxgantt.css') }}" rel="stylesheet">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&amp;display=swap"
@@ -98,11 +101,14 @@
         <script src="{{ asset('plugins/echarts/echarts.min.js') }}"></script>
         <script src="{{ asset('js/phoenix.js') }}"></script>
         <script src="{{ asset('js/ecommerce-dashboard.js') }}"></script>
-
+        {{-- Phần thêm cho add Product --}}
         <script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
         <script src="{{ asset('plugins/dropzone/dropzone-min.js') }}"></script>
         <script src="{{ asset('plugins/choices/choices.min.js') }}"></script>
         <script src="{{ asset('plugins/flatpickr/flatpickr.min.js') }}"></script>
+        {{-- Phần thêm cho project-management --}}
+        <script src="{{ asset('plugins/dhtmlx-gantt/dhtmlxgantt.js') }}"></script>
+        <script src="{{ asset('js/dashboards/projectmanagement-dashboard.js') }}"></script>
 </body>
 
 </html>
