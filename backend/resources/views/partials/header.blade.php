@@ -422,85 +422,85 @@
                             <div class="row text-center align-items-center gx-0 gy-0">
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/behance.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/behance.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Behance</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/google-cloud.webp"
+                                        href="#!"><img src="{{ asset('img/nav-icons/google-cloud.webp') }}"
                                             alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Cloud</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/slack.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/slack.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Slack</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/gitlab.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/gitlab.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Gitlab</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/bitbucket.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/bitbucket.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">BitBucket</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/google-drive.webp"
+                                        href="#!"><img src="{{ asset('img/nav-icons/google-drive.webp') }}"
                                             alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Drive</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/trello.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/trello.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Trello</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/figma.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/figma.webp') }}" alt=""
                                             width="20" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Figma</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/twitter.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/twitter.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Twitter</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/pinterest.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/pinterest.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Pinterest</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/ln.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/ln.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Linkedin</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/google-maps.webp"
+                                        href="#!"><img src="{{ asset('img/nav-icons/google-maps.webp') }}"
                                             alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Maps</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/google-photos.webp"
+                                        href="#!"><img src="{{ asset('img/nav-icons/google-photos.webp') }}"
                                             alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Photos</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="assets/img/nav-icons/spotify.webp" alt=""
+                                        href="#!"><img src="{{ asset('img/nav-icons/spotify.webp') }}" alt=""
                                             width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Spotify</p>
                                     </a></div>
@@ -513,7 +513,7 @@
                     role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true"
                     aria-expanded="false">
                     <div class="avatar avatar-l ">
-                        <img class="rounded-circle " src="assets/img/team/40x40/57.webp" alt="" />
+                        <img class="rounded-circle " src="{{ asset('img/team/40x40/57.webp') }}" alt="" />
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
@@ -522,7 +522,7 @@
                         <div class="card-body p-0">
                             <div class="text-center pt-4 pb-3">
                                 <div class="avatar avatar-xl ">
-                                    <img class="rounded-circle " src="assets/img/team/72x72/57.webp"
+                                    <img class="rounded-circle " src="{{ asset('img/team/72x72/57.webp') }}"
                                         alt="" />
                                 </div>
                                 <h6 class="mt-2 text-body-emphasis">Jerry Seinfield</h6>

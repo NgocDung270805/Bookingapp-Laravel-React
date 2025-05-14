@@ -14,28 +14,30 @@
     <!-- ===============================================-->
     <!--    Favicons-->
     <!-- ===============================================-->
-    {{-- <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/favicons/apple-touch-icon.png')}}"> --}}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('img/favicons/apple-touch-icon.png') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/favicons/admin.webp') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('img/favicons/admin.webp') }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicons/admin.webp') }}">
     <link rel="manifest" href="{{ asset('img/favicons/manifest.json') }}">
     <meta name="msapplication-TileImage" content="{{ asset('img/favicons/mstile-150x150.png') }}">
     <meta name="theme-color" content="#ffffff">
-    <link rel="stylesheet" href="{{ asset('resources/css/app.css') }}">
-    <script src="{{ asset('resources/js/app.js') }}"></script>
-    @livewireStyles
     <script src="{{ asset('plugins/simplebar/simplebar.min.js') }}"></script>
     <script src="{{ asset('js/config.js') }}"></script>
 
     <!-- ===============================================-->
     <!--    Stylesheets-->
     <!-- ===============================================-->
+
+    <link href="{{ asset('plugins/dropzone/dropzone.css') }}" rel="stylesheet">
+    <link href="{{ asset('plugins/choices/choices.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('plugins/flatpickr/flatpickr.min.css') }}" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&amp;display=swap"
         rel="stylesheet">
     <link href="{{ asset('plugins/simplebar/simplebar.min.css') }}" rel="stylesheet">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
     <link href="{{ asset('css/theme-rtl.min.css') }}" type="text/css" rel="stylesheet" id="style-rtl">
     <link href="{{ asset('css/theme.min.css') }}" type="text/css" rel="stylesheet" id="style-default">
     <link href="{{ asset('css/user-rtl.min.css') }}" type="text/css" rel="stylesheet" id="user-style-rtl">
@@ -60,7 +62,11 @@
     <link href="{{ asset('plugins/leaflet.markercluster/MarkerCluster.Default.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/leaflet.tilelayer.colorfilter/leaflet-tilelayer-colorfilter.css') }}"
         rel="stylesheet">
-    
+    @livewireStyles
+
+
+
+
 </head>
 
 <body>
@@ -92,6 +98,11 @@
         <script src="{{ asset('plugins/echarts/echarts.min.js') }}"></script>
         <script src="{{ asset('js/phoenix.js') }}"></script>
         <script src="{{ asset('js/ecommerce-dashboard.js') }}"></script>
+
+        <script src="{{ asset('plugins/tinymce/tinymce.min.js') }}"></script>
+        <script src="{{ asset('plugins/dropzone/dropzone-min.js') }}"></script>
+        <script src="{{ asset('plugins/choices/choices.min.js') }}"></script>
+        <script src="{{ asset('plugins/flatpickr/flatpickr.min.js') }}"></script>
 </body>
 
 </html>

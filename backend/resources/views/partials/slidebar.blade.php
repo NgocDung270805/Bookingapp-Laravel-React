@@ -89,14 +89,14 @@
                                         <ul class="nav collapse parent show" data-bs-parent="#e-commerce"
                                             id="nv-admin">
                                             <li class="nav-item"><a class="nav-link"
-                                                    href="apps/e-commerce/admin/add-product.html">
+                                                    href="{{ route('addProduct')}}">
                                                     <div class="d-flex align-items-center"><span
                                                             class="nav-link-text">Add product</span>
                                                     </div>
                                                 </a><!-- more inner pages-->
                                             </li>
                                             <li class="nav-item"><a class="nav-link"
-                                                    href="apps/e-commerce/admin/products.html">
+                                                    href="{{ route('product')}}">
                                                     <div class="d-flex align-items-center"><span
                                                             class="nav-link-text">Products</span></div>
                                                 </a><!-- more inner pages-->

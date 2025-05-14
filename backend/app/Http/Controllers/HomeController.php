@@ -7,4 +7,12 @@ class HomeController extends Controller
     public function index(){
         return view('home');
     }
+
+    public function product(){
+        return view('app/e-commerce/admin/product');
+    }
+
+    public function addProduct(){
+        return view('app/e-commerce/admin/add-product');
+    }
 }
