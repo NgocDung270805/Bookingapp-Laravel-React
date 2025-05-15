@@ -422,8 +422,8 @@
                             <div class="row text-center align-items-center gx-0 gy-0">
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/behance.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/behance.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Behance</p>
                                     </a></div>
                                 <div class="col-4"><a
@@ -434,20 +434,20 @@
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/slack.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/slack.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Slack</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/gitlab.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/gitlab.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Gitlab</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/bitbucket.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/bitbucket.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">BitBucket</p>
                                     </a></div>
                                 <div class="col-4"><a
@@ -458,32 +458,32 @@
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/trello.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/trello.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Trello</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/figma.webp') }}" alt=""
-                                            width="20" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/figma.webp') }}"
+                                            alt="" width="20" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Figma</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/twitter.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/twitter.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Twitter</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/pinterest.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/pinterest.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Pinterest</p>
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/ln.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/ln.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Linkedin</p>
                                     </a></div>
                                 <div class="col-4"><a
@@ -500,8 +500,8 @@
                                     </a></div>
                                 <div class="col-4"><a
                                         class="d-block bg-body-secondary-hover p-2 rounded-3 text-center text-decoration-none mb-3"
-                                        href="#!"><img src="{{ asset('img/nav-icons/spotify.webp') }}" alt=""
-                                            width="30" />
+                                        href="#!"><img src="{{ asset('img/nav-icons/spotify.webp') }}"
+                                            alt="" width="30" />
                                         <p class="mb-0 text-body-emphasis text-truncate fs-10 mt-1 pt-1">Spotify</p>
                                     </a></div>
                             </div>
@@ -547,7 +547,7 @@
                                 </li>
                                 <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span
                                             class="me-2 text-body align-bottom" data-feather="help-circle"></a>Help
-                                        Center</a></li>
+                                    Center</a></li>
                                 <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span
                                             class="me-2 text-body align-bottom"
                                             data-feather="globe"></span>Language</a></li>
@@ -561,9 +561,18 @@
                                 </li>
                             </ul>
                             <hr />
-                            <div class="px-3"> <a class="btn btn-phoenix-secondary d-flex flex-center w-100"
-                                    href="#!"> <span class="me-2" data-feather="log-out"> </span>Sign out</a>
+                            <div class="px-3">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    style="display: none;">
+                                    @csrf
+                                </form>
+
+                                <a class="btn btn-phoenix-secondary d-flex flex-center w-100" href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <span class="me-2" data-feather="log-out"></span>Sign out
+                                </a>
                             </div>
+
                             <div class="my-2 text-center fw-bold fs-10 text-body-quaternary"><a
                                     class="text-body-quaternary me-1" href="#!">Privacy policy</a>&bull;<a
                                     class="text-body-quaternary mx-1" href="#!">Terms</a>&bull;<a
@@ -576,4 +585,3 @@
     </div>
 </nav>
 <!-- END HEADER -->
-    

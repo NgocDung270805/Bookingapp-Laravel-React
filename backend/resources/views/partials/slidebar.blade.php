@@ -59,6 +59,134 @@
                     <!-- label-->
                     <p class="navbar-vertical-label">Apps</p>
                     <hr class="navbar-vertical-line" /><!-- parent pages-->
+                    <div class="nav-item-wrapper">
+                        <a class="nav-link dropdown-indicator label-1" href="#nv-travel-agency" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-travel-agency">
+                            <div class="d-flex align-items-center">
+                                <div class="dropdown-indicator-icon-wrapper">
+                                    <span
+                                        class="fas fa-caret-right dropdown-indicator-icon">
+                                    </span>
+                                </div>
+                                    <span class="nav-link-icon">
+                                        <span data-feather="users"></span>
+                                    </span>
+                                    <span class="nav-link-text">Account Management</span>
+                            </div>
+                        </a>
+                        <div class="parent-wrapper label-1">
+                            <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse"
+                                id="nv-travel-agency">
+                                <li class="collapsed-nav-item-title d-none">Travel agency</li>
+                                {{-- Users --}}
+                                <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-flight"
+                                        data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-flight">
+                                        <div class="d-flex align-items-center">
+                                            <div class="dropdown-indicator-icon-wrapper"><span
+                                                    class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                            <span class="nav-link-text">Users</span>
+                                        </div>
+                                    </a><!-- more inner pages-->
+                                    <div class="parent-wrapper">
+                                        <ul class="nav collapse parent" data-bs-parent="#travel-agency"
+                                            id="nv-flight">
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/flight/homepage.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Homepage</span></div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/flight/booking.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Booking</span></div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/flight/payment.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Payment</span></div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                {{-- End Users --}}
+
+                                {{-- Management --}}
+                                <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-trip"
+                                        data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-trip">
+                                        <div class="d-flex align-items-center">
+                                            <div class="dropdown-indicator-icon-wrapper"><span
+                                                    class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                            <span class="nav-link-text">Management</span>
+                                        </div>
+                                    </a><!-- more inner pages-->
+                                    <div class="parent-wrapper">
+                                        <ul class="nav collapse parent" data-bs-parent="#travel-agency"
+                                            id="nv-trip">
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/trip/homepage.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Homepage</span></div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/trip/trip-details.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Trip details</span>
+                                                    </div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/trip/checkout.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Checkout</span></div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                {{-- End Management --}}
+
+                                {{-- Administration --}}
+                                <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-trip"
+                                        data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-trip">
+                                        <div class="d-flex align-items-center">
+                                            <div class="dropdown-indicator-icon-wrapper"><span
+                                                    class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                            <span class="nav-link-text">Administration</span>
+                                        </div>
+                                    </a><!-- more inner pages-->
+                                    <div class="parent-wrapper">
+                                        <ul class="nav collapse parent" data-bs-parent="#travel-agency"
+                                            id="nv-trip">
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/trip/homepage.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Homepage</span></div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/trip/trip-details.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Trip details</span>
+                                                    </div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="apps/travel-agency/trip/checkout.html">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Checkout</span></div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                {{-- End Administration --}}
+                            </ul>
+                        </div>
+                    </div><!-- parent pages-->
+
                     <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1" href="#nv-e-commerce"
                             role="button" data-bs-toggle="collapse" aria-expanded="false"
                             aria-controls="nv-e-commerce">
