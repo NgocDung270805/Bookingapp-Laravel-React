@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+
+
 /**
  * @method bool hasRole(string $role)
  */
@@ -48,5 +50,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    /**
+     * The attributes that should be appended to the model's array form.
+     *
+     * @return list<string>
+     */
+    /**
+     * Indicate that the model's email address should be verified.
+     */
+    public function profile()
+    {
+        return $this->hasOne(Users_profiles::class);
+    }
+
+    public function details()
+    {
+        return $this->hasOne(User_details::class);
     }
 }
