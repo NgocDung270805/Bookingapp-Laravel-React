@@ -34,8 +34,8 @@ class LoginController extends Controller
             }
 
             if ($user->hasRole('user')) {
-                return redirect()->route('welcome'); // hoặc route('home')
-                // return redirect()->away('http://localhost:5173/');
+                // return redirect()->route('welcome'); // hoặc route('home')
+                return redirect()->away('http://localhost:5173/');
                 // return redirect()->away('http://localhost:3000/');
             }
 
