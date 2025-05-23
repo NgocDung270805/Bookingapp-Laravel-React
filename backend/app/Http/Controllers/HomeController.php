@@ -11,9 +11,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $user = User::with(['profile', 'details'])->find(Auth::id());
-        // dd($user);
-        return view('index', compact('user'));
+        return view('index');
     }
 
     public function pJM()
