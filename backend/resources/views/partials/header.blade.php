@@ -525,6 +525,8 @@
                                 <div class="avatar avatar-xl ">
                                     <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" />
                                 </div>
+                                {{-- Toán tử 3 ngôi check name --}}
+                                
                                 <h6 class="mt-2 text-body-emphasis">{{ $user->name }}</h6>
                             </div>
                             <div class="mb-3 mx-3"><input class="form-control form-control-sm" id="statusUpdateInput"

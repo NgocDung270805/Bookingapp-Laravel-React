@@ -47,12 +47,17 @@
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
-                                <li class="nav-item" 
-                                  {{-- style="{{ $user->hasRole('manage') ? 'display: none;' : '' }}" --}}
-                                    ><a class="nav-link" href="apps/social/feed.html">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text">Social
-                                                feed</span></div>
-                                    </a><!-- more inner pages-->
+                                <li class="nav-item">
+                                    <a class="nav-link" href="
+                                    {{-- {{ $user->hasRole('manage') ? '#' : ' --}}
+                                    apps/social/feed.html
+                                    {{-- ' }} --}}
+                                    " 
+                                    {{-- onclick="{{ $user->hasRole('manage') ? 'return false;' : '' }}" style="{{ $user->hasRole('manage') ? 'pointer-events: none; opacity: 0.5; cursor: not-allowed;' : '' }}" --}}
+                                        ><div class="d-flex align-items-center">
+                                            <span class="nav-link-text">Social feed</span>
+                                        </div>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -158,7 +163,7 @@
                                                     </div>
                                                 </a><!-- more inner pages-->
                                             </li>
-                                            
+
                                         </ul>
                                     </div>
                                 </li>
@@ -167,6 +172,107 @@
 
                     </div><!-- parent pages-->
 
+                    <div class="nav-item-wrapper">
+                        <a class="nav-link dropdown-indicator label-1"
+                            href="#nv-system-management" role="button" data-bs-toggle="collapse" aria-expanded="false"
+                            aria-controls="nv-system-management">
+                            <div class="d-flex align-items-center">
+                                <div class="dropdown-indicator-icon-wrapper">
+                                    <span class="fas fa-caret-right dropdown-indicator-icon"></span>
+                                </div>
+                                <span class="nav-link-icon">
+                                    <span data-feather="tool"></span>
+                                </span>
+                                <span class="nav-link-text">System Management</span>
+                            </div>
+                        </a>
+
+                        <div class="parent-wrapper label-1">
+                            <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse" id="nv-system-management">
+                                <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-flight"
+                                        data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-flight">
+                                        <div class="d-flex align-items-center">
+                                            <div class="dropdown-indicator-icon-wrapper"><span
+                                                    class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                            <span class="nav-link-text">Categories</span>
+                                        </div>
+                                    </a><!-- more inner pages-->
+                                    <div class="parent-wrapper">
+                                        <ul class="nav collapse parent" data-bs-parent="#travel-agency"
+                                            id="nv-flight">
+                                            <li class="nav-item"><a class="nav-link"
+                                                    href="{{ route('category.index') }}">
+                                                    <div class="d-flex align-items-center"><span
+                                                            class="nav-link-text">Home</span></div>
+                                                </a><!-- more inner pages-->
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link dropdown-indicator" href="#nv-system-hotel"
+                                        data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-system-hotel">
+                                        <div class="d-flex align-items-center">
+                                            <div class="dropdown-indicator-icon-wrapper"><span
+                                                    class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                            <span class="nav-link-text">Abc</span>
+                                        </div>
+                                    </a>
+
+                                    <div class="parent-wrapper">
+                                        <ul class="nav collapse parent" data-bs-parent="#nv-system-management" id="nv-system-hotel">
+                                            
+                                            <li class="nav-item">
+                                                <a class="nav-link dropdown-indicator" href="#nv-system-hotel-admin"
+                                                    data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-system-hotel-admin">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="dropdown-indicator-icon-wrapper"><span
+                                                                class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                                        <span class="nav-link-text">Admin</span>
+                                                    </div>
+                                                </a>
+
+                                                <div class="parent-wrapper">
+                                                    <ul class="nav collapse parent" data-bs-parent="#nv-system-hotel" id="nv-system-hotel-admin">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" href="apps/travel-agency/hotel/admin/add-property.html">
+                                                                <div class="d-flex align-items-center">
+                                                                    <span class="nav-link-text">Add property</span>
+                                                                </div>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+
+                                            <li class="nav-item">
+                                                <a class="nav-link dropdown-indicator" href="#nv-system-hotel-customer"
+                                                    data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-system-hotel-customer">
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="dropdown-indicator-icon-wrapper"><span
+                                                                class="fas fa-caret-right dropdown-indicator-icon"></span></div>
+                                                        <span class="nav-link-text">Customer</span>
+                                                    </div>
+                                                </a>
+
+                                                <div class="parent-wrapper">
+                                                    <ul class="nav collapse parent" data-bs-parent="#nv-system-hotel" id="nv-system-hotel-customer">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" href="apps/travel-agency/hotel/customer/homepage.html">
+                                                                <div class="d-flex align-items-center">
+                                                                    <span class="nav-link-text">Homepage</span>
+                                                                </div>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1"
                             href="#nv-e-commerce" role="button" data-bs-toggle="collapse" aria-expanded="false"
                             aria-controls="nv-e-commerce">
@@ -955,8 +1061,7 @@
                             </div>
                         </a>
                         <div class="parent-wrapper label-1">
-                            <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse"
-                                id="nv-pricing">
+                            <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse" id="nv-pricing">
                                 <li class="collapsed-nav-item-title d-none">Pricing</li>
                                 <li class="nav-item"><a class="nav-link" href="pages/pricing/pricing-column.html">
                                         <div class="d-flex align-items-center"><span class="nav-link-text">Pricing
@@ -1000,24 +1105,20 @@
                             </div>
                         </a>
                         <div class="parent-wrapper label-1">
-                            <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse"
-                                id="nv-errors">
+                            <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse" id="nv-errors">
                                 <li class="collapsed-nav-item-title d-none">Errors</li>
                                 <li class="nav-item"><a class="nav-link" href="pages/errors/404.html">
-                                        <div class="d-flex align-items-center"><span
-                                                class="nav-link-text">404</span>
+                                        <div class="d-flex align-items-center"><span class="nav-link-text">404</span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="pages/errors/403.html">
-                                        <div class="d-flex align-items-center"><span
-                                                class="nav-link-text">403</span>
+                                        <div class="d-flex align-items-center"><span class="nav-link-text">403</span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="pages/errors/500.html">
-                                        <div class="d-flex align-items-center"><span
-                                                class="nav-link-text">500</span>
+                                        <div class="d-flex align-items-center"><span class="nav-link-text">500</span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
