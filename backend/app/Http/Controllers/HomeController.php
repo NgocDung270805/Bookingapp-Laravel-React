@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('index');
+        $user = User::with(['profile', 'details'])->find(Auth::id());
+        // dd($user);
+        return view('index', compact('user'));
     }
 
     public function pJM()

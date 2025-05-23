@@ -6,11 +6,12 @@
                 data-bs-toggle="collapse" data-bs-target="#navbarVerticalCollapse" aria-controls="navbarVerticalCollapse"
                 aria-expanded="false" aria-label="Toggle Navigation"><span class="navbar-toggle-icon"><span
                         class="toggle-line"></span></span></button>
-            <a class="navbar-brand me-1 me-sm-3" href="index.html">
+            <a class="navbar-brand me-1 me-sm-3" href="{{ route('home') }}">
                 <div class="d-flex align-items-center">
-                    <div class="d-flex align-items-center"><img src="assets/img/icons/logo.png" alt="phoenix"
+                    <div class="d-flex align-items-center"><img
+                            src="https://cdn-icons-png.flaticon.com/512/2206/2206368.png" alt="Administration"
                             width="27" />
-                        <h5 class="logo-text ms-2 d-none d-sm-block">phoenix</h5>
+                        <h5 class="logo-text ms-2 d-none d-sm-block">Administration</h5>
                     </div>
                 </div>
             </a>
@@ -513,7 +514,7 @@
                     role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true"
                     aria-expanded="false">
                     <div class="avatar avatar-l ">
-                        <img class="rounded-circle " src="assets/img/team/40x40/57.webp" alt="" />
+                        <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}"alt="Avatar" />
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
@@ -522,13 +523,12 @@
                         <div class="card-body p-0">
                             <div class="text-center pt-4 pb-3">
                                 <div class="avatar avatar-xl ">
-                                    <img class="rounded-circle " src="assets/img/team/72x72/57.webp"
-                                        alt="" />
+                                    <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" />
                                 </div>
-                                <h6 class="mt-2 text-body-emphasis">Jerry Seinfield</h6>
+                                <h6 class="mt-2 text-body-emphasis">{{ $user->name }}</h6>
                             </div>
                             <div class="mb-3 mx-3"><input class="form-control form-control-sm" id="statusUpdateInput"
-                                    type="text" placeholder="Update your status" /></div>
+                                    type="text" placeholder="Cập nhật trạng thái tài khoản" /></div>
                         </div>
                         <div class="overflow-auto scrollbar" style="height: 10rem;">
                             <ul class="nav d-flex flex-column mb-2 pb-1">
@@ -547,7 +547,7 @@
                                 </li>
                                 <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span
                                             class="me-2 text-body align-bottom" data-feather="help-circle"></a>Help
-                                        Center</a></li>
+                                    Center</a></li>
                                 <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span
                                             class="me-2 text-body align-bottom"
                                             data-feather="globe"></span>Language</a></li>
@@ -555,23 +555,32 @@
                         </div>
                         <div class="card-footer p-0 border-top border-translucent">
                             <ul class="nav d-flex flex-column my-3">
-                                <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span
-                                            class="me-2 text-body align-bottom" data-feather="user-plus"></span>Add
-                                        another account</a>
+                                <li class="nav-item">
+                                    <a class="nav-link px-3 d-block" href="#!">
+                                        <span class="me-2 text-body align-bottom" data-feather="user-plus"></span>
+                                        Add another account
+                                    </a>
                                 </li>
                             </ul>
                             <hr />
-                            <div class="px-3"> <a class="btn btn-phoenix-secondary d-flex flex-center w-100"
-                                    href="#!"> <span class="me-2" data-feather="log-out"> </span>Sign out</a>
+                            <div class="px-3">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    style="display: none;"> @csrf</form>
+                                <a class="btn btn-phoenix-secondary d-flex flex-center w-100" href="#"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <span class="me-2" data-feather="log-out"></span>
+                                    Sign out
+                                </a>
                             </div>
-                            <div class="my-2 text-center fw-bold fs-10 text-body-quaternary"><a
-                                    class="text-body-quaternary me-1" href="#!">Privacy policy</a>&bull;<a
-                                    class="text-body-quaternary mx-1" href="#!">Terms</a>&bull;<a
-                                    class="text-body-quaternary ms-1" href="#!">Cookies</a></div>
                         </div>
+                        <div class="my-2 text-center fw-bold fs-10 text-body-quaternary"><a
+                                class="text-body-quaternary me-1" href="#!">Privacy policy</a>&bull;<a
+                                class="text-body-quaternary mx-1" href="#!">Terms</a>&bull;<a
+                                class="text-body-quaternary ms-1" href="#!">Cookies</a></div>
                     </div>
                 </div>
-            </li>
-        </ul>
+    </div>
+    </li>
+    </ul>
     </div>
 </nav>

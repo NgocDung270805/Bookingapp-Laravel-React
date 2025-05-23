@@ -9,17 +9,17 @@
     <!-- ===============================================-->
     <!--    Document Title-->
     <!-- ===============================================-->
-    <title>admin</title>
+    <title>Administration</title>
 
     <!-- ===============================================-->
     <!--    Favicons-->
     <!-- ===============================================-->
-    <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png">
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicons/favicon.ico">
-    <link rel="manifest" href="assets/img/favicons/manifest.json">
-    <meta name="msapplication-TileImage" content="assets/img/favicons/mstile-150x150.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
+    <link rel="shortcut icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
+    <link rel="manifest" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
+    <meta name="msapplication-TileImage" content="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
     <meta name="theme-color" content="#ffffff">
     <script src="vendors/simplebar/simplebar.min.js"></script>
     <script src="assets/js/config.js"></script>
@@ -61,7 +61,6 @@
     <main class="main" id="top">
         @include('partials.sidebar')
         @include('partials.header')
-
         <script>
             var navbarTopShape = window.config.config.phoenixNavbarTopShape;
             var navbarPosition = window.config.config.phoenixNavbarPosition;

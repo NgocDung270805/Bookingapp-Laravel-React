@@ -7,8 +7,8 @@
             <div class="row g-4">
                 <div class="col-12 col-xxl-6">
                     <div class="mb-8">
-                        <h2 class="mb-2">Ecommerce Dashboard</h2>
-                        <h5 class="text-body-tertiary fw-semibold">Here’s what’s going on at your business right now</h5>
+                        <h2 class="mb-2">Dashboard</h2>
+                        <h5 class="text-body-tertiary fw-semibold">Đây là những gì mà diễn ra tại doanh nghiệp của bạn ngay bây giờ</h5>
                     </div>
                     <div class="row align-items-center g-4">
                         <div class="col-12 col-md-auto">
@@ -21,8 +21,8 @@
                                         class="fa-stack-1x fa-solid fa-star text-success "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0">57 new orders</h4>
-                                    <p class="text-body-secondary fs-9 mb-0">Awating processing</p>
+                                    <h4 class="mb-0">57 đơn hàng mới</h4>
+                                    <p class="text-body-secondary fs-9 mb-0">Đang chờ xử lý</p>
                                 </div>
                             </div>
                         </div>
@@ -36,8 +36,8 @@
                                         class="fa-stack-1x fa-solid fa-pause text-warning "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0">5 orders</h4>
-                                    <p class="text-body-secondary fs-9 mb-0">On hold</p>
+                                    <h4 class="mb-0">5 đơn đặt hàng</h4>
+                                    <p class="text-body-secondary fs-9 mb-0">Đang giữ</p>
                                 </div>
                             </div>
                         </div>
@@ -51,8 +51,8 @@
                                         class="fa-stack-1x fa-solid fa-xmark text-danger "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0">15 products</h4>
-                                    <p class="text-body-secondary fs-9 mb-0">Out of stock</p>
+                                    <h4 class="mb-0">15 sản phẩm</h4>
+                                    <p class="text-body-secondary fs-9 mb-0">Hết hàng</p>
                                 </div>
                             </div>
                         </div>
@@ -60,8 +60,8 @@
                     <hr class="bg-body-secondary mb-6 mt-4" />
                     <div class="row flex-between-center mb-4 g-3">
                         <div class="col-auto">
-                            <h3>Total sells</h3>
-                            <p class="text-body-tertiary lh-sm mb-0">Payment received across all channels</p>
+                            <h3>Tổng số bán</h3>
+                            <p class="text-body-tertiary lh-sm mb-0">Thanh toán nhận được trên tất cả các kênh</p>
                         </div>
                         <div class="col-8 col-sm-4"><select class="form-select form-select-sm"
                                 id="select-gross-revenue-month">
@@ -79,10 +79,10 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-1">Total orders<span
+                                            <h5 class="mb-1">Tổng số đơn đặt hàng<span
                                                     class="badge badge-phoenix badge-phoenix-warning rounded-pill fs-9 ms-2"><span
                                                         class="badge-label">-6.8%</span></span></h5>
-                                            <h6 class="text-body-tertiary">Last 7 days</h6>
+                                            <h6 class="text-body-tertiary">7 ngày qua</h6>
                                         </div>
                                         <h4>16,247</h4>
                                     </div>
@@ -92,12 +92,12 @@
                                     <div class="mt-2">
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="bullet-item bg-primary me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Completed</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Hoàn thành</h6>
                                             <h6 class="text-body fw-semibold mb-0">52%</h6>
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <div class="bullet-item bg-primary-subtle me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Pending payment</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Đang chờ thanh toán</h6>
                                             <h6 class="text-body fw-semibold mb-0">48%</h6>
                                         </div>
                                     </div>
@@ -109,10 +109,10 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-1">New customers<span
+                                            <h5 class="mb-1">Khách hàng mới<span
                                                     class="badge badge-phoenix badge-phoenix-warning rounded-pill fs-9 ms-2">
                                                     <span class="badge-label">+26.5%</span></span></h5>
-                                            <h6 class="text-body-tertiary">Last 7 days</h6>
+                                            <h6 class="text-body-tertiary">7 ngày qua</h6>
                                         </div>
                                         <h4>356</h4>
                                     </div>
@@ -127,8 +127,8 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-2">Top coupons</h5>
-                                            <h6 class="text-body-tertiary">Last 7 days</h6>
+                                            <h5 class="mb-2">Phiếu giảm giá hàng đầu</h5>
+                                            <h6 class="text-body-tertiary">7 ngày qua</h6>
                                         </div>
                                     </div>
                                     <div class="pb-4 pt-3">
@@ -137,17 +137,17 @@
                                     <div>
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="bullet-item bg-primary me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Percentage discount</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Giảm giá theo tỷ lệ phần trăm</h6>
                                             <h6 class="text-body fw-semibold mb-0">72%</h6>
                                         </div>
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="bullet-item bg-primary-lighter me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Fixed card discount</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Giảm giá theo thẻ cố định</h6>
                                             <h6 class="text-body fw-semibold mb-0">18%</h6>
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <div class="bullet-item bg-info-dark me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Fixed product discount</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Giảm giá theo sản phẩm cố định</h6>
                                             <h6 class="text-body fw-semibold mb-0">10%</h6>
                                         </div>
                                     </div>
@@ -159,8 +159,8 @@
                                 <div class="card-body d-flex flex-column">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-2">Paying vs non paying</h5>
-                                            <h6 class="text-body-tertiary">Last 7 days</h6>
+                                            <h5 class="mb-2">Khách hàng trả phí vs không trả phí</h5>
+                                            <h6 class="text-body-tertiary">7 ngày qua</h6>
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center pt-3 flex-1">
@@ -169,12 +169,12 @@
                                     <div class="mt-3">
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="bullet-item bg-primary me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Paying customer</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Khách hàng trả phí</h6>
                                             <h6 class="text-body fw-semibold mb-0">30%</h6>
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <div class="bullet-item bg-primary-subtle me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Non-paying customer</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Khách hàng không trả phí</h6>
                                             <h6 class="text-body fw-semibold mb-0">70%</h6>
                                         </div>
                                     </div>
@@ -189,8 +189,8 @@
             <div data-list='{"valueNames":["product","customer","rating","review","time"],"page":6}'>
                 <div class="row align-items-end justify-content-between pb-5 g-3">
                     <div class="col-auto">
-                        <h3>Latest reviews</h3>
-                        <p class="text-body-tertiary lh-sm mb-0">Payment received across all channels</p>
+                        <h3>Đánh giá mới nhất</h3>
+                        <p class="text-body-tertiary lh-sm mb-0">Thanh toán đã nhận trên tất cả các kênh</p>
                     </div>
                     <div class="col-12 col-md-auto">
                         <div class="row g-2 gy-3">
@@ -212,9 +212,9 @@
                                     aria-expanded="false" data-bs-reference="parent"><span class="fas fa-ellipsis-h"
                                         data-fa-transform="shrink-2"></span></button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#">Action</a></li>
-                                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                    <li><a class="dropdown-item" href="#">Hoạt động</a></li>
+                                    <li><a class="dropdown-item" href="#">Hành động khác</a></li>
+                                    <li><a class="dropdown-item" href="#">Một cái gì đó khác ở đây</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -231,16 +231,16 @@
                                 </th>
                                 <th class="sort white-space-nowrap align-middle" scope="col"></th>
                                 <th class="sort white-space-nowrap align-middle" scope="col" style="min-width:360px;"
-                                    data-sort="product">PRODUCT</th>
+                                    data-sort="product">SẢN PHẨM</th>
                                 <th class="sort align-middle" scope="col" data-sort="customer"
-                                    style="min-width:200px;">CUSTOMER</th>
+                                    style="min-width:200px;">KHÁCH HÀNG</th>
                                 <th class="sort align-middle" scope="col" data-sort="rating"
-                                    style="min-width:110px;">RATING</th>
+                                    style="min-width:110px;">ĐÁNH GIÁ</th>
                                 <th class="sort align-middle" scope="col" style="max-width:350px;"
-                                    data-sort="review">REVIEW</th>
-                                <th class="sort text-start ps-5 align-middle" scope="col" data-sort="status">STATUS
+                                    data-sort="review">NHẬN XÉT</th>
+                                <th class="sort text-start ps-5 align-middle" scope="col" data-sort="status">TRẠNG THÁI
                                 </th>
-                                <th class="sort text-end align-middle" scope="col" data-sort="time">TIME</th>
+                                <th class="sort text-end align-middle" scope="col" data-sort="time">THỜI GIAN</th>
                                 <th class="sort text-end pe-0 align-middle" scope="col"></th>
                             </tr>
                         </thead>
@@ -1247,23 +1247,23 @@
             <div class="col-12 col-xl-6">
                 <div data-list='{"valueNames":["country","users","transactions","revenue","conv-rate"],"page":5}'>
                     <div class="mb-5 mt-7">
-                        <h3>Top regions by revenue</h3>
-                        <p class="text-body-tertiary">Where you generated most of the revenue</p>
+                        <h3>Các khu vực hàng đầu theo doanh thu</h3>
+                        <p class="text-body-tertiary">Nơi bạn tạo ra nhiều doanh thu nhất</p>
                     </div>
                     <div class="table-responsive scrollbar">
                         <table class="table fs-10 mb-0">
                             <thead>
                                 <tr>
                                     <th class="sort border-top border-translucent ps-0 align-middle" scope="col"
-                                        data-sort="country" style="width:32%">COUNTRY</th>
+                                        data-sort="country" style="width:32%">QUỐC GIA</th>
                                     <th class="sort border-top border-translucent align-middle" scope="col"
-                                        data-sort="users" style="width:17%">USERS</th>
+                                        data-sort="users" style="width:17%">NGƯỜI DÙNG</th>
                                     <th class="sort border-top border-translucent text-end align-middle" scope="col"
-                                        data-sort="transactions" style="width:16%">TRANSACTIONS</th>
+                                        data-sort="transactions" style="width:16%">GIAO DỊCH</th>
                                     <th class="sort border-top border-translucent text-end align-middle" scope="col"
-                                        data-sort="revenue" style="width:20%">REVENUE</th>
+                                        data-sort="revenue" style="width:20%">DOANH THU</th>
                                     <th class="sort border-top border-translucent text-end pe-0 align-middle"
-                                        scope="col" data-sort="conv-rate" style="width:17%">CONV. RATE</th>
+                                        scope="col" data-sort="conv-rate" style="width:17%">TỶ LỆ CHUYỂN ĐỔI</th>
                                 </tr>
                             </thead>
                             <tr>
@@ -1289,7 +1289,7 @@
                                                 <div class="d-flex align-items-center"><img
                                                         src="assets/img/country/india.png" alt=""
                                                         width="24" />
-                                                    <p class="mb-0 ps-3 text-primary fw-bold fs-9">India</p>
+                                                    <p class="mb-0 ps-3 text-primary fw-bold fs-9">Ấn Độ</p>
                                                 </div>
                                             </a>
                                         </div>
@@ -1594,16 +1594,16 @@
                 <div class="col-12 col-xl-6">
                     <div class="me-xl-4">
                         <div>
-                            <h3>Projection vs actual</h3>
-                            <p class="mb-1 text-body-tertiary">Actual earnings vs projected earnings</p>
+                            <h3>Dự đoán so với thực tế</h3>
+                            <p class="mb-1 text-body-tertiary">Doanh thu thực tế so với doanh thu dự đoán</p>
                         </div>
                         <div class="echart-projection-actual" style="height:300px; width:100%"></div>
                     </div>
                 </div>
                 <div class="col-12 col-xl-6">
                     <div>
-                        <h3>Returning customer rate</h3>
-                        <p class="mb-1 text-body-tertiary">Rate of customers returning to your shop over time</p>
+                        <h3>Tỷ lệ khách hàng quay lại</h3>
+                        <p class="mb-1 text-body-tertiary">Tỷ lệ khách hàng quay lại cửa hàng của bạn theo thời gian</p>
                     </div>
                     <div class="echart-returning-customer" style="height:300px;"></div>
                 </div>
