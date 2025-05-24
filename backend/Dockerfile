@@ -21,7 +21,7 @@ RUN composer install --no-dev --no-scripts --no-interaction --prefer-dist
 COPY . .
 
 # Copy custom PHP config (ví dụ opcache)
-COPY ./php.ini /usr/local/etc/php/conf.d/opcache.ini
+# COPY ./php.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Laravel sẽ chạy bằng built-in server trong container
 CMD php artisan serve --host=0.0.0.0 --port=8000
