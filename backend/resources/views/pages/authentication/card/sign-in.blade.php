@@ -125,7 +125,7 @@
                                                     <input
                                                         class="form-control form-icon-input @error('email') is-invalid @enderror"
                                                         id="email" name="email" type="email"
-                                                        value="{{ old('email') }}" placeholder="name@example.com" />
+                                                        value="{{ old('email') }}" placeholder="name@gmail.com" />
                                                     <span class="fas fa-user text-body fs-9 form-icon"></span>
                                                     @error('email')
                                                         <div class="invalid-feedback">{{ $message }}</div>
