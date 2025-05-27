@@ -169,7 +169,7 @@
                                                 </div>
                                                 <div class="col-auto">
                                                     <a class="fs-9 fw-semibold"
-                                                        href="../../../pages/authentication/card/forgot-password.html">Forgot
+                                                        href="#">Forgot
                                                         Password?</a>
                                                 </div>
                                             </div>
