@@ -137,7 +137,7 @@
                         <div class="py-2"><a class="dropdown-item py-2 d-flex align-items-center"
                                 href="pages/members.html">
                                 <div class="avatar avatar-l status-online  me-2 text-body">
-                                    <img class="rounded-circle " src="assets/img/team/40x40/10.webp"
+                                    <img class="rounded-circle " src=""
                                         alt="" />
                                 </div>
                                 <div class="flex-1">
@@ -147,7 +147,7 @@
                             </a>
                             <a class="dropdown-item py-2 d-flex align-items-center" href="pages/members.html">
                                 <div class="avatar avatar-l  me-2 text-body">
-                                    <img class="rounded-circle " src="assets/img/team/40x40/12.webp"
+                                    <img class="rounded-circle " src=""
                                         alt="" />
                                 </div>
                                 <div class="flex-1">
@@ -510,11 +510,12 @@
                     </div>
                 </div>
             </li>
-            <li class="nav-item dropdown"><a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!"
+            <li class="nav-item dropdown">
+                <a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!"
                     role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true"
                     aria-expanded="false">
                     <div class="avatar avatar-l ">
-                        <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}"alt="Avatar" />
+                        {{-- <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}"alt="Avatar" /> --}}
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
@@ -523,7 +524,7 @@
                         <div class="card-body p-0">
                             <div class="text-center pt-4 pb-3">
                                 <div class="avatar avatar-xl ">
-                                    <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" />
+                                    {{-- <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" /> --}}
                                 </div>
                                 {{-- Toán tử 3 ngôi check name --}}
                                 
