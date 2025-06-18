@@ -515,7 +515,7 @@
                     role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true"
                     aria-expanded="false">
                     <div class="avatar avatar-l ">
-                        {{-- <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}"alt="Avatar" /> --}}
+                        <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}"alt="Avatar" />
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
@@ -524,7 +524,7 @@
                         <div class="card-body p-0">
                             <div class="text-center pt-4 pb-3">
                                 <div class="avatar avatar-xl ">
-                                    {{-- <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" /> --}}
+                                    <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" />
                                 </div>
                                 {{-- Toán tử 3 ngôi check name --}}
                                 

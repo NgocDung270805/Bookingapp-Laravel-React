@@ -125,21 +125,21 @@
                                             </div>
                                         </td>
                                         <td class="align-middle white-space-nowrap py-0 category-img">
-                                            @if ($category->img)
-                                                <div style="padding-left: {{ $category->level * 30 }}px;">
+                                            <div style="padding-left: {{ $category->level * 30 }}px;">
+                                                @if ($category->img)
                                                     <a class="d-block border border-translucent rounded-2" href="#">
-                                                        <img src="{{ asset('storage/' . $category->img) }}"
-                                                            alt="{{ $category->name }}" width="53" />
+                                                        <img src="{{ asset('storage/' . $category->img) }}" alt=""
+                                                            width="53" />
                                                     </a>
-                                                </div>
-                                            @else
-                                                {{-- Placeholder nếu không có ảnh --}}
-                                                <div class="d-block border border-translucent rounded-2 text-center"
-                                                    style="width:53px; height:53px; line-height:53px;">
-                                                    <i class="fas fa-image text-body-secondary"></i>
-                                                </div>
-                                            @endif
+                                                @else
+                                                    <div class="d-block border border-translucent rounded-2 text-center"
+                                                        style="width:53px; height:53px; line-height:53px;">
+                                                        <i class="fas fa-image text-body-secondary"></i>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </td>
+
                                         <td class="category-name align-middle ps-4">
                                             <div style="padding-left: {{ $category->level * 30 }}px;">
                                                 {{-- Thụt lề danh mục con --}}

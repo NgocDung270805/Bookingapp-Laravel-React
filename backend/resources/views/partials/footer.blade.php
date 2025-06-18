@@ -6,7 +6,7 @@
                     class="d-sm-none" />2025 &copy;<a class="mx-1" href="https://themewagon.com"></a></p>
         </div>
         <div class="col-12 col-sm-auto text-center">
-            <p class="mb-0 text-body-tertiary text-opacity-85">PND</p>
+            <p class="mb-0 text-body-tertiary text-opacity-85">v1.0</p>
         </div>
     </div>
 </footer>
