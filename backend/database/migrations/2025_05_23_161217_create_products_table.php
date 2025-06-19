@@ -17,10 +17,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->longText('description')->nullable();
-            $table->decimal('price', 15, 2);
-            $table->decimal('discount_price', 15, 2)->nullable();
-            $table->integer('discount_percent')->nullable();// Tỉ lệ giảm giá
-            $table->integer('quantity')->default(0);
             $table->string('img')->nullable();
             $table->boolean('status')->default(true);
             $table->boolean('is_featured')->default(false);
