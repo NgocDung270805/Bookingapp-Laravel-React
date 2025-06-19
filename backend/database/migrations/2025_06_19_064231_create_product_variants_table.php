@@ -17,9 +17,9 @@ return new class extends Migration
             
             $table->string('variant_name'); // Ví dụ: "Màu đỏ", "Kích thước L"
             $table->string('sku')->unique()->nullable(); // Mã SKU duy nhất cho từng biến thể
-            
+            $table->enum('pricing_type', ['public_price', 'request_quote'])->default('public_price');
             // Các thuộc tính riêng của từng biến thể, di chuyển từ bảng products
-            $table->decimal('price', 15, 2); // Giá của biến thể này
+            $table->decimal('price', 15, 2)->nullable(); // Giá của biến thể này
             $table->decimal('discount_price', 15, 2)->nullable(); // Giá khuyến mãi riêng của biến thể
             $table->integer('discount_percent')->nullable(); // Phần trăm giảm giá riêng của biến thể
             $table->integer('quantity')->default(0); // Số lượng tồn kho của biến thể này

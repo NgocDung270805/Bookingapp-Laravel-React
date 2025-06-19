@@ -23,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Bắt buộc dùng HTTPS
-        URL::forceScheme('https');
+        // URL::forceScheme('https');
         
         View::composer('*', function ($view) {
             $view->with('user', Auth::user());

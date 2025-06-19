@@ -48,6 +48,14 @@ class Category extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class);
+        return $this->belongsToMany(Tag::class, 'category_tag', 'category_id', 'tag_id');
+    }
+
+    /**
+     * The products that belong to the category (Many-to-Many).
+     */
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'product_category', 'category_id', 'product_id');
     }
 }

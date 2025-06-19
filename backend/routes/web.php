@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\TagController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Web\ProductVariantController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
@@ -35,10 +36,22 @@ Route::prefix('tag')->name('tag.')->middleware('auth')->group(function () {
 });
 
 // Route cho Product CRUD
-Route::prefix('product')->name('product.')->group(function () {
+Route::prefix('product')->name('product.')->middleware('auth')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
     Route::post('/', [ProductController::class, 'store'])->name('store');
     Route::get('/{id}/edit', [ProductController::class, 'edit'])->name('edit');
     Route::put('/{id}', [ProductController::class, 'update'])->name('update');
     Route::delete('/{id}', [ProductController::class, 'destroy'])->name('destroy');
+
+    // Route để lấy danh sách biến thể của một sản phẩm
+    Route::get('/{product}/variants', [ProductVariantController::class, 'index'])->name('variants.index');
+    // Route để thêm biến thể mới cho sản phẩm (sẽ gửi POST đến đây)
+    Route::post('/{product}/variants', [ProductVariantController::class, 'store'])->name('variants.store');
+});
+
+// Route cho Product Variant CRUD (ngoài việc liên quan trực tiếp đến Product)
+Route::prefix('product-variant')->name('product_variant.')->middleware('auth')->group(function () {
+    Route::get('/{productVariant}/edit', [ProductVariantController::class, 'edit'])->name('edit');
+    Route::put('/{productVariant}', [ProductVariantController::class, 'update'])->name('update');
+    Route::delete('/{productVariant}', [ProductVariantController::class, 'destroy'])->name('destroy');
 });

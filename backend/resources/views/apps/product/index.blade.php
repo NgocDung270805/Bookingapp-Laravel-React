@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Product') {{-- Đổi tiêu đề --}}
+@section('title', 'Product')
 @section('content')
     <div class="content">
         <nav class="mb-3" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Product</a></li> {{-- Đổi category thành product --}}
-                <li class="breadcrumb-item active">List Product</li> {{-- Đổi Category thành Product --}}
+                <li class="breadcrumb-item"><a href="{{ route('product.index') }}">Product</a></li>
+                <li class="breadcrumb-item active">List Product</li>
             </ol>
         </nav>
         <div class="mb-9">
@@ -18,7 +18,7 @@
             <ul class="nav nav-links mb-3 mb-lg-2 mx-n3">
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="#"><span>All </span><span
                                 class="text-body-tertiary fw-semibold"
-                                id="total-products">({{ count($products) }})</span></a></li> {{-- Đổi total-categories thành total-products, categories thành products --}}
+                                id="total-products">({{ count($products) }})</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><span>Published </span><span
                                 class="text-body-tertiary fw-semibold">(70348)</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><span>Drafts </span><span
@@ -26,8 +26,8 @@
                 <li class="nav-item"><a class="nav-link" href="#"><span>On discount </span><span
                                 class="text-body-tertiary fw-semibold">(810)</span></a></li>
             </ul>
-            <div id="products-list" {{-- Giữ ID là "products-list" hoặc "products" --}}
-                data-list='{"valueNames":["product-name","product-category","product-price","product-tags"],"page":10,"pagination":true}'> {{-- Cập nhật valueNames --}}
+            <div id="products-list"
+                data-list='{"valueNames":["product-name","product-categories","product-price","product-tags"],"page":10,"pagination":true}'>
                 <div class="mb-4">
                     <div class="d-flex flex-wrap gap-3">
                         <div class="search-box">
@@ -38,7 +38,6 @@
                         </div>
                         <div class="scrollbar overflow-hidden-y">
                             <div class="btn-group position-static" role="group">
-                                {{-- Giữ các filter Category và Vendor nếu cần --}}
                                 <div class="btn-group position-static text-nowrap"><button
                                             class="btn btn-phoenix-secondary px-7 flex-shrink-0" type="button"
                                             data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
@@ -75,8 +74,11 @@
                         <div class="ms-xxl-auto"><button class="btn btn-link text-body me-4 px-0"><span
                                         class="fa-solid fa-file-export fs-9 me-2"></span>Export</button>
                             <button class="btn btn-primary" id="addProductBtn" data-bs-toggle="modal"
-                                data-bs-target="#productModal"> {{-- Đổi id và data-bs-target --}}
-                                <span class="fas fa-plus me-2"></span>Add Product {{-- Đổi text --}}
+                                data-bs-target="#productModal">
+                                <span class="fas fa-plus me-2"></span>Add Product
+                            </button>
+                            <button class="btn btn-phoenix-secondary ms-2" id="manageVariantsBtn" style="display: none;">
+                                <span class="fas fa-cubes me-2"></span>Manage Variants
                             </button>
                         </div>
                     </div>
@@ -94,15 +96,15 @@
                                                 data-bulk-select='{"body":"products-table-body"}' /></div>
                                     </th>
                                     <th class="sort white-space-nowrap align-middle fs-10" scope="col"
-                                        style="width:70px;">Image</th>
+                                        style="width:70px;"></th>
                                     <th class="sort white-space-nowrap align-middle ps-4" scope="col"
-                                        style="width:350px;" data-sort="product-name">PRODUCT NAME</th> {{-- Đổi category-name thành product-name --}}
-                                    <th class="sort align-middle ps-4" scope="col" data-sort="product-category"
-                                        style="width:150px;">CATEGORY</th> {{-- Đổi parent-category thành category --}}
+                                        style="width:350px;" data-sort="product-name">PRODUCT NAME</th>
+                                    <th class="sort align-middle ps-4" scope="col" data-sort="product-categories"
+                                        style="width:150px;">CATEGORIES</th>
                                     <th class="sort align-middle ps-4" scope="col" data-sort="product-price"
-                                        style="width:150px;">PRICE</th> {{-- Thêm cột Price --}}
+                                        style="width:150px;">PRICE (min)</th>
                                     <th class="sort align-middle ps-3" scope="col" data-sort="product-tags"
-                                        style="width:250px;">TAGS</th> {{-- Đổi description thành tags --}}
+                                        style="width:250px;">TAGS</th>
                                     <th class="sort text-end align-middle pe-0 ps-4" scope="col">ACTIONS</th>
                                 </tr>
                             </thead>
@@ -112,35 +114,46 @@
                                         <td class="fs-9 align-middle">
                                             <div class="form-check mb-0 fs-8"><input class="form-check-input"
                                                     type="checkbox"
-                                                    data-bulk-select-row='{"productId":{{ $product->id }}}' /> {{-- Đổi categoryId thành productId --}}
+                                                    data-bulk-select-row='{"productId":{{ $product->id }}}' />
                                             </div>
                                         </td>
                                         <td class="align-middle white-space-nowrap py-0 product-img">
                                             @if ($product->img)
                                                 <a class="d-block border border-translucent rounded-2" href="#">
-                                                    <img src="{{ asset('storage/' . $product->img) }}" alt="" width="53" />
+                                                    <img src="{{ asset('storage/' . $product->img) }}" alt="{{ $product->name }}" width="53" />
                                                 </a>
                                             @else
                                                 <div class="d-block border border-translucent rounded-2 text-center"
                                                     style="width:53px; height:53px; line-height:53px;">
-                                                    <i class="fas fa-box text-body-secondary"></i> {{-- Icon placeholder --}}
+                                                    <i class="fas fa-box text-body-secondary"></i>
                                                 </div>
                                             @endif
                                         </td>
                                         <td class="product-name align-middle ps-4">
                                             <a class="fw-semibold line-clamp-3 mb-0" href="#">{{ $product->name }}</a>
                                         </td>
-                                        <td class="product-category align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
-                                            {{ $product->category ? $product->category->name : 'N/A' }}
+                                        <td class="product-categories align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
+                                            @forelse($product->categories as $category)
+                                                {{ $category->name }}
+                                                @if ($loop->iteration < $loop->count)
+                                                    ,
+                                                @endif
+                                            @empty
+                                                N/A
+                                            @endforelse
                                         </td>
                                         <td class="product-price align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4">
-                                            ${{ number_format($product->price, 2) }} {{-- Định dạng giá tiền --}}
+                                            @if($product->variants->isNotEmpty())
+                                                {{ number_format($product->variants->min('price'), 2) . ' VNĐ' }}
+                                            @else
+                                                N/A
+                                            @endif
                                         </td>
                                         <td class="product-tags align-middle review pb-2 ps-3" style="min-width:225px;">
-                                            @forelse($product->tags as $tag) {{-- Lặp qua các tags của sản phẩm --}}
+                                            @forelse($product->tags as $tag)
                                                 <a class="text-decoration-none" href="#!"><span class="badge badge-tag me-2 mb-2">{{ $tag->name }}</span></a>
                                             @empty
-                                                <span>--</span>
+                                                <span>No Tags</span>
                                             @endforelse
                                         </td>
                                         <td class="align-middle white-space-nowrap text-end pe-0 ps-4 btn-reveal-trigger">
@@ -153,10 +166,10 @@
                                                         class="fas fa-ellipsis-h fs-10"></span></button>
                                                 <div class="dropdown-menu dropdown-menu-end py-2">
                                                     <a class="dropdown-item edit-product-btn" href="#"
-                                                        data-id="{{ $product->id }}">Edit</a> {{-- Đổi edit-category-btn thành edit-product-btn --}}
+                                                        data-id="{{ $product->id }}">Edit</a>
                                                     <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item text-danger delete-product-btn" href="#"
-                                                        data-id="{{ $product->id }}">Remove</a> {{-- Đổi delete-category-btn thành delete-product-btn --}}
+                                                        data-id="{{ $product->id }}">Remove</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -191,57 +204,38 @@
                 <form id="productForm" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="_method" id="formMethod" value="POST">
-                    <input type="hidden" name="product_id" id="productId"> {{-- Đổi category_id thành product_id --}}
+                    <input type="hidden" name="product_id" id="productId">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="productModalLabel">Add New Product</h5> {{-- Đổi Category thành Product --}}
+                        <h5 class="modal-title" id="productModalLabel">Add New Product</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="productName" class="form-label">Product Name</label> {{-- Đổi Category Name thành Product Name --}}
-                            <input type="text" class="form-control" id="productName" name="name" required> {{-- Đổi categoryName thành productName --}}
+                            <label for="productName" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="productName" name="name" required>
                             <div class="text-danger" id="nameError"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="productCategory" class="form-label">Category</label> {{-- Đổi Parent Category thành Category --}}
-                            <select class="form-select" id="productCategory" name="category_id" required> {{-- Đổi categoryParent thành productCategory, name=category_id --}}
-                                <option value="">-- Select Category --</option>
-                                {{-- Options will be loaded via JavaScript --}}
-                            </select>
-                            <div class="text-danger" id="category_idError"></div>
+                            <label class="form-label">Categories</label>
+                            <div id="productCategoriesCheckboxes" class="d-flex flex-wrap">
+                                {{-- Categories checkboxes will be loaded via JavaScript --}}
+                            </div>
+                            <div class="text-danger" id="category_idsError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="productDescription" class="form-label">Description</label>
                             <textarea class="form-control" id="productDescription" name="description" rows="3"></textarea>
                             <div class="text-danger" id="descriptionError"></div>
                         </div>
+
                         <div class="mb-3">
-                            <label for="productPrice" class="form-label">Price</label>
-                            <input type="number" step="0.01" class="form-control" id="productPrice" name="price" required>
-                            <div class="text-danger" id="priceError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productDiscountPrice" class="form-label">Discount Price</label>
-                            <input type="number" step="0.01" class="form-control" id="productDiscountPrice" name="discount_price">
-                            <div class="text-danger" id="discount_priceError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productDiscountPercent" class="form-label">Discount Percent (%)</label>
-                            <input type="number" class="form-control" id="productDiscountPercent" name="discount_percent" min="0" max="100">
-                            <div class="text-danger" id="discount_percentError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productQuantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="productQuantity" name="quantity" required min="0">
-                            <div class="text-danger" id="quantityError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="productImage" class="form-label">Image</label>
+                            <label for="productImage" class="form-label">Product General Image</label>
                             <input class="form-control" type="file" id="productImage" name="img">
                             <div class="text-danger" id="imgError"></div>
                             <img id="currentProductImage" src="" alt="Current Image" class="img-thumbnail mt-2"
                                 style="max-width: 100px; display: none;">
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label">Tags</label>
                             <div id="productTagsCheckboxes" class="d-flex flex-wrap">
@@ -262,15 +256,117 @@
                                 Featured
                             </label>
                         </div>
+
+                        <div class="mb-3 mt-4" id="variantManagementSection" style="display: none;">
+                            <button type="button" class="btn btn-info" id="openVariantModalBtn">
+                                <span class="fas fa-cubes me-2"></span>Manage Product Variants
+                            </button>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button> {{-- Đổi saveCategoryBtn thành saveProductBtn --}}
+                        <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="variantsModal" tabindex="-1" aria-labelledby="variantsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="variantsModalLabel">Manage Variants for Product: <span id="variantProductName"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="currentProductIdForVariants">
+                    <h6>Existing Variants:</h6>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>SKU</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Image</th>
+                                <th>Status</th>
+                                <th>Featured</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="variantsTableBody">
+                            {{-- Variants will be loaded here via JS --}}
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-success btn-sm mt-3" id="addVariantBtn">Add New Variant</button>
+                    
+                    <hr class="my-4">
+
+                    <h6>Add/Edit Variant:</h6>
+                    <form id="variantForm" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="_method" id="variantFormMethod" value="POST">
+                        <input type="hidden" name="variant_id" id="variantId">
+                        <input type="hidden" name="product_id" id="variantProductIdField">
+
+                        <div class="mb-3">
+                            <label for="variantName" class="form-label">Variant Name</label>
+                            <input type="text" class="form-control" id="variantName" name="variant_name" required>
+                            <div class="text-danger" id="variant_nameError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="variantSku" class="form-label">SKU (Stock Keeping Unit)</label>
+                            <input type="text" class="form-control" id="variantSku" name="sku">
+                            <div class="text-danger" id="skuError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="variantPrice" class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" id="variantPrice" name="price" required>
+                            <div class="text-danger" id="variant_priceError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="variantDiscountPrice" class="form-label">Discount Price</label>
+                            <input type="number" step="0.01" class="form-control" id="variantDiscountPrice" name="discount_price">
+                            <div class="text-danger" id="variant_discount_priceError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="variantDiscountPercent" class="form-label">Discount Percent (%)</label>
+                            <input type="number" class="form-control" id="variantDiscountPercent" name="discount_percent" min="0" max="100">
+                            <div class="text-danger" id="variant_discount_percentError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="variantQuantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="variantQuantity" name="quantity" required min="0">
+                            <div class="text-danger" id="variant_quantityError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="variantImage" class="form-label">Variant Image</label>
+                            <input class="form-control" type="file" id="variantImage" name="img">
+                            <div class="text-danger" id="variant_imgError"></div>
+                            <img id="currentVariantImage" src="" alt="Current Image" class="img-thumbnail mt-2" style="max-width: 80px; display: none;">
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="variantStatus" name="status" value="1" checked>
+                            <label class="form-check-label" for="variantStatus">Active</label>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="variantIsFeatured" name="is_featured" value="1">
+                            <label class="form-check-label" for="variantIsFeatured">Featured</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="saveVariantBtn">Save Variant</button>
+                        <button type="button" class="btn btn-secondary" id="cancelEditVariantBtn" style="display: none;">Cancel Edit</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('scripts')
@@ -278,22 +374,36 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
-            // Hàm cập nhật bảng sản phẩm sau khi thêm/sửa/xóa thành công
+            // Biến toàn cục để lưu ID sản phẩm hiện đang được chỉnh sửa (trong modal Product chính)
+            let currentEditingProductId = null;
+
+            // Hàm cập nhật bảng sản phẩm sau khi thao tác thành công
             function updateProductTable(products) {
-                let tableBody = $('#products-table-body'); // Giữ nguyên ID gốc của bạn
+                let tableBody = $('#products-table-body');
                 tableBody.empty();
                 let totalProducts = 0;
 
                 products.forEach(product => {
                     totalProducts++;
-                    let statusBadge = product.status ?
-                        '<span class="badge bg-success">Active</span>' :
-                        '<span class="badge bg-secondary">Inactive</span>';
+                    let generalStatus = product.status ? 'Active' : 'Inactive';
+                    let generalFeatured = product.is_featured ? 'Yes' : 'No';
 
                     let imageUrl = product.img ? `/storage/${product.img}` : ``;
                     let imageHtml = product.img ?
                         `<a class="d-block border border-translucent rounded-2" href="#"><img src="${imageUrl}" alt="${product.name}" width="53" /></a>` :
                         `<div class="d-block border border-translucent rounded-2 text-center" style="width:53px; height:53px; line-height:53px;"><i class="fas fa-box text-body-secondary"></i></div>`;
+
+                    let categoriesHtml = '';
+                    if (product.categories && product.categories.length > 0) {
+                        product.categories.forEach((cat, index) => {
+                            categoriesHtml += cat.name;
+                            if (index < product.categories.length - 1) {
+                                categoriesHtml += ', ';
+                            }
+                        });
+                    } else {
+                        categoriesHtml = 'N/A';
+                    }
 
                     let tagsHtml = '';
                     if (product.tags && product.tags.length > 0) {
@@ -303,6 +413,14 @@
                     } else {
                         tagsHtml = `<span>No Tags</span>`;
                     }
+
+                    // Giá min từ biến thể (nếu có)
+                    let minPrice = 'N/A';
+                    if (product.variants && product.variants.length > 0) {
+                        let prices = product.variants.map(v => parseFloat(v.price));
+                        minPrice = `$${Math.min(...prices).toFixed(2)}`;
+                    }
+
 
                     tableBody.append(`
                         <tr class="position-static">
@@ -317,11 +435,11 @@
                             <td class="product-name align-middle ps-4">
                                 <a class="fw-semibold line-clamp-3 mb-0" href="#">${product.name}</a>
                             </td>
-                            <td class="product-category align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
-                                ${product.category ? product.category.name : 'N/A'}
+                            <td class="product-categories align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
+                                ${categoriesHtml}
                             </td>
                             <td class="product-price align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4">
-                                $${parseFloat(product.price).toFixed(2)}
+                                ${minPrice}
                             </td>
                             <td class="product-tags align-middle review pb-2 ps-3" style="min-width:225px;">
                                 ${tagsHtml}
@@ -346,21 +464,27 @@
                 $('#total-products').text(`(${totalProducts})`);
             }
 
-            // Hàm tải các danh mục cho dropdown trong modal sản phẩm
-            function loadCategoriesForProductModal(selectedCategoryId = null) {
+            // Hàm tải các danh mục cho checkbox trong modal sản phẩm chính
+            function loadCategoriesForProductModal(selectedCategoryIds = []) {
                 $.ajax({
-                    url: "{{ route('category.index') }}", // Lấy tất cả danh mục
+                    url: "{{ route('category.index') }}",
                     method: 'GET',
                     success: function(response) {
-                        let categorySelect = $('#productCategory');
-                        categorySelect.empty().append('<option value="">-- Select Category --</option>');
+                        let categoriesCheckboxesDiv = $('#productCategoriesCheckboxes');
+                        categoriesCheckboxesDiv.empty();
                         response.categories.forEach(cat => {
-                            // Không cần thụt lề cho product category dropdown
-                            categorySelect.append(`<option value="${cat.id}">${cat.name}</option>`);
+                            let checked = selectedCategoryIds.includes(cat.id) ? 'checked' : '';
+                            let prefix = '';
+                            if (cat.level > 0) {
+                                prefix = '&nbsp;'.repeat(cat.level * 4) + '↳&nbsp;';
+                            }
+                            categoriesCheckboxesDiv.append(`
+                                <div class="form-check me-2">
+                                    <input class="form-check-input" type="checkbox" name="category_ids[]" value="${cat.id}" id="category-${cat.id}" ${checked}>
+                                    <label class="form-check-label" for="category-${cat.id}">${prefix}${cat.name}</label>
+                                </div>
+                            `);
                         });
-                        if (selectedCategoryId) {
-                            categorySelect.val(selectedCategoryId);
-                        }
                     },
                     error: function(xhr, status, error) {
                         console.error("Error loading categories for product modal:", error);
@@ -368,10 +492,10 @@
                 });
             }
 
-            // Hàm tải các tags cho checkbox trong modal sản phẩm
+            // Hàm tải các tags cho checkbox trong modal sản phẩm chính
             function loadTagsForProductModal(selectedTagIds = []) {
                 $.ajax({
-                    url: "{{ route('tag.index') }}", // Lấy tất cả tags
+                    url: "{{ route('tag.index') }}",
                     method: 'GET',
                     success: function(response) {
                         let tagsCheckboxesDiv = $('#productTagsCheckboxes');
@@ -392,6 +516,62 @@
                 });
             }
 
+            // Hàm tải và hiển thị danh sách biến thể cho một sản phẩm cụ thể
+            function loadVariantsForProduct(productId, productName) {
+                $.ajax({
+                    url: `/product/${productId}/variants`,
+                    method: 'GET',
+                    success: function(response) {
+                        let variantsTableBody = $('#variantsTableBody');
+                        variantsTableBody.empty();
+                        if (response.variants.length === 0) {
+                            variantsTableBody.append('<tr><td colspan="8" class="text-center">No variants found. Add a new one.</td></tr>');
+                        } else {
+                            response.variants.forEach(variant => {
+                                let variantStatus = variant.status ? 'Active' : 'Inactive';
+                                let variantFeatured = variant.is_featured ? 'Yes' : 'No';
+                                let variantImageUrl = variant.img ? `/storage/${variant.img}` : '';
+                                let variantImageHtml = variant.img ?
+                                    `<img src="${variantImageUrl}" alt="${variant.variant_name}" width="50" class="img-thumbnail">` :
+                                    `<i class="fas fa-image text-body-secondary"></i>`;
+
+                                variantsTableBody.append(`
+                                    <tr>
+                                        <td>${variant.variant_name}</td>
+                                        <td>${variant.sku || 'N/A'}</td>
+                                        <td>$${parseFloat(variant.price).toFixed(2)}</td>
+                                        <td>${variant.quantity}</td>
+                                        <td>${variantImageHtml}</td>
+                                        <td>${variantStatus}</td>
+                                        <td>${variantFeatured}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info edit-variant-btn" data-id="${variant.id}">Edit</button>
+                                            <button class="btn btn-sm btn-danger delete-variant-btn" data-id="${variant.id}">Delete</button>
+                                        </td>
+                                    </tr>
+                                `);
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading variants:", error);
+                        Swal.fire('Error!', 'Failed to load product variants.', 'error');
+                    }
+                });
+            }
+
+            // Reset form biến thể
+            function resetVariantForm() {
+                $('#variantForm')[0].reset();
+                $('#variantFormMethod').val('POST');
+                $('#variantId').val('');
+                $('#variantProductIdField').val(currentEditingProductId); // Giữ product_id
+                $('#currentVariantImage').hide().attr('src', '');
+                $('#variantStatus').prop('checked', true);
+                $('#variantIsFeatured').prop('checked', false);
+                $('.text-danger').text(''); // Xóa lỗi validation
+                $('#cancelEditVariantBtn').hide();
+            }
 
             // Handle "Add Product" button click
             $('#addProductBtn').on('click', function() {
@@ -401,23 +581,22 @@
                 $('#productId').val('');
                 $('#currentProductImage').hide().attr('src', '');
 
-                // Reset checkbox và radio
                 $('#productStatus').prop('checked', true);
                 $('#productIsFeatured').prop('checked', false);
 
-                // Tải categories và tags cho modal
-                loadCategoriesForProductModal();
-                loadTagsForProductModal([]); // Mảng rỗng vì là thêm mới
+                loadCategoriesForProductModal([]);
+                loadTagsForProductModal([]);
 
-                // Clear validation errors
                 $('.text-danger').text('');
+                $('#variantManagementSection').hide(); // Ẩn phần quản lý biến thể khi thêm mới sản phẩm
                 $('#productModal').modal('show');
             });
 
-            // Handle "Edit" button click
+            // Handle "Edit Product" button click
             $(document).on('click', '.edit-product-btn', function() {
                 let id = $(this).data('id');
-                console.log("Edit product button clicked for ID:", id);
+                currentEditingProductId = id; // Lưu ID sản phẩm đang chỉnh sửa
+                
                 $('#productModalLabel').text('Edit Product');
                 $('#productForm')[0].reset();
                 $('#formMethod').val('PUT');
@@ -428,32 +607,25 @@
                     url: `/product/${id}/edit`,
                     method: 'GET',
                     success: function(response) {
-                        console.log("Ajax success for edit product:", response);
                         let product = response.product;
-                        let categories = response.categories;
-                        let allTags = response.allTags; // Danh sách tất cả tags
-                        let productTags = product.tags.map(tag => tag.id); // Lấy ID của tags hiện có
+                        let productCategoryIds = response.productCategoryIds;
+                        let productTagIds = response.productTagIds;
 
                         $('#productName').val(product.name);
                         $('#productDescription').val(product.description);
-                        $('#productPrice').val(product.price);
-                        $('#productDiscountPrice').val(product.discount_price);
-                        $('#productDiscountPercent').val(product.discount_percent);
-                        $('#productQuantity').val(product.quantity);
                         $('#productStatus').prop('checked', product.status == 1);
                         $('#productIsFeatured').prop('checked', product.is_featured == 1);
-
+                        
                         if (product.img) {
                             $('#currentProductImage').attr('src', `/storage/${product.img}`).show();
                         } else {
                             $('#currentProductImage').hide().attr('src', '');
                         }
 
-                        // Tải categories và chọn category hiện tại
-                        loadCategoriesForProductModal(product.category_id);
-                        // Tải tags và đánh dấu các tags đã chọn
-                        loadTagsForProductModal(productTags);
+                        loadCategoriesForProductModal(productCategoryIds);
+                        loadTagsForProductModal(productTagIds);
 
+                        $('#variantManagementSection').show(); // Hiện phần quản lý biến thể
                         $('#productModal').modal('show');
                     },
                     error: function(xhr, status, error) {
@@ -464,7 +636,7 @@
                 });
             });
 
-            // Handle form submission (Add/Edit)
+            // Handle form submission (Add/Edit Product)
             $('#productForm').on('submit', function(e) {
                 e.preventDefault();
 
@@ -473,7 +645,6 @@
                 let method = $('#formMethod').val();
                 let url = method === 'POST' ? "{{ route('product.store') }}" : `/product/${productId}`;
 
-                // Clear previous errors
                 $('.text-danger').text('');
 
                 $.ajax({
@@ -492,8 +663,9 @@
                         let errors = xhr.responseJSON.errors;
                         if (errors) {
                             for (let field in errors) {
-                                // Xử lý lỗi cho mảng tags
-                                if (field.startsWith('tags.')) {
+                                if (field.startsWith('category_ids.')) {
+                                    $('#category_idsError').text(errors[field][0]);
+                                } else if (field.startsWith('tags.')) {
                                     $('#tagsError').text(errors[field][0]);
                                 } else {
                                     $(`#${field}Error`).text(errors[field][0]);
@@ -506,13 +678,13 @@
                 });
             });
 
-            // Handle "Delete" button click
+            // Handle "Delete Product" button click
             $(document).on('click', '.delete-product-btn', function() {
                 let id = $(this).data('id');
 
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
+                    text: "You won't be able to revert this! All variants of this product will also be deleted.",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -533,6 +705,143 @@
                             error: function(xhr, status, error) {
                                 console.error("Error deleting product:", error);
                                 Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete product.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // ===============================================
+            // Logic cho Product Variants
+            // ===============================================
+
+            // Khi người dùng click "Manage Variants" trong modal Product chính
+            $('#openVariantModalBtn').on('click', function() {
+                if (currentEditingProductId) {
+                    $('#variantProductIdField').val(currentEditingProductId);
+                    // Lấy tên sản phẩm từ form chính (có thể cần fetch lại nếu form reset)
+                    // Hoặc truyền tên từ response.product trong edit
+                    let productName = $('#productName').val();
+                    $('#variantProductName').text(productName);
+                    
+                    resetVariantForm();
+                    loadVariantsForProduct(currentEditingProductId);
+                    $('#variantsModal').modal('show');
+                } else {
+                    Swal.fire('Info', 'Please save the product first to manage variants.', 'info');
+                }
+            });
+
+            // Handle "Add New Variant" button in Variants Modal
+            $('#addVariantBtn').on('click', function() {
+                resetVariantForm();
+            });
+
+            // Handle "Edit Variant" button in Variants Table
+            $(document).on('click', '.edit-variant-btn', function() {
+                let variantId = $(this).data('id');
+                $.ajax({
+                    url: `/product-variant/${variantId}/edit`,
+                    method: 'GET',
+                    success: function(response) {
+                        let variant = response.variant;
+                        $('#variantFormMethod').val('PUT');
+                        $('#variantId').val(variant.id);
+                        $('#variantName').val(variant.variant_name);
+                        $('#variantSku').val(variant.sku);
+                        $('#variantPrice').val(variant.price);
+                        $('#variantDiscountPrice').val(variant.discount_price);
+                        $('#variantDiscountPercent').val(variant.discount_percent);
+                        $('#variantQuantity').val(variant.quantity);
+                        $('#variantStatus').prop('checked', variant.status == 1);
+                        $('#variantIsFeatured').prop('checked', variant.is_featured == 1);
+
+                        if (variant.img) {
+                            $('#currentVariantImage').attr('src', `/storage/${variant.img}`).show();
+                        } else {
+                            $('#currentVariantImage').hide().attr('src', '');
+                        }
+                        $('#cancelEditVariantBtn').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching variant for edit:", error);
+                        Swal.fire('Error!', 'Failed to load variant details.', 'error');
+                    }
+                });
+            });
+            
+            // Handle "Cancel Edit Variant" button
+            $('#cancelEditVariantBtn').on('click', function() {
+                resetVariantForm();
+            });
+
+            // Handle form submission (Add/Edit Variant)
+            $('#variantForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let formData = new FormData(this);
+                let variantId = $('#variantId').val();
+                let productId = $('#variantProductIdField').val();
+                let method = $('#variantFormMethod').val();
+                let url = method === 'POST' ? `/product/${productId}/variants` : `/product-variant/${variantId}`;
+
+                $('.text-danger').text('');
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire('Success!', response.success, 'success');
+                        loadVariantsForProduct(productId);
+                        resetVariantForm();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", xhr.responseText);
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            for (let field in errors) {
+                                // Sửa lỗi ID cho các thông báo lỗi biến thể
+                                let errorId = field.replace('.', '_') + 'Error'; // variant_nameError, skuError
+                                $(`#${errorId}`).text(errors[field][0]);
+                            }
+                        } else {
+                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Handle "Delete Variant" button
+            $(document).on('click', '.delete-variant-btn', function() {
+                let variantId = $(this).data('id');
+                let productId = $('#variantProductIdField').val();
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/product-variant/${variantId}`,
+                            method: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire('Deleted!', response.success, 'success');
+                                loadVariantsForProduct(productId);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error deleting variant:", error);
+                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete variant.', 'error');
                             }
                         });
                     }

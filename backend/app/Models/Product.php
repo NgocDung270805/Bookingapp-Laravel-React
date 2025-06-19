@@ -11,14 +11,10 @@ class Product extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'category_id',
         'name',
         'slug',
         'description',
-        'price',
-        'discount_price',
-        'discount_percent',
-        'quantity',
+        // Các trường được giữ lại trong products
         'img',
         'status',
         'is_featured',
@@ -27,22 +23,40 @@ class Product extends Model
     ];
 
     /**
-     * Get the category that owns the product.
+     * The categories that belong to the product (Many-to-Many).
      */
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class, 'product_category', 'product_id', 'category_id');
     }
 
     /**
-     * The tags that belong to the product.
+     * The tags that belong to the product (Many-to-Many).
      */
     public function tags()
     {
-        // Định nghĩa mối quan hệ nhiều-nhiều với Tag
-        // 'product_tag' là tên bảng trung gian
-        // 'product_id' là khóa ngoại của bảng hiện tại trong bảng trung gian
-        // 'tag_id' là khóa ngoại của model liên quan trong bảng trung gian
         return $this->belongsToMany(Tag::class, 'product_tag', 'product_id', 'tag_id');
+    }
+
+    /**
+     * Get the product variants for the product.
+     */
+    public function variants()
+    {
+        return $this->hasMany(ProductVariant::class);
+    }
+
+    /**
+     * Get the product images for the product.
+     */
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
+    
+    // Thêm accessor để lấy giá thấp nhất từ các biến thể (dùng trong View)
+    public function getMinPriceAttribute()
+    {
+        return $this->variants->min('price');
     }
 }
