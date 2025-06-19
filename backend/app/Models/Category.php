@@ -45,4 +45,9 @@ class Category extends Model
     {
         return $query->whereNull('parent_id');
     }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }

@@ -189,7 +189,7 @@
 
                         <div class="parent-wrapper label-1">
                             <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse" id="nv-system-management">
-                                <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-flight"
+                                {{-- <li class="nav-item"><a class="nav-link dropdown-indicator" href="#nv-flight"
                                         data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-flight">
                                         <div class="d-flex align-items-center">
                                             <div class="dropdown-indicator-icon-wrapper"><span
@@ -208,8 +208,23 @@
                                             </li>
                                         </ul>
                                     </div>
+                                </li> --}}
+                                <li class="nav-item"><a class="nav-link" href="{{ route('category.index') }}">
+                                        <div class="d-flex align-items-center"><span
+                                                class="nav-link-text">Category</span></div>
+                                    </a><!-- more inner pages-->
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item"><a class="nav-link" href="{{ route('tag.index') }}">
+                                        <div class="d-flex align-items-center"><span
+                                                class="nav-link-text">Tag</span></div>
+                                    </a><!-- more inner pages-->
+                                </li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('product.index') }}">
+                                        <div class="d-flex align-items-center"><span
+                                                class="nav-link-text">Products</span></div>
+                                    </a><!-- more inner pages-->
+                                </li>
+                                {{-- <li class="nav-item">
                                     <a class="nav-link dropdown-indicator" href="#nv-system-hotel"
                                         data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-system-hotel">
                                         <div class="d-flex align-items-center">
@@ -269,7 +284,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                </li>
+                                </li> --}}
                             </ul>
                         </div>
                     </div>
