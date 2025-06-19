@@ -23,6 +23,15 @@ class ProductVariant extends Model
         'is_featured',
     ];
 
+    protected $casts = [
+        'price' => 'decimal:2',
+        'discount_price' => 'decimal:2',
+        'discount_percent' => 'integer',
+        'quantity' => 'integer',
+        'status' => 'boolean',
+        'is_featured' => 'boolean',
+    ];
+
     /**
      * Get the product that owns the variant.
      */
@@ -37,5 +46,14 @@ class ProductVariant extends Model
     public function images()
     {
         return $this->hasMany(ProductImage::class, 'product_variant_id');
+    }
+
+    /**
+     * The product attribute values that describe this variant (Many-to-Many relationship).
+     * Đây là mối quan hệ mà Laravel đang tìm kiếm.
+     */
+    public function attributeValues()
+    {
+        return $this->belongsToMany(ProductAttributeValue::class, 'product_variant_attribute_value', 'product_variant_id', 'product_attribute_value_id');
     }
 }
