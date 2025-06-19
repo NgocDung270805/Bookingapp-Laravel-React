@@ -34,9 +34,10 @@ class ProductVariantController extends Controller
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'boolean',
             'is_featured' => 'boolean',
-            'attribute_value_ids' => 'nullable|array', // Mảng các ID giá trị thuộc tính
+            'attribute_value_ids' => 'nullable|array', // KHÔNG CẦN json_decode nữa
             'attribute_value_ids.*' => 'exists:product_attribute_values,id',
         ];
+
 
         if ($request->pricing_type === 'public_price') {
             $rules['price'] = 'required|numeric|min:0';
@@ -69,9 +70,10 @@ class ProductVariantController extends Controller
             'is_featured' => $request->is_featured ?? 0,
         ]);
 
+        
         // Đồng bộ các giá trị thuộc tính cho biến thể
         if ($request->has('attribute_value_ids')) {
-            $variant->attributeValues()->sync($request->attribute_value_ids);
+            $variant->attributeValues()->sync($request->attribute_value_ids); // Laravel tự nhận đây là mảng
         } else {
             $variant->attributeValues()->detach();
         }
@@ -84,13 +86,19 @@ class ProductVariantController extends Controller
      */
     public function edit(ProductVariant $productVariant)
     {
-        $productVariant->load('attributeValues'); // Tải các giá trị thuộc tính hiện có của biến thể
+        // Tải các giá trị thuộc tính hiện có của biến thể
+        $productVariant->load('attributeValues'); 
 
-        $attributeTypes = ProductAttributeType::with('values')->orderBy('name')->get(); // Lấy tất cả loại thuộc tính và giá trị của chúng
+        // Lấy tất cả loại thuộc tính và giá trị của chúng
+        $attributeTypes = ProductAttributeType::with('values')->orderBy('name')->get(); 
+
+        // Lấy IDs của các giá trị thuộc tính hiện tại của biến thể
+        $selectedAttributeValueIds = $productVariant->attributeValues->pluck('id')->toArray();
 
         return response()->json([
             'variant' => $productVariant,
-            'attributeTypes' => $attributeTypes, // Gửi về để điền form
+            'attributeTypes' => $attributeTypes, // Gửi tất cả loại thuộc tính và giá trị của chúng
+            'selectedAttributeValueIds' => $selectedAttributeValueIds, // Gửi các ID đã chọn
         ]);
     }
 
