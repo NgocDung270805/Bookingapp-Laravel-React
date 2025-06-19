@@ -17,14 +17,14 @@
             </div>
             <ul class="nav nav-links mb-3 mb-lg-2 mx-n3">
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="#"><span>All </span><span
-                                class="text-body-tertiary fw-semibold"
-                                id="total-products">({{ count($products) }})</span></a></li>
+                            class="text-body-tertiary fw-semibold" id="total-products">({{ count($products) }})</span></a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="#"><span>Published </span><span
-                                class="text-body-tertiary fw-semibold">(70348)</span></a></li>
+                            class="text-body-tertiary fw-semibold">(70348)</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><span>Drafts </span><span
-                                class="text-body-tertiary fw-semibold">(17)</span></a></li>
+                            class="text-body-tertiary fw-semibold">(17)</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><span>On discount </span><span
-                                class="text-body-tertiary fw-semibold">(810)</span></a></li>
+                            class="text-body-tertiary fw-semibold">(810)</span></a></li>
             </ul>
             <div id="products-list"
                 data-list='{"valueNames":["product-name","product-categories","product-price","product-tags"],"page":10,"pagination":true}'>
@@ -39,10 +39,10 @@
                         <div class="scrollbar overflow-hidden-y">
                             <div class="btn-group position-static" role="group">
                                 <div class="btn-group position-static text-nowrap"><button
-                                            class="btn btn-phoenix-secondary px-7 flex-shrink-0" type="button"
-                                            data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
-                                            aria-expanded="false" data-bs-reference="parent"> Category<span
-                                                class="fas fa-angle-down ms-2"></span></button>
+                                        class="btn btn-phoenix-secondary px-7 flex-shrink-0" type="button"
+                                        data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
+                                        aria-expanded="false" data-bs-reference="parent"> Category<span
+                                            class="fas fa-angle-down ms-2"></span></button>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="#">Action</a></li>
                                         <li><a class="dropdown-item" href="#">Another action</a></li>
@@ -54,10 +54,10 @@
                                     </ul>
                                 </div>
                                 <div class="btn-group position-static text-nowrap"><button
-                                            class="btn btn-sm btn-phoenix-secondary px-7 flex-shrink-0" type="button"
-                                            data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
-                                            aria-expanded="false" data-bs-reference="parent"> Vendor<span
-                                                class="fas fa-angle-down ms-2"></span></button>
+                                        class="btn btn-sm btn-phoenix-secondary px-7 flex-shrink-0" type="button"
+                                        data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
+                                        aria-expanded="false" data-bs-reference="parent"> Vendor<span
+                                            class="fas fa-angle-down ms-2"></span></button>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="#">Action</a></li>
                                         <li><a class="dropdown-item" href="#">Another action</a></li>
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         <div class="ms-xxl-auto"><button class="btn btn-link text-body me-4 px-0"><span
-                                        class="fa-solid fa-file-export fs-9 me-2"></span>Export</button>
+                                    class="fa-solid fa-file-export fs-9 me-2"></span>Export</button>
                             <button class="btn btn-primary" id="addProductBtn" data-bs-toggle="modal"
                                 data-bs-target="#productModal">
                                 <span class="fas fa-plus me-2"></span>Add Product
@@ -120,7 +120,8 @@
                                         <td class="align-middle white-space-nowrap py-0 product-img">
                                             @if ($product->img)
                                                 <a class="d-block border border-translucent rounded-2" href="#">
-                                                    <img src="{{ asset('storage/' . $product->img) }}" alt="{{ $product->name }}" width="53" />
+                                                    <img src="{{ asset('storage/' . $product->img) }}"
+                                                        alt="{{ $product->name }}" width="53" />
                                                 </a>
                                             @else
                                                 <div class="d-block border border-translucent rounded-2 text-center"
@@ -130,9 +131,11 @@
                                             @endif
                                         </td>
                                         <td class="product-name align-middle ps-4">
-                                            <a class="fw-semibold line-clamp-3 mb-0" href="#">{{ $product->name }}</a>
+                                            <a class="fw-semibold line-clamp-3 mb-0"
+                                                href="#">{{ $product->name }}</a>
                                         </td>
-                                        <td class="product-categories align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
+                                        <td
+                                            class="product-categories align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
                                             @forelse($product->categories as $category)
                                                 {{ $category->name }}
                                                 @if ($loop->iteration < $loop->count)
@@ -142,8 +145,9 @@
                                                 N/A
                                             @endforelse
                                         </td>
-                                        <td class="product-price align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4">
-                                            @if($product->variants->isNotEmpty())
+                                        <td
+                                            class="product-price align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4">
+                                            @if ($product->variants->isNotEmpty())
                                                 {{ number_format($product->variants->min('price'), 2) . ' VNĐ' }}
                                             @else
                                                 N/A
@@ -151,7 +155,8 @@
                                         </td>
                                         <td class="product-tags align-middle review pb-2 ps-3" style="min-width:225px;">
                                             @forelse($product->tags as $tag)
-                                                <a class="text-decoration-none" href="#!"><span class="badge badge-tag me-2 mb-2">{{ $tag->name }}</span></a>
+                                                <a class="text-decoration-none" href="#!"><span
+                                                        class="badge badge-tag me-2 mb-2">{{ $tag->name }}</span></a>
                                             @empty
                                                 <span>No Tags</span>
                                             @endforelse
@@ -182,12 +187,12 @@
                         <div class="col-auto d-flex">
                             <p class="mb-0 d-none d-sm-block me-3 fw-semibold text-body" data-list-info="data-list-info">
                             </p><a class="fw-semibold" href="#!" data-list-view="*">View all<span
-                                        class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a
+                                    class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a
                                 class="fw-semibold d-none" href="#!" data-list-view="less">View Less<span
-                                        class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+                                    class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
                         </div>
                         <div class="col-auto d-flex"><button class="page-link" data-list-pagination="prev"><span
-                                        class="fas fa-chevron-left"></span></button>
+                                    class="fas fa-chevron-left"></span></button>
                             <ul class="mb-0 pagination"></ul><button class="page-link pe-0"
                                 data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
                         </div>
@@ -245,13 +250,15 @@
                         </div>
 
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="productStatus" name="status" value="1" checked>
+                            <input class="form-check-input" type="checkbox" id="productStatus" name="status"
+                                value="1" checked>
                             <label class="form-check-label" for="productStatus">
                                 Active
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="productIsFeatured" name="is_featured" value="1">
+                            <input class="form-check-input" type="checkbox" id="productIsFeatured" name="is_featured"
+                                value="1">
                             <label class="form-check-label" for="productIsFeatured">
                                 Featured
                             </label>
@@ -273,11 +280,13 @@
         </div>
     </div>
 
+    {{-- Modal để quản lý biến thể sản phẩm (Thêm/Sửa/Xóa biến thể) --}}
     <div class="modal fade" id="variantsModal" tabindex="-1" aria-labelledby="variantsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="variantsModalLabel">Manage Variants for Product: <span id="variantProductName"></span></h5>
+                    <h5 class="modal-title" id="variantsModalLabel">Manage Variants for Product: <span
+                            id="variantProductName"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -288,6 +297,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>SKU</th>
+                                <th>Price Type</th> {{-- Cột mới --}}
                                 <th>Price</th>
                                 <th>Quantity</th>
                                 <th>Image</th>
@@ -300,8 +310,9 @@
                             {{-- Variants will be loaded here via JS --}}
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-success btn-sm mt-3" id="addVariantBtn">Add New Variant</button>
-                    
+                    <button type="button" class="btn btn-success btn-sm mt-3" id="addVariantBtn">Add New
+                        Variant</button>
+
                     <hr class="my-4">
 
                     <h6>Add/Edit Variant:</h6>
@@ -321,43 +332,74 @@
                             <input type="text" class="form-control" id="variantSku" name="sku">
                             <div class="text-danger" id="skuError"></div>
                         </div>
+
+                        {{-- Thêm phần chọn loại giá --}}
                         <div class="mb-3">
-                            <label for="variantPrice" class="form-label">Price</label>
-                            <input type="number" step="0.01" class="form-control" id="variantPrice" name="price" required>
-                            <div class="text-danger" id="variant_priceError"></div>
+                            <label class="form-label">Pricing Type</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="pricing_type"
+                                        id="pricingTypePublic" value="public_price" checked>
+                                    <label class="form-check-label" for="pricingTypePublic">Giá công khai</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="pricing_type"
+                                        id="pricingTypeQuote" value="request_quote">
+                                    <label class="form-check-label" for="pricingTypeQuote">Nhận báo giá</label>
+                                </div>
+                            </div>
+                            <div class="text-danger" id="pricing_typeError"></div>
                         </div>
-                        <div class="mb-3">
-                            <label for="variantDiscountPrice" class="form-label">Discount Price</label>
-                            <input type="number" step="0.01" class="form-control" id="variantDiscountPrice" name="discount_price">
-                            <div class="text-danger" id="variant_discount_priceError"></div>
+
+                        {{-- Các trường giá, chỉ hiển thị khi pricing_type là public_price --}}
+                        <div id="publicPriceFields">
+                            <div class="mb-3">
+                                <label for="variantPrice" class="form-label">Price</label>
+                                <input type="number" step="0.01" class="form-control" id="variantPrice"
+                                    name="price">
+                                <div class="text-danger" id="priceError"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="variantDiscountPrice" class="form-label">Discount Price</label>
+                                <input type="number" step="0.01" class="form-control" id="variantDiscountPrice"
+                                    name="discount_price">
+                                <div class="text-danger" id="discount_priceError"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="variantDiscountPercent" class="form-label">Discount Percent (%)</label>
+                                <input type="number" class="form-control" id="variantDiscountPercent"
+                                    name="discount_percent" min="0" max="100">
+                                <div class="text-danger" id="discount_percentError"></div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="variantDiscountPercent" class="form-label">Discount Percent (%)</label>
-                            <input type="number" class="form-control" id="variantDiscountPercent" name="discount_percent" min="0" max="100">
-                            <div class="text-danger" id="variant_discount_percentError"></div>
-                        </div>
+
                         <div class="mb-3">
                             <label for="variantQuantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="variantQuantity" name="quantity" required min="0">
-                            <div class="text-danger" id="variant_quantityError"></div>
+                            <input type="number" class="form-control" id="variantQuantity" name="quantity" required
+                                min="0">
+                            <div class="text-danger" id="quantityError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="variantImage" class="form-label">Variant Image</label>
                             <input class="form-control" type="file" id="variantImage" name="img">
                             <div class="text-danger" id="variant_imgError"></div>
-                            <img id="currentVariantImage" src="" alt="Current Image" class="img-thumbnail mt-2" style="max-width: 80px; display: none;">
+                            <img id="currentVariantImage" src="" alt="Current Image" class="img-thumbnail mt-2"
+                                style="max-width: 80px; display: none;">
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="variantStatus" name="status" value="1" checked>
+                            <input class="form-check-input" type="checkbox" id="variantStatus" name="status"
+                                value="1" checked>
                             <label class="form-check-label" for="variantStatus">Active</label>
                         </div>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="variantIsFeatured" name="is_featured" value="1">
+                            <input class="form-check-input" type="checkbox" id="variantIsFeatured" name="is_featured"
+                                value="1">
                             <label class="form-check-label" for="variantIsFeatured">Featured</label>
                         </div>
 
                         <button type="submit" class="btn btn-primary" id="saveVariantBtn">Save Variant</button>
-                        <button type="button" class="btn btn-secondary" id="cancelEditVariantBtn" style="display: none;">Cancel Edit</button>
+                        <button type="button" class="btn btn-secondary" id="cancelEditVariantBtn"
+                            style="display: none;">Cancel Edit</button>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -408,7 +450,8 @@
                     let tagsHtml = '';
                     if (product.tags && product.tags.length > 0) {
                         product.tags.forEach(tag => {
-                            tagsHtml += `<a class="text-decoration-none" href="#!"><span class="badge badge-tag me-2 mb-2">${tag.name}</span></a>`;
+                            tagsHtml +=
+                                `<a class="text-decoration-none" href="#!"><span class="badge badge-tag me-2 mb-2">${tag.name}</span></a>`;
                         });
                     } else {
                         tagsHtml = `<span>No Tags</span>`;
@@ -525,7 +568,7 @@
                         let variantsTableBody = $('#variantsTableBody');
                         variantsTableBody.empty();
                         if (response.variants.length === 0) {
-                            variantsTableBody.append('<tr><td colspan="8" class="text-center">No variants found. Add a new one.</td></tr>');
+                            variantsTableBody.append('<tr><td colspan="9" class="text-center">No variants found. Add a new one.</td></tr>'); // Cập nhật colspan
                         } else {
                             response.variants.forEach(variant => {
                                 let variantStatus = variant.status ? 'Active' : 'Inactive';
@@ -534,12 +577,23 @@
                                 let variantImageHtml = variant.img ?
                                     `<img src="${variantImageUrl}" alt="${variant.variant_name}" width="50" class="img-thumbnail">` :
                                     `<i class="fas fa-image text-body-secondary"></i>`;
+                                
+                                let priceHtml;
+                                if (variant.pricing_type === 'public_price') {
+                                    priceHtml = `$${parseFloat(variant.price).toFixed(2)}`;
+                                    if (variant.discount_price) {
+                                        priceHtml += `<br><small class="text-danger">Disc: $${parseFloat(variant.discount_price).toFixed(2)}</small>`;
+                                    }
+                                } else {
+                                    priceHtml = `Request Quote`;
+                                }
 
                                 variantsTableBody.append(`
                                     <tr>
                                         <td>${variant.variant_name}</td>
                                         <td>${variant.sku || 'N/A'}</td>
-                                        <td>$${parseFloat(variant.price).toFixed(2)}</td>
+                                        <td>${variant.pricing_type === 'public_price' ? 'Public Price' : 'Request Quote'}</td> {{-- Cột mới --}}
+                                        <td>${priceHtml}</td>
                                         <td>${variant.quantity}</td>
                                         <td>${variantImageHtml}</td>
                                         <td>${variantStatus}</td>
@@ -565,12 +619,14 @@
                 $('#variantForm')[0].reset();
                 $('#variantFormMethod').val('POST');
                 $('#variantId').val('');
-                $('#variantProductIdField').val(currentEditingProductId); // Giữ product_id
+                $('#variantProductIdField').val(currentEditingProductId);
                 $('#currentVariantImage').hide().attr('src', '');
                 $('#variantStatus').prop('checked', true);
                 $('#variantIsFeatured').prop('checked', false);
-                $('.text-danger').text(''); // Xóa lỗi validation
+                $('.text-danger').text('');
                 $('#cancelEditVariantBtn').hide();
+                $('#pricingTypePublic').prop('checked', true); // Mặc định là Public Price
+                $('#publicPriceFields').show(); // Hiển thị trường giá công khai
             }
 
             // Handle "Add Product" button click
@@ -596,7 +652,7 @@
             $(document).on('click', '.edit-product-btn', function() {
                 let id = $(this).data('id');
                 currentEditingProductId = id; // Lưu ID sản phẩm đang chỉnh sửa
-                
+
                 $('#productModalLabel').text('Edit Product');
                 $('#productForm')[0].reset();
                 $('#formMethod').val('PUT');
@@ -615,9 +671,10 @@
                         $('#productDescription').val(product.description);
                         $('#productStatus').prop('checked', product.status == 1);
                         $('#productIsFeatured').prop('checked', product.is_featured == 1);
-                        
+
                         if (product.img) {
-                            $('#currentProductImage').attr('src', `/storage/${product.img}`).show();
+                            $('#currentProductImage').attr('src', `/storage/${product.img}`)
+                                .show();
                         } else {
                             $('#currentProductImage').hide().attr('src', '');
                         }
@@ -631,7 +688,9 @@
                     error: function(xhr, status, error) {
                         console.error("Error fetching product for edit:", error);
                         console.error("Response Text:", xhr.responseText);
-                        Swal.fire('Error!', 'Failed to load product details. Check console for more info.', 'error');
+                        Swal.fire('Error!',
+                            'Failed to load product details. Check console for more info.',
+                            'error');
                     }
                 });
             });
@@ -672,7 +731,8 @@
                                 }
                             }
                         } else {
-                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
                         }
                     }
                 });
@@ -704,7 +764,8 @@
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error deleting product:", error);
-                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete product.', 'error');
+                                Swal.fire('Error!', xhr.responseJSON.error ||
+                                    'Failed to delete product.', 'error');
                             }
                         });
                     }
@@ -723,7 +784,7 @@
                     // Hoặc truyền tên từ response.product trong edit
                     let productName = $('#productName').val();
                     $('#variantProductName').text(productName);
-                    
+
                     resetVariantForm();
                     loadVariantsForProduct(currentEditingProductId);
                     $('#variantsModal').modal('show');
@@ -749,12 +810,25 @@
                         $('#variantId').val(variant.id);
                         $('#variantName').val(variant.variant_name);
                         $('#variantSku').val(variant.sku);
-                        $('#variantPrice').val(variant.price);
-                        $('#variantDiscountPrice').val(variant.discount_price);
-                        $('#variantDiscountPercent').val(variant.discount_percent);
                         $('#variantQuantity').val(variant.quantity);
                         $('#variantStatus').prop('checked', variant.status == 1);
                         $('#variantIsFeatured').prop('checked', variant.is_featured == 1);
+
+                        // Cập nhật loại giá và hiển thị/ẩn các trường giá
+                        if (variant.pricing_type === 'public_price') {
+                            $('#pricingTypePublic').prop('checked', true);
+                            $('#publicPriceFields').show();
+                            $('#variantPrice').val(variant.price);
+                            $('#variantDiscountPrice').val(variant.discount_price);
+                            $('#variantDiscountPercent').val(variant.discount_percent);
+                        } else {
+                            $('#pricingTypeQuote').prop('checked', true);
+                            $('#publicPriceFields').hide();
+                            // Đặt giá trị null cho các trường giá ẩn
+                            $('#variantPrice').val('');
+                            $('#variantDiscountPrice').val('');
+                            $('#variantDiscountPercent').val('');
+                        }
 
                         if (variant.img) {
                             $('#currentVariantImage').attr('src', `/storage/${variant.img}`).show();
@@ -769,7 +843,7 @@
                     }
                 });
             });
-            
+
             // Handle "Cancel Edit Variant" button
             $('#cancelEditVariantBtn').on('click', function() {
                 resetVariantForm();
@@ -783,7 +857,8 @@
                 let variantId = $('#variantId').val();
                 let productId = $('#variantProductIdField').val();
                 let method = $('#variantFormMethod').val();
-                let url = method === 'POST' ? `/product/${productId}/variants` : `/product-variant/${variantId}`;
+                let url = method === 'POST' ? `/product/${productId}/variants` :
+                    `/product-variant/${variantId}`;
 
                 $('.text-danger').text('');
 
@@ -804,11 +879,13 @@
                         if (errors) {
                             for (let field in errors) {
                                 // Sửa lỗi ID cho các thông báo lỗi biến thể
-                                let errorId = field.replace('.', '_') + 'Error'; // variant_nameError, skuError
+                                let errorId = field.replace('.', '_') +
+                                'Error'; // variant_nameError, skuError
                                 $(`#${errorId}`).text(errors[field][0]);
                             }
                         } else {
-                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
                         }
                     }
                 });
@@ -841,11 +918,25 @@
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error deleting variant:", error);
-                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete variant.', 'error');
+                                Swal.fire('Error!', xhr.responseJSON.error ||
+                                    'Failed to delete variant.', 'error');
                             }
                         });
                     }
                 });
+            });
+
+            // Lắng nghe sự kiện thay đổi radio button pricing_type
+            $('input[name="pricing_type"]').on('change', function() {
+                if (this.value === 'public_price') {
+                    $('#publicPriceFields').slideDown(); // Hiển thị các trường giá
+                } else {
+                    $('#publicPriceFields').slideUp(); // Ẩn các trường giá
+                    // Xóa giá trị trong các trường khi ẩn đi
+                    $('#variantPrice').val('');
+                    $('#variantDiscountPrice').val('');
+                    $('#variantDiscountPercent').val('');
+                }
             });
         });
     </script>
