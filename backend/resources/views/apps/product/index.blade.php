@@ -17,14 +17,14 @@
             </div>
             <ul class="nav nav-links mb-3 mb-lg-2 mx-n3">
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="#"><span>All </span><span
-                                class="text-body-tertiary fw-semibold"
-                                id="total-products">({{ count($products) }})</span></a></li>
+                            class="text-body-tertiary fw-semibold" id="total-products">({{ count($products) }})</span></a>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="#"><span>Published </span><span
-                                class="text-body-tertiary fw-semibold">(70348)</span></a></li>
+                            class="text-body-tertiary fw-semibold">(70348)</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><span>Drafts </span><span
-                                class="text-body-tertiary fw-semibold">(17)</span></a></li>
+                            class="text-body-tertiary fw-semibold">(17)</span></a></li>
                 <li class="nav-item"><a class="nav-link" href="#"><span>On discount </span><span
-                                class="text-body-tertiary fw-semibold">(810)</span></a></li>
+                            class="text-body-tertiary fw-semibold">(810)</span></a></li>
             </ul>
             <div id="products-list"
                 data-list='{"valueNames":["product-name","product-categories","product-price","product-tags"],"page":10,"pagination":true}'>
@@ -39,10 +39,10 @@
                         <div class="scrollbar overflow-hidden-y">
                             <div class="btn-group position-static" role="group">
                                 <div class="btn-group position-static text-nowrap"><button
-                                            class="btn btn-phoenix-secondary px-7 flex-shrink-0" type="button"
-                                            data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
-                                            aria-expanded="false" data-bs-reference="parent"> Category<span
-                                                class="fas fa-angle-down ms-2"></span></button>
+                                        class="btn btn-phoenix-secondary px-7 flex-shrink-0" type="button"
+                                        data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
+                                        aria-expanded="false" data-bs-reference="parent"> Category<span
+                                            class="fas fa-angle-down ms-2"></span></button>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="#">Action</a></li>
                                         <li><a class="dropdown-item" href="#">Another action</a></li>
@@ -54,10 +54,10 @@
                                     </ul>
                                 </div>
                                 <div class="btn-group position-static text-nowrap"><button
-                                            class="btn btn-sm btn-phoenix-secondary px-7 flex-shrink-0" type="button"
-                                            data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
-                                            aria-expanded="false" data-bs-reference="parent"> Vendor<span
-                                                class="fas fa-angle-down ms-2"></span></button>
+                                        class="btn btn-sm btn-phoenix-secondary px-7 flex-shrink-0" type="button"
+                                        data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true"
+                                        aria-expanded="false" data-bs-reference="parent"> Vendor<span
+                                            class="fas fa-angle-down ms-2"></span></button>
                                     <ul class="dropdown-menu">
                                         <li><a class="dropdown-item" href="#">Action</a></li>
                                         <li><a class="dropdown-item" href="#">Another action</a></li>
@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         <div class="ms-xxl-auto"><button class="btn btn-link text-body me-4 px-0"><span
-                                        class="fa-solid fa-file-export fs-9 me-2"></span>Export</button>
+                                    class="fa-solid fa-file-export fs-9 me-2"></span>Export</button>
                             <button class="btn btn-primary" id="addProductBtn" data-bs-toggle="modal"
                                 data-bs-target="#productModal">
                                 <span class="fas fa-plus me-2"></span>Add Product
@@ -81,7 +81,8 @@
                                 <span class="fas fa-cubes me-2"></span>Manage Variants
                             </button>
                             {{-- Nút quản lý thuộc tính sản phẩm và giá trị thuộc tính --}}
-                            <button class="btn btn-phoenix-secondary ms-2" id="manageAttributesBtn" data-bs-toggle="modal" data-bs-target="#attributesModal">
+                            <button class="btn btn-phoenix-secondary ms-2" id="manageAttributesBtn" data-bs-toggle="modal"
+                                data-bs-target="#attributesModal">
                                 <span class="fas fa-tags me-2"></span>Manage Attributes
                             </button>
                         </div>
@@ -124,7 +125,8 @@
                                         <td class="align-middle white-space-nowrap py-0 product-img">
                                             @if ($product->img)
                                                 <a class="d-block border border-translucent rounded-2" href="#">
-                                                    <img src="{{ asset('storage/' . $product->img) }}" alt="{{ $product->name }}" width="53" />
+                                                    <img src="{{ asset('storage/' . $product->img) }}"
+                                                        alt="{{ $product->name }}" width="53" />
                                                 </a>
                                             @else
                                                 <div class="d-block border border-translucent rounded-2 text-center"
@@ -134,9 +136,11 @@
                                             @endif
                                         </td>
                                         <td class="product-name align-middle ps-4">
-                                            <a class="fw-semibold line-clamp-3 mb-0" href="#">{{ $product->name }}</a>
+                                            <a class="fw-semibold line-clamp-3 mb-0"
+                                                href="#">{{ $product->name }}</a>
                                         </td>
-                                        <td class="product-categories align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
+                                        <td
+                                            class="product-categories align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
                                             @forelse($product->categories as $category)
                                                 {{ $category->name }}
                                                 @if ($loop->iteration < $loop->count)
@@ -146,8 +150,9 @@
                                                 N/A
                                             @endforelse
                                         </td>
-                                        <td class="product-price align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4">
-                                            @if($product->variants->isNotEmpty())
+                                        <td
+                                            class="product-price align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4">
+                                            @if ($product->variants->isNotEmpty())
                                                 ${{ number_format($product->variants->min('price'), 2) }}
                                             @else
                                                 N/A
@@ -155,7 +160,8 @@
                                         </td>
                                         <td class="product-tags align-middle review pb-2 ps-3" style="min-width:225px;">
                                             @forelse($product->tags as $tag)
-                                                <a class="text-decoration-none" href="#!"><span class="badge badge-tag me-2 mb-2">{{ $tag->name }}</span></a>
+                                                <a class="text-decoration-none" href="#!"><span
+                                                        class="badge badge-tag me-2 mb-2">{{ $tag->name }}</span></a>
                                             @empty
                                                 <span>No Tags</span>
                                             @endforelse
@@ -186,12 +192,12 @@
                         <div class="col-auto d-flex">
                             <p class="mb-0 d-none d-sm-block me-3 fw-semibold text-body" data-list-info="data-list-info">
                             </p><a class="fw-semibold" href="#!" data-list-view="*">View all<span
-                                        class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a
+                                    class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a><a
                                 class="fw-semibold d-none" href="#!" data-list-view="less">View Less<span
-                                        class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
+                                    class="fas fa-angle-right ms-1" data-fa-transform="down-1"></span></a>
                         </div>
                         <div class="col-auto d-flex"><button class="page-link" data-list-pagination="prev"><span
-                                        class="fas fa-chevron-left"></span></button>
+                                    class="fas fa-chevron-left"></span></button>
                             <ul class="mb-0 pagination"></ul><button class="page-link pe-0"
                                 data-list-pagination="next"><span class="fas fa-chevron-right"></span></button>
                         </div>
@@ -249,13 +255,15 @@
                         </div>
 
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="productStatus" name="status" value="1" checked>
+                            <input class="form-check-input" type="checkbox" id="productStatus" name="status"
+                                value="1" checked>
                             <label class="form-check-label" for="productStatus">
                                 Active
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="productIsFeatured" name="is_featured" value="1">
+                            <input class="form-check-input" type="checkbox" id="productIsFeatured" name="is_featured"
+                                value="1">
                             <label class="form-check-label" for="productIsFeatured">
                                 Featured
                             </label>
@@ -282,7 +290,8 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="variantsModalLabel">Manage Variants for Product: <span id="variantProductName"></span></h5>
+                    <h5 class="modal-title" id="variantsModalLabel">Manage Variants for Product: <span
+                            id="variantProductName"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -306,12 +315,14 @@
                             {{-- Variants will be loaded here via JS --}}
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-success btn-sm mt-3" id="addVariantBtn">Add New Variant</button>
-                    
+                    <button type="button" class="btn btn-success btn-sm mt-3" id="addVariantBtn">Add New
+                        Variant</button>
+
                     <hr class="my-4">
 
                     <h6>Add/Edit Variant:</h6>
-                    <form id="variantForm" enctype="multipart/form-data">
+                    {{-- FORM NÀY BAN ĐẦU SẼ BỊ ẨN --}}
+                    <form id="variantForm" enctype="multipart/form-data" style="display: none;">
                         @csrf
                         <input type="hidden" name="_method" id="variantFormMethod" value="POST">
                         <input type="hidden" name="variant_id" id="variantId">
@@ -324,20 +335,22 @@
                         </div>
                         <div class="mb-3">
                             <label for="variantSku" class="form-label">SKU (Stock Keeping Unit)</label>
-                            <input type="text" class="form-control" id="variantSku" name="sku">
+                            <input type="text" class="form-control" id="variantSku" name="sku" readonly>
                             <div class="text-danger" id="skuError"></div>
                         </div>
 
-                        {{-- Thêm phần chọn loại giá --}}
+                        {{-- Phần chọn loại giá --}}
                         <div class="mb-3">
                             <label class="form-label">Pricing Type</label>
                             <div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pricing_type" id="pricingTypePublic" value="public_price" checked>
+                                    <input class="form-check-input" type="radio" name="pricing_type"
+                                        id="pricingTypePublic" value="public_price" checked>
                                     <label class="form-check-label" for="pricingTypePublic">Public Price</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pricing_type" id="pricingTypeQuote" value="request_quote">
+                                    <input class="form-check-input" type="radio" name="pricing_type"
+                                        id="pricingTypeQuote" value="request_quote">
                                     <label class="form-check-label" for="pricingTypeQuote">Request Quote</label>
                                 </div>
                             </div>
@@ -348,44 +361,84 @@
                         <div id="publicPriceFields">
                             <div class="mb-3">
                                 <label for="variantPrice" class="form-label">Price</label>
-                                <input type="number" step="0.01" class="form-control" id="variantPrice" name="price">
+                                <input type="number" step="0.01" class="form-control" id="variantPrice"
+                                    name="price">
                                 <div class="text-danger" id="priceError"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="variantDiscountPrice" class="form-label">Discount Price</label>
-                                <input type="number" step="0.01" class="form-control" id="variantDiscountPrice" name="discount_price">
+                                <input type="number" step="0.01" class="form-control" id="variantDiscountPrice"
+                                    name="discount_price">
                                 <div class="text-danger" id="discount_priceError"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="variantDiscountPercent" class="form-label">Discount Percent (%)</label>
-                                <input type="number" class="form-control" id="variantDiscountPercent" name="discount_percent" min="0" max="100">
+                                <input type="number" class="form-control" id="variantDiscountPercent"
+                                    name="discount_percent" min="0" max="100">
                                 <div class="text-danger" id="discount_percentError"></div>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="variantQuantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="variantQuantity" name="quantity" required min="0">
+                            <input type="number" class="form-control" id="variantQuantity" name="quantity" required
+                                min="0">
                             <div class="text-danger" id="quantityError"></div>
                         </div>
                         <div class="mb-3">
                             <label for="variantImage" class="form-label">Variant Image</label>
                             <input class="form-control" type="file" id="variantImage" name="img">
                             <div class="text-danger" id="variant_imgError"></div>
-                            <img id="currentVariantImage" src="" alt="Current Image" class="img-thumbnail mt-2" style="max-width: 80px; display: none;">
+                            <img id="currentVariantImage" src="" alt="Current Image" class="img-thumbnail mt-2"
+                                style="max-width: 80px; display: none;">
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="variantStatus" name="status" value="1" checked>
+                            <input class="form-check-input" type="checkbox" id="variantStatus" name="status"
+                                value="1" checked>
                             <label class="form-check-label" for="variantStatus">Active</label>
                         </div>
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="variantIsFeatured" name="is_featured" value="1">
+                            <input class="form-check-input" type="checkbox" id="variantIsFeatured" name="is_featured"
+                                value="1">
                             <label class="form-check-label" for="variantIsFeatured">Featured</label>
                         </div>
 
+                        {{-- Phần quản lý thuộc tính biến thể --}}
+                        <div class="mb-3 border p-3 rounded">
+                            <label class="form-label d-block">Variant Attributes</label>
+                            <div id="variantAttributesSelectionContainer">
+                                {{-- Attribute Types and Values will be loaded here via JS --}}
+                                <p class="text-muted small">Loading attributes...</p>
+                            </div>
+                            <input type="hidden" name="attribute_value_ids" id="attributeValueIdsInput">
+                            <div class="text-danger" id="attribute_value_idsError"></div>
+                        </div>
+
                         <button type="submit" class="btn btn-primary" id="saveVariantBtn">Save Variant</button>
-                        <button type="button" class="btn btn-secondary" id="cancelEditVariantBtn" style="display: none;">Cancel Edit</button>
+                        <button type="button" class="btn btn-secondary" id="cancelEditVariantBtn">Cancel Edit</button>
+                        {{-- Bỏ style display none --}}
                     </form>
+
+                    {{-- Phần nhập giá hàng loạt (Bulk Price Update) --}}
+                    <hr class="my-4">
+                    <h6>Bulk Price Update:</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="bulkPriceInput" class="form-label">Price for all variants</label>
+                            <input type="number" step="0.01" class="form-control" id="bulkPriceInput"
+                                placeholder="Enter price">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="bulkDiscountPriceInput" class="form-label">Discount Price for all variants</label>
+                            <input type="number" step="0.01" class="form-control" id="bulkDiscountPriceInput"
+                                placeholder="Enter discount price">
+                        </div>
+                        <div class="col-12">
+                            <button type="button" class="btn btn-warning" id="applyBulkPriceBtn">Apply to All
+                                Variants</button>
+                        </div>
+                        <div class="text-danger" id="bulk_price_error"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
@@ -394,8 +447,9 @@
         </div>
     </div>
 
-    {{-- Modal cho quản lý thuộc tính sản phẩm và giá trị thuộc tính --}}
-    <div class="modal fade" id="attributesModal" tabindex="-1" aria-labelledby="attributesModalLabel" aria-hidden="true">
+    {{-- Modal cho quản lý thuộc tính sản phẩm và giá trị thuộc tính (ProductAttributeTypes & ProductAttributeValues) --}}
+    <div class="modal fade" id="attributesModal" tabindex="-1" aria-labelledby="attributesModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -418,14 +472,16 @@
                                     {{-- Attribute Types will be loaded here via JS --}}
                                 </tbody>
                             </table>
-                            <button type="button" class="btn btn-success btn-sm mt-3" id="addAttrTypeBtn">Add New Attribute Type</button>
+                            <button type="button" class="btn btn-success btn-sm mt-3" id="addAttrTypeBtn">Add New
+                                Attribute Type</button>
                             <form id="attrTypeForm" class="mt-3">
                                 @csrf
                                 <input type="hidden" name="_method" id="attrTypeFormMethod" value="POST">
                                 <input type="hidden" name="attr_type_id" id="attrTypeId">
                                 <div class="mb-2">
                                     <label for="attrTypeName" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="attrTypeName" name="name" required>
+                                    <input type="text" class="form-control" id="attrTypeName" name="name"
+                                        required>
                                     <div class="text-danger" id="attr_type_nameError"></div>
                                 </div>
                                 <div class="mb-2">
@@ -440,7 +496,8 @@
                                     <div class="text-danger" id="attr_type_display_typeError"></div>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-sm">Save Attribute Type</button>
-                                <button type="button" class="btn btn-secondary btn-sm" id="cancelAttrTypeEditBtn" style="display:none;">Cancel</button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="cancelAttrTypeEditBtn"
+                                    style="display:none;">Cancel</button>
                             </form>
                         </div>
 
@@ -458,7 +515,8 @@
                                     {{-- Attribute Values will be loaded here via JS --}}
                                 </tbody>
                             </table>
-                            <button type="button" class="btn btn-success btn-sm mt-3" id="addAttrValueBtn" style="display:none;">Add New Value</button>
+                            <button type="button" class="btn btn-success btn-sm mt-3" id="addAttrValueBtn"
+                                style="display:none;">Add New Value</button>
                             <form id="attrValueForm" class="mt-3" style="display:none;">
                                 @csrf
                                 <input type="hidden" name="_method" id="attrValueFormMethod" value="POST">
@@ -466,16 +524,19 @@
                                 <input type="hidden" name="current_attr_type_id" id="currentAttrTypeIdForValue">
                                 <div class="mb-2">
                                     <label for="attrValueValue" class="form-label">Value</label>
-                                    <input type="text" class="form-control" id="attrValueValue" name="value" required>
+                                    <input type="text" class="form-control" id="attrValueValue" name="value"
+                                        required>
                                     <div class="text-danger" id="attr_value_valueError"></div>
                                 </div>
                                 <div class="mb-2" id="attrValueMetadataField" style="display:none;">
                                     <label for="attrValueMetadata" class="form-label">Metadata (JSON)</label>
-                                    <input type="text" class="form-control" id="attrValueMetadata" name="metadata" placeholder='e.g. {"hex_code": "#FF0000"} for colors'>
+                                    <input type="text" class="form-control" id="attrValueMetadata" name="metadata"
+                                        placeholder='e.g. {"hex_code": "#FF0000"} for colors'>
                                     <div class="text-danger" id="attr_value_metadataError"></div>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-sm">Save Attribute Value</button>
-                                <button type="button" class="btn btn-secondary btn-sm" id="cancelAttrValueEditBtn" style="display:none;">Cancel</button>
+                                <button type="button" class="btn btn-secondary btn-sm" id="cancelAttrValueEditBtn"
+                                    style="display:none;">Cancel</button>
                             </form>
                         </div>
                     </div>
@@ -486,7 +547,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @push('scripts')
@@ -494,11 +554,10 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function() {
-            // Biến toàn cục để lưu ID sản phẩm hiện đang được chỉnh sửa (trong modal Product chính)
             let currentEditingProductId = null;
-            let currentManagingAttrTypeId = null; // Biến toàn cục để lưu loại thuộc tính đang quản lý giá trị
+            let currentManagingAttrTypeId = null;
+            let selectedVariantAttrValues = []; // Array to hold selected attribute value IDs for the current variant
 
-            // Hàm cập nhật bảng sản phẩm sau khi thao tác thành công
             function updateProductTable(products) {
                 let tableBody = $('#products-table-body');
                 tableBody.empty();
@@ -529,22 +588,22 @@
                     let tagsHtml = '';
                     if (product.tags && product.tags.length > 0) {
                         product.tags.forEach(tag => {
-                            tagsHtml += `<a class="text-decoration-none" href="#!"><span class="badge badge-tag me-2 mb-2">${tag.name}</span></a>`;
+                            tagsHtml +=
+                                `<a class="text-decoration-none" href="#!"><span class="badge badge-tag me-2 mb-2">${tag.name}</span></a>`;
                         });
                     } else {
                         tagsHtml = `<span>No Tags</span>`;
                     }
 
-                    // Giá min từ biến thể (nếu có)
                     let minPrice = 'N/A';
                     if (product.variants && product.variants.length > 0) {
                         let prices = product.variants
-                                    .filter(v => v.pricing_type === 'public_price' && v.price !== null)
-                                    .map(v => parseFloat(v.price));
+                            .filter(v => v.pricing_type === 'public_price' && v.price !== null)
+                            .map(v => parseFloat(v.price));
                         if (prices.length > 0) {
                             minPrice = `$${Math.min(...prices).toFixed(2)}`;
                         } else {
-                            minPrice = 'Quote'; // Tất cả biến thể là báo giá hoặc không có giá công khai
+                            minPrice = 'Quote';
                         }
                     } else {
                         minPrice = 'No Variants';
@@ -593,7 +652,6 @@
                 $('#total-products').text(`(${totalProducts})`);
             }
 
-            // Hàm tải các danh mục cho checkbox trong modal sản phẩm chính
             function loadCategoriesForProductModal(selectedCategoryIds = []) {
                 $.ajax({
                     url: "{{ route('category.index') }}",
@@ -621,7 +679,6 @@
                 });
             }
 
-            // Hàm tải các tags cho checkbox trong modal sản phẩm chính
             function loadTagsForProductModal(selectedTagIds = []) {
                 $.ajax({
                     url: "{{ route('tag.index') }}",
@@ -645,7 +702,6 @@
                 });
             }
 
-            // Hàm tải và hiển thị danh sách biến thể cho một sản phẩm cụ thể
             function loadVariantsForProduct(productId) {
                 $.ajax({
                     url: `/product/${productId}/variants`,
@@ -654,32 +710,38 @@
                         let variantsTableBody = $('#variantsTableBody');
                         variantsTableBody.empty();
                         if (response.variants.length === 0) {
-                            variantsTableBody.append('<tr><td colspan="9" class="text-center">No variants found. Add a new one.</td></tr>');
+                            variantsTableBody.append(
+                                '<tr><td colspan="9" class="text-center">No variants found. Add a new one.</td></tr>'
+                                );
                         } else {
                             response.variants.forEach(variant => {
                                 let variantStatus = variant.status ? 'Active' : 'Inactive';
                                 let variantFeatured = variant.is_featured ? 'Yes' : 'No';
-                                let variantImageUrl = variant.img ? `/storage/${variant.img}` : '';
+                                let variantImageUrl = variant.img ? `/storage/${variant.img}` :
+                                    '';
                                 let variantImageHtml = variant.img ?
                                     `<img src="${variantImageUrl}" alt="${variant.variant_name}" width="50" class="img-thumbnail">` :
                                     `<i class="fas fa-image text-body-secondary"></i>`;
-                                
+
                                 let priceHtml;
                                 if (variant.pricing_type === 'public_price') {
                                     priceHtml = `$${parseFloat(variant.price).toFixed(2)}`;
                                     if (variant.discount_price) {
-                                        priceHtml += `<br><small class="text-danger">Disc: $${parseFloat(variant.discount_price).toFixed(2)}</small>`;
+                                        priceHtml +=
+                                            `<br><small class="text-danger">Disc: $${parseFloat(variant.discount_price).toFixed(2)}</small>`;
                                     }
                                 } else {
                                     priceHtml = `Request Quote`;
                                 }
 
-                                // Hiển thị các thuộc tính biến thể của biến thể này
                                 let variantAttrValuesHtml = '';
-                                if(variant.attribute_values && variant.attribute_values.length > 0) {
+                                if (variant.attribute_values && variant.attribute_values
+                                    .length > 0) {
                                     variant.attribute_values.forEach(attrValue => {
-                                        let attrTypeName = attrValue.attribute_type ? attrValue.attribute_type.name + ': ' : '';
-                                        variantAttrValuesHtml += `<span class="badge bg-secondary me-1 mb-1">${attrTypeName}${attrValue.value}</span>`;
+                                        let attrTypeName = attrValue.attribute_type ?
+                                            attrValue.attribute_type.name + ': ' : '';
+                                        variantAttrValuesHtml +=
+                                            `<span class="badge bg-secondary me-1 mb-1">${attrTypeName}${attrValue.value}</span>`;
                                     });
                                 }
 
@@ -712,7 +774,18 @@
                 });
             }
 
-            // Reset form biến thể
+            // =======================================================================
+            // NEW LOGIC FOR SHOW/HIDE VARIANT FORM & ATTRIBUTE SELECTION
+            // =======================================================================
+
+            // Function to reset and hide the variant form
+            function resetAndHideVariantForm() {
+                $('#variantForm').slideUp(); // Hide the form
+                resetVariantForm(); // Reset its fields
+                $('#saveVariantBtn').text('Save Variant'); // Reset button text
+            }
+
+            // Hàm reset toàn bộ form biến thể (bao gồm cả trạng thái hiển thị)
             function resetVariantForm() {
                 $('#variantForm')[0].reset();
                 $('#variantFormMethod').val('POST');
@@ -723,25 +796,62 @@
                 $('#variantIsFeatured').prop('checked', false);
                 $('.text-danger').text('');
                 $('#cancelEditVariantBtn').hide();
-                $('#pricingTypePublic').prop('checked', true);
-                $('#publicPriceFields').show();
+                $('#pricingTypePublic').prop('checked', true); // Mặc định là Public Price
+                $('#publicPriceFields').show(); // Hiển thị trường giá công khai
                 $('#bulkPriceInput').val('');
                 $('#bulkDiscountPriceInput').val('');
-                // Clear all attribute value checkboxes
-                $('#variantAttributeValuesCheckboxes input[type="checkbox"]').prop('checked', false);
+                selectedVariantAttrValues = []; // Reset selected attributes for the variant
+                updateSelectedAttributesDisplay(); // Cập nhật hiển thị và hidden input
+                updateVariantNameAndSku(); // Cập nhật lại tên biến thể và SKU
+                loadAttributeTypesForVariantModal([]); // Call with empty array to clear checkboxes in the selection modal
             }
 
-            // Hàm tải các loại thuộc tính và giá trị của chúng cho modal Biến thể
-            function loadAttributeTypesForVariantModal(selectedAttributeValueIds = []) {
+            // Function to generate Variant Name and SKU dynamically
+            function updateVariantNameAndSku() {
+                let baseName = $('#productName').val(); 
+                let selectedAttrValueNames = [];
+
+                $('#selectAttributesContainer .variant-attribute-checkbox:checked').each(function() {
+                    selectedAttrValueNames.push($(this).data('value-name'));
+                });
+
+                if (!baseName) {
+                    $('#variantName').val('');
+                    $('#variantSku').val('');
+                    return;
+                }
+
+                selectedAttrValueNames.sort();
+
+                let variantName = baseName;
+                if (selectedAttrValueNames.length > 0) {
+                    variantName += ' - ' + selectedAttrValueNames.join(', ');
+                }
+                
+                let sku = baseName.replace(/\s+/g, '-').toLowerCase();
+                if (selectedAttrValueNames.length > 0) {
+                    sku += '-' + selectedAttrValueNames.map(name => name.replace(/\s+/g, '-').toLowerCase()).join('-');
+                }
+                sku = sku.substring(0, 250);
+
+                $('#variantName').val(variantName);
+                $('#variantSku').val(sku);
+            }
+
+            // Function to load attribute types and values for the "Select Attributes for Variant" modal (#selectAttributeModal)
+            function loadAttributeTypesForVariantModal(initialSelectedAttributeValueIds = []) {
+                selectedVariantAttrValues = initialSelectedAttributeValueIds; 
+                updateSelectedAttributesDisplay(); // Update display immediately before AJAX call
+
                 $.ajax({
                     url: "{{ route('product_attribute_type.index') }}",
                     method: 'GET',
                     success: function(response) {
-                        let attributesContainer = $('#variantAttributeValuesCheckboxes');
+                        let attributesContainer = $('#variantAttributesSelectionContainer'); // Target container within #variantsModal (main variant form)
                         attributesContainer.empty();
 
                         if (response.attributeTypes.length === 0) {
-                            attributesContainer.append('<p class="text-muted small">No attribute types defined. Please add them via "Manage Attributes".</p>');
+                            attributesContainer.append('<p class="text-muted small">No attribute types defined. Please add them via "Manage Attributes" modal.</p>');
                             return;
                         }
 
@@ -749,18 +859,19 @@
                             let attrTypeHtml = `
                                 <div class="mb-3 border p-2 rounded">
                                     <strong>${attrType.name}:</strong>
-                                    <button type="button" class="btn btn-link btn-sm float-end add-attr-value-from-variant-modal" data-attr-type-id="${attrType.id}" data-attr-type-name="${attrType.name}" data-bs-toggle="modal" data-bs-target="#attributesModal">
+                                    <button type="button" class="btn btn-link btn-sm float-end add-attr-value-from-variant-modal" data-attr-type-id="${attrType.id}" data-attr-type-name="${attrType.name}">
                                         <i class="fas fa-plus"></i> Add Value
                                     </button>
                                     <div class="d-flex flex-wrap mt-2" id="attr-values-for-type-${attrType.id}">
                             `;
                             if (attrType.values && attrType.values.length > 0) {
                                 attrType.values.forEach(attrValue => {
-                                    let checked = selectedAttributeValueIds.includes(attrValue.id) ? 'checked' : '';
+                                    let checked = initialSelectedAttributeValueIds.includes(attrValue.id) ? 'checked' : '';
+                                    let attrValueName = attrValue.value ? attrValue.value : 'Unknown Value'; // Safe check
                                     attrTypeHtml += `
                                         <div class="form-check me-3">
-                                            <input class="form-check-input" type="checkbox" name="attribute_value_ids[]" value="${attrValue.id}" id="attr-value-${attrValue.id}" ${checked}>
-                                            <label class="form-check-label" for="attr-value-${attrValue.id}">${attrValue.value}</label>
+                                            <input class="form-check-input variant-attribute-checkbox" type="checkbox" value="${attrValue.id}" id="select-attr-value-${attrValue.id}" ${checked} data-value-name="${attrValueName}" data-type-name="${attrType.name}">
+                                            <label class="form-check-label" for="select-attr-value-${attrValue.id}">${attrValueName}</label>
                                         </div>
                                     `;
                                 });
@@ -773,12 +884,66 @@
                             `;
                             attributesContainer.append(attrTypeHtml);
                         });
+                        // Attach change listener to new checkboxes
+                        attributesContainer.find('.variant-attribute-checkbox').off('change').on('change', function() {
+                            let id = parseInt($(this).val()); // Ensure ID is integer
+                            if ($(this).is(':checked')) {
+                                if (!selectedVariantAttrValues.includes(id)) {
+                                    selectedVariantAttrValues.push(id);
+                                }
+                            } else {
+                                selectedVariantAttrValues = selectedVariantAttrValues.filter(val => val !== id);
+                            }
+                            updateSelectedAttributesDisplay(); // Update the main display and SKU
+                        });
                     },
                     error: function(xhr, status, error) {
                         console.error("Error loading attribute types and values for variant modal:", error);
+                        Swal.fire('Error!', 'Failed to load variant attributes.', 'error'); // Show error to user
                     }
                 });
             }
+
+            // Function to update the display of selected attributes in the main variant form
+            function updateSelectedAttributesDisplay() {
+                let container = $('#selectedVariantAttributesContainer');
+                container.empty();
+                $('#noAttrsSelectedText').remove(); 
+
+                if (selectedVariantAttrValues.length === 0) {
+                    container.append('<p class="text-muted small" id="noAttrsSelectedText">No attributes selected.</p>');
+                    $('#attributeValueIdsInput').val(''); 
+                    updateVariantNameAndSku(); 
+                    return;
+                }
+
+                let uniqueSelectedIds = [...new Set(selectedVariantAttrValues)];
+
+                $.ajax({
+                    url: `/product-attribute-values/get-by-ids`, 
+                    method: 'POST',
+                    data: { _token: '{{ csrf_token() }}', ids: uniqueSelectedIds },
+                    success: function(response) {
+                        if (response.attributeValues.length > 0) {
+                            response.attributeValues.forEach(attrValue => {
+                                let attrTypeName = attrValue.attribute_type ? attrValue.attribute_type.name + ': ' : '';
+                                container.append(`<span class="badge bg-primary me-1 mb-1">${attrTypeName}${attrValue.value}</span>`);
+                            });
+                        } else {
+                             container.append('<p class="text-muted small" id="noAttrsSelectedText">No attributes selected.</p>');
+                        }
+                        $('#attributeValueIdsInput').val(JSON.stringify(uniqueSelectedIds)); 
+                        updateVariantNameAndSku(); 
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading selected attribute details for display:", error);
+                        container.append(`<span class="badge bg-danger me-1 mb-1">Error loading attributes</span>`);
+                        $('#attributeValueIdsInput').val(''); // Clear on error
+                        updateVariantNameAndSku();
+                    }
+                });
+            }
+
 
             // Load attribute types and values for the main attribute modal
             function loadAttributeTypesForManageModal() {
@@ -789,7 +954,9 @@
                         let tableBody = $('#attributeTypesTableBody');
                         tableBody.empty();
                         if (response.attributeTypes.length === 0) {
-                            tableBody.append('<tr><td colspan="3" class="text-center">No attribute types found.</td></tr>');
+                            tableBody.append(
+                                '<tr><td colspan="3" class="text-center">No attribute types found.</td></tr>'
+                                );
                         } else {
                             response.attributeTypes.forEach(type => {
                                 tableBody.append(`
@@ -826,7 +993,9 @@
                         let tableBody = $('#attributeValuesTableBody');
                         tableBody.empty();
                         if (response.attributeValues.length === 0) {
-                            tableBody.append('<tr><td colspan="2" class="text-center">No values found.</td></tr>');
+                            tableBody.append(
+                                '<tr><td colspan="2" class="text-center">No values found.</td></tr>'
+                                );
                         } else {
                             response.attributeValues.forEach(value => {
                                 tableBody.append(`
@@ -857,7 +1026,7 @@
             }
 
             // ===============================================
-            // Product CRUD (Add/Edit/Save/Delete) - Đảm bảo đã có các handler này
+            // Product CRUD (Add/Edit/Save/Delete)
             // ===============================================
 
             // Handle "Add Product" button click
@@ -883,7 +1052,7 @@
             $(document).on('click', '.edit-product-btn', function() {
                 let id = $(this).data('id');
                 currentEditingProductId = id; // Lưu ID sản phẩm đang chỉnh sửa
-                
+
                 $('#productModalLabel').text('Edit Product');
                 $('#productForm')[0].reset();
                 $('#formMethod').val('PUT');
@@ -902,9 +1071,10 @@
                         $('#productDescription').val(product.description);
                         $('#productStatus').prop('checked', product.status == 1);
                         $('#productIsFeatured').prop('checked', product.is_featured == 1);
-                        
+
                         if (product.img) {
-                            $('#currentProductImage').attr('src', `/storage/${product.img}`).show();
+                            $('#currentProductImage').attr('src', `/storage/${product.img}`)
+                                .show();
                         } else {
                             $('#currentProductImage').hide().attr('src', '');
                         }
@@ -918,31 +1088,56 @@
                     error: function(xhr, status, error) {
                         console.error("Error fetching product for edit:", error);
                         console.error("Response Text:", xhr.responseText);
-                        Swal.fire('Error!', 'Failed to load product details. Check console for more info.', 'error');
+                        Swal.fire('Error!',
+                            'Failed to load product details. Check console for more info.',
+                            'error');
                     }
                 });
             });
 
-            // Handle form submission (Add/Edit Product)
-            $('#productForm').on('submit', function(e) {
+            // Handle form submission (Add/Edit Variant)
+            $('#variantForm').on('submit', function(e) {
                 e.preventDefault();
 
                 let formData = new FormData(this);
-                let productId = $('#productId').val();
-                let method = $('#formMethod').val();
-                let url = method === 'POST' ? "{{ route('product.store') }}" : `/product/${productId}`;
+                let variantId = $('#variantId').val();
+                let productId = $('#variantProductIdField').val();
+                let method = $('#variantFormMethod').val();
+                let url = method === 'POST' ? `/product/${productId}/variants` :
+                    `/product-variant/${variantId}`;
 
                 $('.text-danger').text('');
 
+                // SỬA ĐOẠN NÀY ĐỂ attribute_value_ids ĐƯỢC GỬI DƯỚI DẠNG MẢNG ĐÚNG CÁCH
+                // Xóa trường attribute_value_ids cũ nếu đã tồn tại trong formData
+                if (formData.has('attribute_value_ids')) {
+                    formData.delete('attribute_value_ids');
+                }
+                // Thêm từng ID riêng lẻ vào formData dưới dạng mảng
+                // Laravel sẽ parse 'attribute_value_ids[]' thành một mảng
+                selectedVariantAttrValues.forEach(function(id) {
+                    formData.append('attribute_value_ids[]', id);
+                });
+                // Nếu mảng rỗng, không append gì cả, Laravel sẽ coi đó là mảng rỗng hợp lệ (hoặc nullable)
+
+                // Hoặc nếu bạn muốn luôn gửi nó là một mảng JSON string,
+                // bạn cần Laravel giải mã nó ở backend.
+                // Nếu bạn giữ JSON.stringify, bạn cần thêm decoder ở Controller.
+                // formData.set('attribute_value_ids', JSON.stringify(selectedVariantAttrValues)); // <-- CÁCH CŨ GÂY LỖI
+
+                // Nếu là PUT, cần đảm bảo _method là PUT (đã có)
+                // formData.append('_method', method); // Không cần nếu đã có <input type="hidden" name="_method">
+
                 $.ajax({
                     url: url,
-                    method: 'POST',
+                    method: 'POST', // Luôn là POST với FormData, Laravel sẽ xử lý _method
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: function(response) {
                         Swal.fire('Success!', response.success, 'success');
-                        $('#productModal').modal('hide');
+                        loadVariantsForProduct(productId);
+                        resetVariantForm();
                         updateProductTable(response.products);
                     },
                     error: function(xhr, status, error) {
@@ -950,16 +1145,12 @@
                         let errors = xhr.responseJSON.errors;
                         if (errors) {
                             for (let field in errors) {
-                                if (field.startsWith('category_ids.')) {
-                                    $('#category_idsError').text(errors[field][0]);
-                                } else if (field.startsWith('tags.')) {
-                                    $('#tagsError').text(errors[field][0]);
-                                } else {
-                                    $(`#${field}Error`).text(errors[field][0]);
-                                }
+                                let errorId = field.replace('.', '_') + 'Error';
+                                $(`#${errorId}`).text(errors[field][0]);
                             }
                         } else {
-                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
                         }
                     }
                 });
@@ -991,7 +1182,8 @@
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error deleting product:", error);
-                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete product.', 'error');
+                                Swal.fire('Error!', xhr.responseJSON.error ||
+                                    'Failed to delete product.', 'error');
                             }
                         });
                     }
@@ -1002,17 +1194,14 @@
             // Product Variants Logic
             // ===============================================
 
-            // Khi người dùng click "Manage Variants" trong modal Product chính
             $('#openVariantModalBtn').on('click', function() {
-                console.log("Manage Product Variants button clicked!"); // Kiểm tra xem dòng này có hiển thị không
                 if (currentEditingProductId) {
                     $('#variantProductIdField').val(currentEditingProductId);
-                    let productName = $('#productName').val(); // Lấy tên sản phẩm từ form chính
+                    let productName = $('#productName').val();
                     $('#variantProductName').text(productName);
                     
-                    resetVariantForm();
-                    loadVariantsForProduct(currentEditingProductId);
-                    loadAttributeTypesForVariantModal([]); // Tải các thuộc tính cho biến thể
+                    resetAndHideVariantForm(); // Reset và ẩn form khi mở modal biến thể
+                    loadVariantsForProduct(currentEditingProductId); // Load variants table
                     $('#variantsModal').modal('show');
                 } else {
                     Swal.fire('Info', 'Please save the product first to manage variants.', 'info');
@@ -1021,12 +1210,16 @@
 
             // Handle "Add New Variant" button in Variants Modal
             $('#addVariantBtn').on('click', function() {
-                resetVariantForm();
+                resetVariantForm(); // Reset all fields
+                loadAttributeTypesForVariantModal([]); // Load attributes for a new variant
+                $('#variantForm').slideDown(); // Show the form for adding
             });
 
             // Handle "Edit Variant" button in Variants Table
             $(document).on('click', '.edit-variant-btn', function() {
                 let variantId = $(this).data('id');
+                $('#saveVariantBtn').text('Update Variant');
+
                 $.ajax({
                     url: `/product-variant/${variantId}/edit`,
                     method: 'GET',
@@ -1061,9 +1254,9 @@
                         }
                         $('#cancelEditVariantBtn').show();
 
-                        // Tải thuộc tính biến thể và đánh dấu các giá trị đã chọn
                         let selectedAttributeValueIds = variant.attribute_values.map(av => av.id);
-                        loadAttributeTypesForVariantModal(selectedAttributeValueIds);
+                        loadAttributeTypesForVariantModal(selectedAttributeValueIds); // Load attributes for editing
+                        $('#variantForm').slideDown(); // Show the form for editing
                     },
                     error: function(xhr, status, error) {
                         console.error("Error fetching variant for edit:", error);
@@ -1072,12 +1265,11 @@
                 });
             });
             
-            // Handle "Cancel Edit Variant" button
             $('#cancelEditVariantBtn').on('click', function() {
-                resetVariantForm();
+                resetAndHideVariantForm(); // Reset and hide variant form
+                $('#saveVariantBtn').text('Save Variant'); // Reset button text
             });
 
-            // Lắng nghe sự kiện thay đổi radio button pricing_type
             $('input[name="pricing_type"]').on('change', function() {
                 if (this.value === 'public_price') {
                     $('#publicPriceFields').slideDown();
@@ -1089,11 +1281,31 @@
                 }
             });
 
-            // Handle form submission (Add/Edit Variant)
+            // Lắng nghe sự kiện input trên Variant Name để tự động cập nhật SKU
+            $('#variantName').on('input', updateVariantNameAndSku);
+            // Lắng nghe sự kiện thay đổi checkbox thuộc tính biến thể để tự động cập nhật tên biến thể và SKU
+            // Sự kiện này được gán lại mỗi khi loadAttributeTypesForVariantModal chạy
+            $(document).on('change', '#variantAttributesSelectionContainer .variant-attribute-checkbox', updateVariantNameAndSku);
+
+
             $('#variantForm').on('submit', function(e) {
                 e.preventDefault();
 
                 let formData = new FormData(this);
+                // Ensure attribute_value_ids is properly sent
+                if (selectedVariantAttrValues.length > 0) {
+                    selectedVariantAttrValues.forEach(function(id) {
+                        formData.append('attribute_value_ids[]', id);
+                    });
+                } else {
+                    // Gửi một mảng rỗng nếu không có gì được chọn để Laravel nhận dạng là mảng
+                    // Laravel yêu cầu 'attribute_value_ids' là một mảng, ngay cả khi rỗng.
+                    // Nếu không có checkbox nào được chọn và không có dòng này,
+                    // 'attribute_value_ids' sẽ không tồn tại trong FormData.
+                    formData.append('attribute_value_ids[]', ''); // Gửi một giá trị rỗng trong mảng
+                }
+
+
                 let variantId = $('#variantId').val();
                 let productId = $('#variantProductIdField').val();
                 let method = $('#variantFormMethod').val();
@@ -1110,9 +1322,8 @@
                     success: function(response) {
                         Swal.fire('Success!', response.success, 'success');
                         loadVariantsForProduct(productId);
-                        resetVariantForm();
-                        // Sau khi lưu biến thể, cập nhật lại bảng sản phẩm chính để phản ánh giá min
-                        updateProductTable(response.products); // Controller phải trả về products cập nhật
+                        resetAndHideVariantForm(); // Reset và ẩn form sau khi lưu
+                        updateProductTable(response.products);
                     },
                     error: function(xhr, status, error) {
                         console.error("Error:", xhr.responseText);
@@ -1129,7 +1340,6 @@
                 });
             });
 
-            // Handle "Delete Variant" button
             $(document).on('click', '.delete-variant-btn', function() {
                 let variantId = $(this).data('id');
                 let productId = $('#variantProductIdField').val();
@@ -1151,8 +1361,7 @@
                             success: function(response) {
                                 Swal.fire('Deleted!', response.success, 'success');
                                 loadVariantsForProduct(productId);
-                                // Sau khi xóa biến thể, cập nhật lại bảng sản phẩm chính để phản ánh giá min mới
-                                updateProductTable(response.products); // Controller phải trả về products cập nhật
+                                updateProductTable(response.products);
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error deleting variant:", error);
@@ -1163,10 +1372,10 @@
                 });
             });
 
-            // ... (Các handle addProductBtn, edit-product-btn, productForm.submit, delete-product-btn không đổi) ...
-            // (Đảm bảo đã thêm currentEditingProductId = id; vào edit-product-btn)
+            // ===============================================
+            // Product Attributes (Types & Values) Logic
+            // ===============================================
 
-            // Handle "Manage Attributes" button click
             $('#manageAttributesBtn').on('click', function() {
                 loadAttributeTypesForManageModal();
                 $('#attrValueContext').show().text('Select an Attribute Type to manage its values.');
@@ -1177,13 +1386,12 @@
                 $('#attributesModal').modal('show');
             });
 
-            // Handle clicking on an attribute type name to manage its values
             $(document).on('click', '.select-attr-type-to-manage-values', function(e) {
                 e.preventDefault();
                 let typeId = $(this).data('id');
                 let typeName = $(this).data('name');
                 let displayType = $(this).data('display-type');
-                currentManagingAttrTypeId = typeId; // Lưu loại thuộc tính đang quản lý
+                currentManagingAttrTypeId = typeId;
 
                 $('#attrValueContext').hide();
                 $('#attributeValuesTable').show();
@@ -1191,7 +1399,6 @@
                 $('#addAttrValueBtn').text(`Add New Value for ${typeName}`);
                 loadAttributeValuesForManageModal(typeId);
 
-                // Hiển thị/ẩn trường metadata tùy thuộc vào display_type
                 if (displayType === 'color_picker') {
                     $('#attrValueMetadataField').show();
                 } else {
@@ -1199,13 +1406,10 @@
                 }
             });
 
-            // ===============================================
-            // Logic cho Product Attribute Type CRUD
-            // ===============================================
-
+            // Product Attribute Type CRUD
             $('#addAttrTypeBtn').on('click', function() {
                 resetAttrTypeForm();
-                $('#attrTypeForm').slideDown(); // Show the form if hidden
+                $('#attrTypeForm').slideDown();
             });
 
             function resetAttrTypeForm() {
@@ -1218,7 +1422,7 @@
 
             $(document).on('click', '.edit-attr-type-btn', function() {
                 let id = $(this).data('id');
-                $('#attrTypeForm').slideDown(); // Show the form if hidden
+                $('#attrTypeForm').slideDown();
 
                 $.ajax({
                     url: `/product-attribute-types/${id}/edit`,
@@ -1257,6 +1461,9 @@
                         Swal.fire('Success!', response.success, 'success');
                         loadAttributeTypesForManageModal();
                         resetAttrTypeForm();
+                        if ($('#variantsModal').hasClass('show')) {
+                             loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                        }
                     },
                     error: function(xhr, status, error) {
                         console.error("Error saving attribute type:", xhr.responseText);
@@ -1291,7 +1498,6 @@
                             success: function(response) {
                                 Swal.fire('Deleted!', response.success, 'success');
                                 loadAttributeTypesForManageModal();
-                                // Hide value section if the type being managed was deleted
                                 if (currentManagingAttrTypeId === id) {
                                     $('#attrValueContext').show().text('Select an Attribute Type to manage its values.');
                                     $('#attributeValuesTable').hide();
@@ -1299,8 +1505,9 @@
                                     $('#attrValueForm').hide();
                                     resetAttrValueForm();
                                 }
-                                // Optionally reload variants table if this change affects product display
-                                // updateProductTable(response.products); // if controller returns products
+                                if ($('#variantsModal').hasClass('show')) {
+                                     loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                                }
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error deleting attribute type:", xhr.responseText);
@@ -1317,10 +1524,7 @@
             });
 
 
-            // ===============================================
-            // Logic cho Product Attribute Value CRUD
-            // ===============================================
-
+            // Product Attribute Value CRUD
             $('#addAttrValueBtn').on('click', function() {
                 resetAttrValueForm();
                 $('#attrValueForm').slideDown();
@@ -1334,13 +1538,13 @@
                 $('#attrValueMetadata').val('');
                 $('#cancelAttrValueEditBtn').hide();
                 $('.text-danger').text('');
-                $('#currentAttrTypeIdForValue').val(currentManagingAttrTypeId); // Ensure correct type ID
+                $('#currentAttrTypeIdForValue').val(currentManagingAttrTypeId);
             }
 
             $(document).on('click', '.edit-attr-value-btn', function() {
                 let id = $(this).data('id');
                 let typeId = $(this).data('type-id');
-                currentManagingAttrTypeId = typeId; // Update context
+                currentManagingAttrTypeId = typeId;
                 
                 $('#attrValueForm').slideDown();
 
@@ -1387,12 +1591,8 @@
                         Swal.fire('Success!', response.success, 'success');
                         loadAttributeValuesForManageModal(typeId);
                         resetAttrValueForm();
-                        // Also reload attributes for variant modal if open
-                        if ($('#variantsModal').hasClass('show')) { // Check if variant modal is open
-                             loadAttributeTypesForVariantModal(
-                                // Pass currently selected attribute values of the variant being edited, if any
-                                $('#variantId').val() ? response.selectedVariantAttributeValues || [] : [] // You might need to return this from controller
-                            );
+                        if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
+                             loadAttributeTypesForVariantModal(selectedVariantAttrValues);
                         }
                     },
                     error: function(xhr, status, error) {
@@ -1430,11 +1630,8 @@
                             success: function(response) {
                                 Swal.fire('Deleted!', response.success, 'success');
                                 loadAttributeValuesForManageModal(typeId);
-                                // Reload attributes for variant modal if open
-                                if ($('#variantsModal').hasClass('show')) {
-                                     loadAttributeTypesForVariantModal(
-                                        $('#variantId').val() ? response.selectedVariantAttributeValues || [] : [] // You might need to return this from controller
-                                    );
+                                if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
+                                     loadAttributeTypesForVariantModal(selectedVariantAttrValues);
                                 }
                             },
                             error: function(xhr, status, error) {
@@ -1459,7 +1656,6 @@
                 let bulkPrice = parseFloat($('#bulkPriceInput').val());
                 let bulkDiscountPrice = parseFloat($('#bulkDiscountPriceInput').val());
 
-                // Clear previous errors
                 $('#bulk_price_error').text('');
 
                 if (isNaN(bulkPrice) || bulkPrice < 0) {
@@ -1476,17 +1672,16 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `/product/${currentEditingProductId}/variants/bulk-update-price`, // Bạn cần tạo route này và method trong ProductVariantController
+                            url: `/product/${currentEditingProductId}/variants/bulk-update-price`,
                             method: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}',
                                 price: bulkPrice,
                                 discount_price: isNaN(bulkDiscountPrice) ? null : bulkDiscountPrice,
-                                // pricing_type có thể được ngầm định là 'public_price'
                             },
                             success: function(response) {
                                 Swal.fire('Success!', response.success, 'success');
-                                loadVariantsForProduct(currentEditingProductId); // Tải lại danh sách biến thể
+                                loadVariantsForProduct(currentEditingProductId);
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error bulk updating prices:", xhr.responseText);

@@ -80,6 +80,9 @@ Route::prefix('product-attribute-types')->name('product_attribute_type.')->group
 // Route cho ProductAttributeValue CRUD (khi truy cập trực tiếp bằng ID giá trị)
 Route::prefix('product-attribute-values')->name('product_attribute_value.')->group(function () {
     Route::get('/{attributeValue}/edit', [ProductAttributeValueController::class, 'edit'])->name('edit');
-    Route::put('/{attributeValue}', [ProductAttributeValueController::class, 'update'])->name('update');
+    // SỬA DÒNG NÀY:
+    Route::put('/{attributeValue}', [ProductAttributeValueController::class, 'update'])->name('update'); // Đổi từ ProductAttributeValue::class
     Route::delete('/{attributeValue}', [ProductAttributeValueController::class, 'destroy'])->name('destroy');
+    Route::post('/get-by-ids', [ProductAttributeValueController::class, 'getByIds']);
 });
+
