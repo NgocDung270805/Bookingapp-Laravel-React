@@ -13,6 +13,7 @@ class ProductVariant extends Model
         'product_id',
         'variant_name',
         'sku',
+        'pricing_type',
         'price',
         'discount_price',
         'discount_percent',
@@ -28,5 +29,13 @@ class ProductVariant extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the product images for the variant (One-to-Many relationship).
+     */
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class, 'product_variant_id');
     }
 }
