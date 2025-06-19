@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ProductVariant;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Models\ProductAttributeType;
 use Illuminate\Support\Facades\Storage;
 
 class ProductVariantController extends Controller
@@ -16,7 +17,7 @@ class ProductVariantController extends Controller
      */
     public function index(Product $product)
     {
-        $variants = $product->variants()->orderBy('variant_name')->get();
+        $variants = $product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get(); // Load attributeValues và attributeType
         return response()->json(['variants' => $variants]);
     }
 
@@ -28,20 +29,20 @@ class ProductVariantController extends Controller
         $rules = [
             'variant_name' => 'required|string|max:255',
             'sku' => ['nullable', 'string', 'max:255', Rule::unique('product_variants')],
-            'pricing_type' => 'required|in:public_price,request_quote', // Validation cho trường mới
+            'pricing_type' => 'required|in:public_price,request_quote',
             'quantity' => 'required|integer|min:0',
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'boolean',
             'is_featured' => 'boolean',
+            'attribute_value_ids' => 'nullable|array', // Mảng các ID giá trị thuộc tính
+            'attribute_value_ids.*' => 'exists:product_attribute_values,id',
         ];
 
-        // Thêm rules phụ thuộc vào pricing_type
         if ($request->pricing_type === 'public_price') {
             $rules['price'] = 'required|numeric|min:0';
             $rules['discount_price'] = 'nullable|numeric|lt:price|min:0';
             $rules['discount_percent'] = 'nullable|integer|min:0|max:100';
         } else {
-            // Nếu là request_quote, các trường giá không bắt buộc
             $rules['price'] = 'nullable|numeric|min:0';
             $rules['discount_price'] = 'nullable|numeric|min:0';
             $rules['discount_percent'] = 'nullable|integer|min:0|max:100';
@@ -58,8 +59,8 @@ class ProductVariantController extends Controller
         $variant = $product->variants()->create([
             'variant_name' => $request->variant_name,
             'sku' => $request->sku,
-            'pricing_type' => $request->pricing_type, // Lưu trường mới
-            'price' => $request->pricing_type === 'public_price' ? $request->price : null, // Lưu null nếu là báo giá
+            'pricing_type' => $request->pricing_type,
+            'price' => $request->pricing_type === 'public_price' ? $request->price : null,
             'discount_price' => $request->pricing_type === 'public_price' ? $request->discount_price : null,
             'discount_percent' => $request->pricing_type === 'public_price' ? $request->discount_percent : null,
             'quantity' => $request->quantity,
@@ -68,7 +69,14 @@ class ProductVariantController extends Controller
             'is_featured' => $request->is_featured ?? 0,
         ]);
 
-        return response()->json(['success' => 'Variant created successfully.', 'variant' => $variant, 'variants' => $product->variants()->orderBy('variant_name')->get()]);
+        // Đồng bộ các giá trị thuộc tính cho biến thể
+        if ($request->has('attribute_value_ids')) {
+            $variant->attributeValues()->sync($request->attribute_value_ids);
+        } else {
+            $variant->attributeValues()->detach();
+        }
+
+        return response()->json(['success' => 'Variant created successfully.', 'variants' => $product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get()]);
     }
 
     /**
@@ -76,7 +84,14 @@ class ProductVariantController extends Controller
      */
     public function edit(ProductVariant $productVariant)
     {
-        return response()->json(['variant' => $productVariant]);
+        $productVariant->load('attributeValues'); // Tải các giá trị thuộc tính hiện có của biến thể
+
+        $attributeTypes = ProductAttributeType::with('values')->orderBy('name')->get(); // Lấy tất cả loại thuộc tính và giá trị của chúng
+
+        return response()->json([
+            'variant' => $productVariant,
+            'attributeTypes' => $attributeTypes, // Gửi về để điền form
+        ]);
     }
 
     /**
@@ -92,9 +107,10 @@ class ProductVariantController extends Controller
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'boolean',
             'is_featured' => 'boolean',
+            'attribute_value_ids' => 'nullable|array',
+            'attribute_value_ids.*' => 'exists:product_attribute_values,id',
         ];
 
-        // Thêm rules phụ thuộc vào pricing_type
         if ($request->pricing_type === 'public_price') {
             $rules['price'] = 'required|numeric|min:0';
             $rules['discount_price'] = 'nullable|numeric|lt:price|min:0';
@@ -119,7 +135,7 @@ class ProductVariantController extends Controller
         $productVariant->update([
             'variant_name' => $request->variant_name,
             'sku' => $request->sku,
-            'pricing_type' => $request->pricing_type, // Cập nhật trường mới
+            'pricing_type' => $request->pricing_type,
             'price' => $request->pricing_type === 'public_price' ? $request->price : null,
             'discount_price' => $request->pricing_type === 'public_price' ? $request->discount_price : null,
             'discount_percent' => $request->pricing_type === 'public_price' ? $request->discount_percent : null,
@@ -129,7 +145,14 @@ class ProductVariantController extends Controller
             'is_featured' => $request->is_featured ?? 0,
         ]);
 
-        return response()->json(['success' => 'Variant updated successfully.', 'variant' => $productVariant, 'variants' => $productVariant->product->variants()->orderBy('variant_name')->get()]);
+        // Đồng bộ các giá trị thuộc tính cho biến thể
+        if ($request->has('attribute_value_ids')) {
+            $productVariant->attributeValues()->sync($request->attribute_value_ids);
+        } else {
+            $productVariant->attributeValues()->detach();
+        }
+
+        return response()->json(['success' => 'Variant updated successfully.', 'variants' => $productVariant->product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get()]);
     }
 
     /**
@@ -138,10 +161,13 @@ class ProductVariantController extends Controller
     public function destroy(ProductVariant $productVariant)
     {
         $productId = $productVariant->product_id;
+        // Xóa mối quan hệ với attribute values trước khi xóa biến thể
+        $productVariant->attributeValues()->detach();
+
         if ($productVariant->img && Storage::disk('public')->exists($productVariant->img)) {
             Storage::disk('public')->delete($productVariant->img);
         }
         $productVariant->delete();
-        return response()->json(['success' => 'Variant deleted successfully.', 'variants' => Product::find($productId)->variants()->orderBy('variant_name')->get()]);
+        return response()->json(['success' => 'Variant deleted successfully.', 'variants' => Product::find($productId)->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get()]);
     }
 }
