@@ -7,6 +7,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\ProductVariantController;
+use App\Http\Controllers\Web\ProductAttributeTypeController;
+use App\Http\Controllers\Web\ProductAttributeValueController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
@@ -54,4 +56,30 @@ Route::prefix('product-variant')->name('product_variant.')->middleware('auth')->
     Route::get('/{productVariant}/edit', [ProductVariantController::class, 'edit'])->name('edit');
     Route::put('/{productVariant}', [ProductVariantController::class, 'update'])->name('update');
     Route::delete('/{productVariant}', [ProductVariantController::class, 'destroy'])->name('destroy');
+});
+
+// ==========================================================
+// THÊM CÁC ROUTE MỚI CHO QUẢN LÝ THUỘC TÍNH SẢN PHẨM (ATTRIBUTES)
+// ==========================================================
+
+// Route cho ProductAttributeType CRUD
+Route::prefix('product-attribute-types')->name('product_attribute_type.')->group(function () {
+    Route::get('/', [ProductAttributeTypeController::class, 'index'])->name('index'); // Route bị thiếu
+    Route::post('/', [ProductAttributeTypeController::class, 'store'])->name('store');
+    Route::get('/{attributeType}/edit', [ProductAttributeTypeController::class, 'edit'])->name('edit');
+    Route::put('/{attributeType}', [ProductAttributeTypeController::class, 'update'])->name('update');
+    Route::delete('/{attributeType}', [ProductAttributeTypeController::class, 'destroy'])->name('destroy');
+
+    // Nested Routes cho ProductAttributeValue CRUD (giá trị của thuộc tính)
+    Route::prefix('{attributeType}/values')->name('values.')->group(function () {
+        Route::get('/', [ProductAttributeValueController::class, 'index'])->name('index');
+        Route::post('/', [ProductAttributeValueController::class, 'store'])->name('store');
+    });
+});
+
+// Route cho ProductAttributeValue CRUD (khi truy cập trực tiếp bằng ID giá trị)
+Route::prefix('product-attribute-values')->name('product_attribute_value.')->group(function () {
+    Route::get('/{attributeValue}/edit', [ProductAttributeValueController::class, 'edit'])->name('edit');
+    Route::put('/{attributeValue}', [ProductAttributeValueController::class, 'update'])->name('update');
+    Route::delete('/{attributeValue}', [ProductAttributeValueController::class, 'destroy'])->name('destroy');
 });
