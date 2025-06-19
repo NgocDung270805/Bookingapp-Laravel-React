@@ -646,7 +646,7 @@
             }
 
             // Hàm tải và hiển thị danh sách biến thể cho một sản phẩm cụ thể
-            function loadVariantsForProduct(productId, productName) {
+            function loadVariantsForProduct(productId) {
                 $.ajax({
                     url: `/product/${productId}/variants`,
                     method: 'GET',
@@ -678,7 +678,6 @@
                                 let variantAttrValuesHtml = '';
                                 if(variant.attribute_values && variant.attribute_values.length > 0) {
                                     variant.attribute_values.forEach(attrValue => {
-                                        // Hiển thị tên loại thuộc tính nếu có
                                         let attrTypeName = attrValue.attribute_type ? attrValue.attribute_type.name + ': ' : '';
                                         variantAttrValuesHtml += `<span class="badge bg-secondary me-1 mb-1">${attrTypeName}${attrValue.value}</span>`;
                                     });
@@ -726,20 +725,25 @@
                 $('#cancelEditVariantBtn').hide();
                 $('#pricingTypePublic').prop('checked', true);
                 $('#publicPriceFields').show();
-                $('#bulkPriceInput').val(''); // Clear bulk price input
-                $('#bulkDiscountPriceInput').val(''); // Clear bulk discount price input
-                // Xóa các checkboxes thuộc tính biến thể đã chọn
+                $('#bulkPriceInput').val('');
+                $('#bulkDiscountPriceInput').val('');
+                // Clear all attribute value checkboxes
                 $('#variantAttributeValuesCheckboxes input[type="checkbox"]').prop('checked', false);
             }
 
             // Hàm tải các loại thuộc tính và giá trị của chúng cho modal Biến thể
             function loadAttributeTypesForVariantModal(selectedAttributeValueIds = []) {
                 $.ajax({
-                    url: "{{ route('product_attribute_type.index') }}", // Route để lấy ProductAttributeTypes
+                    url: "{{ route('product_attribute_type.index') }}",
                     method: 'GET',
                     success: function(response) {
                         let attributesContainer = $('#variantAttributeValuesCheckboxes');
                         attributesContainer.empty();
+
+                        if (response.attributeTypes.length === 0) {
+                            attributesContainer.append('<p class="text-muted small">No attribute types defined. Please add them via "Manage Attributes".</p>');
+                            return;
+                        }
 
                         response.attributeTypes.forEach(attrType => {
                             let attrTypeHtml = `
@@ -771,7 +775,7 @@
                         });
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error loading attribute types and values:", error);
+                        console.error("Error loading attribute types and values for variant modal:", error);
                     }
                 });
             }
@@ -805,10 +809,10 @@
                         $('#attrTypeFormMethod').val('POST');
                         $('#attrTypeId').val('');
                         $('#cancelAttrTypeEditBtn').hide();
-                        $('.text-danger').text(''); // Clear any validation errors
+                        $('.text-danger').text('');
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error loading attribute types:", error);
+                        console.error("Error loading attribute types for manage modal:", error);
                     }
                 });
             }
@@ -842,22 +846,329 @@
                         $('#attrValueId').val('');
                         $('#currentAttrTypeIdForValue').val(attrTypeId);
                         $('#cancelAttrValueEditBtn').hide();
-                        $('.text-danger').text(''); // Clear any validation errors
-                        $('#attrValueMetadataField').hide(); // Hide metadata field by default
+                        $('.text-danger').text('');
+                        $('#attrValueForm').hide(); // Hide form initially
+                        $('#addAttrValueBtn').show(); // Show add button
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error loading attribute values:", error);
+                        console.error("Error loading attribute values for manage modal:", error);
                     }
                 });
             }
 
-            // ... (Phần handle addProductBtn, edit-product-btn, productForm.submit, delete-product-btn không đổi) ...
+            // ===============================================
+            // Product CRUD (Add/Edit/Save/Delete) - Đảm bảo đã có các handler này
+            // ===============================================
+
+            // Handle "Add Product" button click
+            $('#addProductBtn').on('click', function() {
+                $('#productModalLabel').text('Add New Product');
+                $('#productForm')[0].reset();
+                $('#formMethod').val('POST');
+                $('#productId').val('');
+                $('#currentProductImage').hide().attr('src', '');
+
+                $('#productStatus').prop('checked', true);
+                $('#productIsFeatured').prop('checked', false);
+
+                loadCategoriesForProductModal([]);
+                loadTagsForProductModal([]);
+
+                $('.text-danger').text('');
+                $('#variantManagementSection').hide(); // Ẩn phần quản lý biến thể khi thêm mới sản phẩm
+                $('#productModal').modal('show');
+            });
+
+            // Handle "Edit Product" button click
+            $(document).on('click', '.edit-product-btn', function() {
+                let id = $(this).data('id');
+                currentEditingProductId = id; // Lưu ID sản phẩm đang chỉnh sửa
+                
+                $('#productModalLabel').text('Edit Product');
+                $('#productForm')[0].reset();
+                $('#formMethod').val('PUT');
+                $('#productId').val(id);
+                $('.text-danger').text('');
+
+                $.ajax({
+                    url: `/product/${id}/edit`,
+                    method: 'GET',
+                    success: function(response) {
+                        let product = response.product;
+                        let productCategoryIds = response.productCategoryIds;
+                        let productTagIds = response.productTagIds;
+
+                        $('#productName').val(product.name);
+                        $('#productDescription').val(product.description);
+                        $('#productStatus').prop('checked', product.status == 1);
+                        $('#productIsFeatured').prop('checked', product.is_featured == 1);
+                        
+                        if (product.img) {
+                            $('#currentProductImage').attr('src', `/storage/${product.img}`).show();
+                        } else {
+                            $('#currentProductImage').hide().attr('src', '');
+                        }
+
+                        loadCategoriesForProductModal(productCategoryIds);
+                        loadTagsForProductModal(productTagIds);
+
+                        $('#variantManagementSection').show(); // Hiện phần quản lý biến thể
+                        $('#productModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching product for edit:", error);
+                        console.error("Response Text:", xhr.responseText);
+                        Swal.fire('Error!', 'Failed to load product details. Check console for more info.', 'error');
+                    }
+                });
+            });
+
+            // Handle form submission (Add/Edit Product)
+            $('#productForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let formData = new FormData(this);
+                let productId = $('#productId').val();
+                let method = $('#formMethod').val();
+                let url = method === 'POST' ? "{{ route('product.store') }}" : `/product/${productId}`;
+
+                $('.text-danger').text('');
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire('Success!', response.success, 'success');
+                        $('#productModal').modal('hide');
+                        updateProductTable(response.products);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", xhr.responseText);
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            for (let field in errors) {
+                                if (field.startsWith('category_ids.')) {
+                                    $('#category_idsError').text(errors[field][0]);
+                                } else if (field.startsWith('tags.')) {
+                                    $('#tagsError').text(errors[field][0]);
+                                } else {
+                                    $(`#${field}Error`).text(errors[field][0]);
+                                }
+                            }
+                        } else {
+                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Handle "Delete Product" button click
+            $(document).on('click', '.delete-product-btn', function() {
+                let id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this! All variants of this product will also be deleted.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/product/${id}`,
+                            method: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire('Deleted!', response.success, 'success');
+                                updateProductTable(response.products);
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error deleting product:", error);
+                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete product.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // ===============================================
+            // Product Variants Logic
+            // ===============================================
+
+            // Khi người dùng click "Manage Variants" trong modal Product chính
+            $('#openVariantModalBtn').on('click', function() {
+                console.log("Manage Product Variants button clicked!"); // Kiểm tra xem dòng này có hiển thị không
+                if (currentEditingProductId) {
+                    $('#variantProductIdField').val(currentEditingProductId);
+                    let productName = $('#productName').val(); // Lấy tên sản phẩm từ form chính
+                    $('#variantProductName').text(productName);
+                    
+                    resetVariantForm();
+                    loadVariantsForProduct(currentEditingProductId);
+                    loadAttributeTypesForVariantModal([]); // Tải các thuộc tính cho biến thể
+                    $('#variantsModal').modal('show');
+                } else {
+                    Swal.fire('Info', 'Please save the product first to manage variants.', 'info');
+                }
+            });
+
+            // Handle "Add New Variant" button in Variants Modal
+            $('#addVariantBtn').on('click', function() {
+                resetVariantForm();
+            });
+
+            // Handle "Edit Variant" button in Variants Table
+            $(document).on('click', '.edit-variant-btn', function() {
+                let variantId = $(this).data('id');
+                $.ajax({
+                    url: `/product-variant/${variantId}/edit`,
+                    method: 'GET',
+                    success: function(response) {
+                        let variant = response.variant;
+                        $('#variantFormMethod').val('PUT');
+                        $('#variantId').val(variant.id);
+                        $('#variantName').val(variant.variant_name);
+                        $('#variantSku').val(variant.sku);
+                        $('#variantQuantity').val(variant.quantity);
+                        $('#variantStatus').prop('checked', variant.status == 1);
+                        $('#variantIsFeatured').prop('checked', variant.is_featured == 1);
+
+                        if (variant.pricing_type === 'public_price') {
+                            $('#pricingTypePublic').prop('checked', true);
+                            $('#publicPriceFields').show();
+                            $('#variantPrice').val(variant.price);
+                            $('#variantDiscountPrice').val(variant.discount_price);
+                            $('#variantDiscountPercent').val(variant.discount_percent);
+                        } else {
+                            $('#pricingTypeQuote').prop('checked', true);
+                            $('#publicPriceFields').hide();
+                            $('#variantPrice').val('');
+                            $('#variantDiscountPrice').val('');
+                            $('#variantDiscountPercent').val('');
+                        }
+
+                        if (variant.img) {
+                            $('#currentVariantImage').attr('src', `/storage/${variant.img}`).show();
+                        } else {
+                            $('#currentVariantImage').hide().attr('src', '');
+                        }
+                        $('#cancelEditVariantBtn').show();
+
+                        // Tải thuộc tính biến thể và đánh dấu các giá trị đã chọn
+                        let selectedAttributeValueIds = variant.attribute_values.map(av => av.id);
+                        loadAttributeTypesForVariantModal(selectedAttributeValueIds);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching variant for edit:", error);
+                        Swal.fire('Error!', 'Failed to load variant details.', 'error');
+                    }
+                });
+            });
+            
+            // Handle "Cancel Edit Variant" button
+            $('#cancelEditVariantBtn').on('click', function() {
+                resetVariantForm();
+            });
+
+            // Lắng nghe sự kiện thay đổi radio button pricing_type
+            $('input[name="pricing_type"]').on('change', function() {
+                if (this.value === 'public_price') {
+                    $('#publicPriceFields').slideDown();
+                } else {
+                    $('#publicPriceFields').slideUp();
+                    $('#variantPrice').val('');
+                    $('#variantDiscountPrice').val('');
+                    $('#variantDiscountPercent').val('');
+                }
+            });
+
+            // Handle form submission (Add/Edit Variant)
+            $('#variantForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let formData = new FormData(this);
+                let variantId = $('#variantId').val();
+                let productId = $('#variantProductIdField').val();
+                let method = $('#variantFormMethod').val();
+                let url = method === 'POST' ? `/product/${productId}/variants` : `/product-variant/${variantId}`;
+
+                $('.text-danger').text('');
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire('Success!', response.success, 'success');
+                        loadVariantsForProduct(productId);
+                        resetVariantForm();
+                        // Sau khi lưu biến thể, cập nhật lại bảng sản phẩm chính để phản ánh giá min
+                        updateProductTable(response.products); // Controller phải trả về products cập nhật
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", xhr.responseText);
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            for (let field in errors) {
+                                let errorId = field.replace('.', '_') + 'Error';
+                                $(`#${errorId}`).text(errors[field][0]);
+                            }
+                        } else {
+                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Handle "Delete Variant" button
+            $(document).on('click', '.delete-variant-btn', function() {
+                let variantId = $(this).data('id');
+                let productId = $('#variantProductIdField').val();
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/product-variant/${variantId}`,
+                            method: 'DELETE',
+                            data: { _token: '{{ csrf_token() }}' },
+                            success: function(response) {
+                                Swal.fire('Deleted!', response.success, 'success');
+                                loadVariantsForProduct(productId);
+                                // Sau khi xóa biến thể, cập nhật lại bảng sản phẩm chính để phản ánh giá min mới
+                                updateProductTable(response.products); // Controller phải trả về products cập nhật
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error deleting variant:", error);
+                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete variant.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // ... (Các handle addProductBtn, edit-product-btn, productForm.submit, delete-product-btn không đổi) ...
             // (Đảm bảo đã thêm currentEditingProductId = id; vào edit-product-btn)
 
             // Handle "Manage Attributes" button click
             $('#manageAttributesBtn').on('click', function() {
                 loadAttributeTypesForManageModal();
-                // Reset context and hide value table
                 $('#attrValueContext').show().text('Select an Attribute Type to manage its values.');
                 $('#attributeValuesTable').hide();
                 $('#addAttrValueBtn').hide();
@@ -894,6 +1205,7 @@
 
             $('#addAttrTypeBtn').on('click', function() {
                 resetAttrTypeForm();
+                $('#attrTypeForm').slideDown(); // Show the form if hidden
             });
 
             function resetAttrTypeForm() {
@@ -906,6 +1218,8 @@
 
             $(document).on('click', '.edit-attr-type-btn', function() {
                 let id = $(this).data('id');
+                $('#attrTypeForm').slideDown(); // Show the form if hidden
+
                 $.ajax({
                     url: `/product-attribute-types/${id}/edit`,
                     method: 'GET',
@@ -935,13 +1249,13 @@
 
                 $.ajax({
                     url: url,
-                    method: 'POST', // Always POST for FormData
+                    method: 'POST',
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: function(response) {
                         Swal.fire('Success!', response.success, 'success');
-                        loadAttributeTypesForManageModal(); // Reload types table
+                        loadAttributeTypesForManageModal();
                         resetAttrTypeForm();
                     },
                     error: function(xhr, status, error) {
@@ -985,6 +1299,8 @@
                                     $('#attrValueForm').hide();
                                     resetAttrValueForm();
                                 }
+                                // Optionally reload variants table if this change affects product display
+                                // updateProductTable(response.products); // if controller returns products
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error deleting attribute type:", xhr.responseText);
@@ -997,6 +1313,7 @@
 
             $('#cancelAttrTypeEditBtn').on('click', function() {
                 resetAttrTypeForm();
+                $('#attrTypeForm').slideUp();
             });
 
 
@@ -1025,7 +1342,7 @@
                 let typeId = $(this).data('type-id');
                 currentManagingAttrTypeId = typeId; // Update context
                 
-                $('#attrValueForm').slideDown(); // Show the form if hidden
+                $('#attrValueForm').slideDown();
 
                 $.ajax({
                     url: `/product-attribute-values/${id}/edit`,
@@ -1054,7 +1371,7 @@
                 e.preventDefault();
                 let formData = new FormData(this);
                 let id = $('#attrValueId').val();
-                let typeId = $('#currentAttrTypeIdForValue').val(); // Get current context
+                let typeId = $('#currentAttrTypeIdForValue').val();
                 let method = $('#attrValueFormMethod').val();
                 let url = method === 'POST' ? `/product-attribute-types/${typeId}/values` : `/product-attribute-values/${id}`;
 
@@ -1062,19 +1379,19 @@
 
                 $.ajax({
                     url: url,
-                    method: 'POST', // Always POST for FormData
+                    method: 'POST',
                     data: formData,
                     contentType: false,
                     processData: false,
                     success: function(response) {
                         Swal.fire('Success!', response.success, 'success');
-                        loadAttributeValuesForManageModal(typeId); // Reload values table for current type
+                        loadAttributeValuesForManageModal(typeId);
                         resetAttrValueForm();
                         // Also reload attributes for variant modal if open
-                        if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
+                        if ($('#variantsModal').hasClass('show')) { // Check if variant modal is open
                              loadAttributeTypesForVariantModal(
-                                // Pass current variant's attribute values if editing a variant
-                                $('#variantId').val() ? response.attributeValueIdsOfCurrentVariant || [] : [] // Needs to be handled better
+                                // Pass currently selected attribute values of the variant being edited, if any
+                                $('#variantId').val() ? response.selectedVariantAttributeValues || [] : [] // You might need to return this from controller
                             );
                         }
                     },
@@ -1083,7 +1400,6 @@
                         let errors = xhr.responseJSON.errors;
                         if (errors) {
                             for (let field in errors) {
-                                // Sửa lỗi ID cho các thông báo lỗi biến thể
                                 let errorId = field.replace('.', '_') + 'Error';
                                 $(`#${errorId}`).text(errors[field][0]);
                             }
@@ -1096,7 +1412,7 @@
 
             $(document).on('click', '.delete-attr-value-btn', function() {
                 let id = $(this).data('id');
-                let typeId = $(this).data('type-id'); // Get type ID to reload values
+                let typeId = $(this).data('type-id');
                 Swal.fire({
                     title: 'Are you sure?',
                     text: "Deleting this value will remove it from any variants that use it! You won't be able to revert this!",
@@ -1113,11 +1429,11 @@
                             data: { _token: '{{ csrf_token() }}' },
                             success: function(response) {
                                 Swal.fire('Deleted!', response.success, 'success');
-                                loadAttributeValuesForManageModal(typeId); // Reload values for current type
-                                // Reload attribute types for variant modal if open
-                                if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
+                                loadAttributeValuesForManageModal(typeId);
+                                // Reload attributes for variant modal if open
+                                if ($('#variantsModal').hasClass('show')) {
                                      loadAttributeTypesForVariantModal(
-                                        $('#variantId').val() ? response.attributeValueIdsOfCurrentVariant || [] : []
+                                        $('#variantId').val() ? response.selectedVariantAttributeValues || [] : [] // You might need to return this from controller
                                     );
                                 }
                             },
@@ -1139,40 +1455,34 @@
             // Logic cho nhập giá hàng loạt (Bulk Price)
             // ===============================================
 
-            // Bạn sẽ cần thêm các nút hoặc trường nhập liệu cho chức năng này
-            // Ví dụ: Một nút "Apply Bulk Price" trong modal variants
-            // Khi nhấn, nó sẽ áp dụng giá từ input của bạn cho TẤT CẢ các biến thể hiện có
-            // Đây là một ví dụ đơn giản cho cách xử lý trong JS
-            // (Bạn cần thêm các input cho bulk price trong HTML của modal variants)
-
-            // Ví dụ: Giả sử bạn có input cho bulkPriceInput và bulkDiscountPriceInput
-            // và một nút #applyBulkPriceBtn
-            /**/
             $('#applyBulkPriceBtn').on('click', function() {
                 let bulkPrice = parseFloat($('#bulkPriceInput').val());
                 let bulkDiscountPrice = parseFloat($('#bulkDiscountPriceInput').val());
 
+                // Clear previous errors
+                $('#bulk_price_error').text('');
+
                 if (isNaN(bulkPrice) || bulkPrice < 0) {
-                    Swal.fire('Error', 'Please enter a valid price for bulk update.', 'error');
+                    $('#bulk_price_error').text('Please enter a valid price for bulk update.');
                     return;
                 }
 
                 Swal.fire({
                     title: 'Apply to all variants?',
-                    text: "This will update prices for ALL existing variants of this product. Are you sure?",
+                    text: "This will update prices (and optionally discount prices) for ALL existing 'Public Price' variants of this product. Are you sure?",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Yes, update all!'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: `/product/${currentEditingProductId}/variants/bulk-update-price`, // Bạn cần tạo route này
+                            url: `/product/${currentEditingProductId}/variants/bulk-update-price`, // Bạn cần tạo route này và method trong ProductVariantController
                             method: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}',
                                 price: bulkPrice,
                                 discount_price: isNaN(bulkDiscountPrice) ? null : bulkDiscountPrice,
-                                // Có thể thêm các trường khác như pricing_type = 'public_price'
+                                // pricing_type có thể được ngầm định là 'public_price'
                             },
                             success: function(response) {
                                 Swal.fire('Success!', response.success, 'success');
@@ -1180,13 +1490,13 @@
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error bulk updating prices:", xhr.responseText);
+                                $('#bulk_price_error').text(xhr.responseJSON.error || 'Failed to bulk update prices.');
                                 Swal.fire('Error!', xhr.responseJSON.error || 'Failed to bulk update prices.', 'error');
                             }
                         });
                     }
                 });
             });
-            
         });
     </script>
 @endpush
