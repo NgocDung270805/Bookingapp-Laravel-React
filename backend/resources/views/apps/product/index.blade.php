@@ -227,10 +227,18 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Categories</label>
-                            <div id="productCategoriesCheckboxes" class="d-flex flex-wrap">
-                                {{-- Categories checkboxes will be loaded via JavaScript --}}
+                            <div id="parentCategoriesDropdownContainer">
+                                <select class="form-select mb-2" id="parentCategorySelect" name="parent_category_id">
+                                    <option value="">Select Parent Category</option>
+                                    {{-- Parent categories will be loaded here via JavaScript --}}
+                                </select>
+                            </div>
+                            <div id="childCategoriesCheckboxesContainer" class="d-flex flex-wrap" style="display: none;">
+                                {{-- Child categories will be loaded here via JavaScript --}}
+                                {{-- Checkboxes for selected child categories will also be appended here dynamically if product already has them --}}
                             </div>
                             <div class="text-danger" id="category_idsError"></div>
+                            <input type="hidden" name="category_ids[]" id="selectedCategoryIdsHidden">
                         </div>
                         <div class="mb-3">
                             <label for="productDescription" class="form-label">Description</label>
@@ -556,7 +564,8 @@
         $(document).ready(function() {
             let currentEditingProductId = null;
             let currentManagingAttrTypeId = null;
-            let selectedVariantAttrValues = []; // Array to hold selected attribute value IDs for the current variant
+            let
+                selectedVariantAttrValues = []; // Array to hold selected attribute value IDs for the current variant
 
             function updateProductTable(products) {
                 let tableBody = $('#products-table-body');
@@ -652,31 +661,190 @@
                 $('#total-products').text(`(${totalProducts})`);
             }
 
-            function loadCategoriesForProductModal(selectedCategoryIds = []) {
+            /**
+             * Loads categories for the product modal, showing parent categories in a dropdown
+             * and child categories as checkboxes based on the selected parent.
+             *
+             * @param {Array} selectedProductCategoryIds - Array of category IDs currently associated with the product.
+             * @param {boolean} isEditMode - True if the modal is in edit mode, false for add mode.
+             */
+            // Cập nhật cách gọi `updateHiddenCategoryIds` trong `loadCategoriesForProductModal`
+            function loadCategoriesForProductModal(selectedProductCategoryIds = [], isEditMode = false) {
+                const parentCategorySelect = $('#parentCategorySelect');
+                const childCategoriesCheckboxesContainer = $('#childCategoriesCheckboxesContainer');
+                parentCategorySelect.empty().append('<option value="">Select Parent Category</option>');
+                childCategoriesCheckboxesContainer.empty().hide();
+
+                // Clear the hidden input for category IDs on fresh load
+                $('#selectedCategoryIdsHidden').val('');
+
                 $.ajax({
                     url: "{{ route('category.index') }}",
                     method: 'GET',
                     success: function(response) {
-                        let categoriesCheckboxesDiv = $('#productCategoriesCheckboxes');
-                        categoriesCheckboxesDiv.empty();
-                        response.categories.forEach(cat => {
-                            let checked = selectedCategoryIds.includes(cat.id) ? 'checked' : '';
-                            let prefix = '';
-                            if (cat.level > 0) {
-                                prefix = '&nbsp;'.repeat(cat.level * 4) + '↳&nbsp;';
-                            }
-                            categoriesCheckboxesDiv.append(`
-                                <div class="form-check me-2">
-                                    <input class="form-check-input" type="checkbox" name="category_ids[]" value="${cat.id}" id="category-${cat.id}" ${checked}>
-                                    <label class="form-check-label" for="category-${cat.id}">${prefix}${cat.name}</label>
-                                </div>
-                            `);
+                        const categories = response.categories; // Lưu trữ tất cả categories
+                        let parentCategories = categories.filter(cat => cat.parent_id === null);
+
+                        parentCategories.forEach(cat => {
+                            parentCategorySelect.append(
+                                `<option value="${cat.id}">${cat.name}</option>`
+                            );
                         });
+
+                        // If in edit mode, pre-select the correct parent and load its children
+                        if (isEditMode && selectedProductCategoryIds.length > 0) {
+                            let actualSelectedCategory = null;
+                            // Ưu tiên tìm category được chọn có parent_id (là child)
+                            actualSelectedCategory = categories.find(cat =>
+                                selectedProductCategoryIds.includes(cat.id) && cat.parent_id !== null
+                            );
+
+                            if (actualSelectedCategory) {
+                                parentCategorySelect.val(actualSelectedCategory.parent_id);
+                                // Khi chỉnh sửa, cần truyền `selectedProductCategoryIds` để hàm `loadChildCategories` biết những child nào đang được chọn
+                                loadChildCategories(actualSelectedCategory.parent_id, categories, selectedProductCategoryIds);
+                                childCategoriesCheckboxesContainer.show();
+                            } else {
+                                // Nếu không có child nào được chọn, kiểm tra xem có parent nào được chọn trực tiếp không
+                                actualSelectedCategory = categories.find(cat =>
+                                    selectedProductCategoryIds.includes(cat.id) && cat.parent_id === null
+                                );
+                                if (actualSelectedCategory) {
+                                    parentCategorySelect.val(actualSelectedCategory.id);
+                                    // Dù là parent được chọn trực tiếp, vẫn có thể có children ẩn, nên vẫn gọi loadChildCategories
+                                    loadChildCategories(actualSelectedCategory.id, categories, selectedProductCategoryIds);
+                                    childCategoriesCheckboxesContainer.show();
+                                }
+                            }
+                        }
+
+                        // Event listener for parent category dropdown change
+                        parentCategorySelect.off('change').on('change', function() {
+                            const selectedParentId = $(this).val();
+                            childCategoriesCheckboxesContainer.empty();
+                            $('#category_idsError').text('');
+
+                            // Luôn xóa tất cả các ID đã chọn trong hidden input khi thay đổi parent mới
+                            // Sau đó, chúng ta sẽ thêm lại các ID tương ứng
+                            updateHiddenCategoryIds(null, false, categories); // Clear all
+
+                            if (selectedParentId) {
+                                // Nếu parent được chọn trực tiếp, thêm nó vào hidden input
+                                if (selectedProductCategoryIds.includes(parseInt(selectedParentId))) {
+                                    updateHiddenCategoryIds(parseInt(selectedParentId), true, categories);
+                                }
+                                loadChildCategories(selectedParentId, categories, selectedProductCategoryIds);
+                                childCategoriesCheckboxesContainer.show();
+                            } else {
+                                childCategoriesCheckboxesContainer.hide();
+                                // Khi không chọn parent nào, đảm bảo hidden input rỗng
+                                updateHiddenCategoryIds(null, false, categories);
+                            }
+                        });
+
+                        // Ban đầu, sau khi load categories, populate hidden input with existing selections
+                        // Điều này là cần thiết để đảm bảo các category đã chọn ban đầu (khi edit) được ghi nhận
+                        selectedProductCategoryIds.forEach(id => {
+                            updateHiddenCategoryIds(id, true, categories);
+                        });
+
                     },
                     error: function(xhr, status, error) {
                         console.error("Error loading categories for product modal:", error);
                     }
                 });
+            }
+
+            /**
+             * Loads child categories as checkboxes for a given parent ID.
+             *
+             * @param {number} parentId - The ID of the parent category.
+             * @param {Array} allCategories - All categories fetched from the backend.
+             * @param {Array} selectedProductCategoryIds - Category IDs currently associated with the product.
+             */
+            // Cập nhật cách gọi `updateHiddenCategoryIds` trong `loadChildCategories`
+            function loadChildCategories(parentId, allCategoriesData, selectedProductCategoryIds = []) {
+                const childCategoriesCheckboxesContainer = $('#childCategoriesCheckboxesContainer');
+                childCategoriesCheckboxesContainer.empty();
+
+                const childCategories = allCategoriesData.filter(cat => cat.parent_id == parentId);
+
+                if (childCategories.length > 0) {
+                    childCategories.forEach(cat => {
+                        const isChecked = selectedProductCategoryIds.includes(cat.id) ? 'checked' : '';
+                        childCategoriesCheckboxesContainer.append(`
+                            <div class="form-check me-2">
+                                <input class="form-check-input category-checkbox" type="checkbox" name="category_ids[]" value="${cat.id}" id="category-${cat.id}" ${isChecked}>
+                                <label class="form-check-label" for="category-${cat.id}">${cat.name}</label>
+                            </div>
+                        `);
+                        // Khi load child categories, nếu nó đã được chọn, hãy đảm bảo parent của nó cũng được thêm
+                        if (isChecked) {
+                            updateHiddenCategoryIds(cat.id, true, allCategoriesData);
+                        }
+                    });
+                } else {
+                    childCategoriesCheckboxesContainer.append('<p class="text-muted small mt-2">No subcategories for this parent.</p>');
+                }
+
+                // Đảm bảo rằng nếu parent category được chọn trực tiếp và không có children
+                const isParentCategorySelectedDirectlyAndNoChildren = selectedProductCategoryIds.includes(parseInt(parentId)) && childCategories.length === 0;
+                if (isParentCategorySelectedDirectlyAndNoChildren) {
+                    updateHiddenCategoryIds(parseInt(parentId), true, allCategoriesData);
+                }
+
+                // Attach change listener to newly added child checkboxes
+                childCategoriesCheckboxesContainer.off('change', '.category-checkbox').on('change', '.category-checkbox', function() {
+                    const categoryId = parseInt($(this).val());
+                    if ($(this).is(':checked')) {
+                        updateHiddenCategoryIds(categoryId, true, allCategoriesData); // Pass allCategoriesData
+                    } else {
+                        updateHiddenCategoryIds(categoryId, false, allCategoriesData); // Pass allCategoriesData
+                    }
+                });
+            }
+
+            /**
+             * Updates the hidden input field that holds all selected category IDs.
+             * This function is crucial to ensure all selected categories (parent and children)
+             * are sent correctly with the form.
+             *
+             * @param {number|null} categoryId - The ID of the category to add/remove. If null, clear all.
+             * @param {boolean} add - True to add, false to remove.
+             */
+            function updateHiddenCategoryIds(categoryId, add, allCategoriesData) {
+                let currentSelectedIds = $('#selectedCategoryIdsHidden').val();
+                let selectedIdsArray = currentSelectedIds ? JSON.parse(currentSelectedIds) : [];
+
+                if (categoryId !== null) {
+                    if (add) {
+                        // Add the current category if it's not already there
+                        if (!selectedIdsArray.includes(categoryId)) {
+                            selectedIdsArray.push(categoryId);
+                        }
+
+                        // Also add its parent if it's a child category and its parent is not already in the list
+                        const category = allCategoriesData.find(cat => cat.id === categoryId);
+                        if (category && category.parent_id !== null && !selectedIdsArray.includes(category.parent_id)) {
+                            selectedIdsArray.push(category.parent_id);
+                        }
+                    } else {
+                        // Remove the current category
+                        selectedIdsArray = selectedIdsArray.filter(id => id !== categoryId);
+
+                        // Optional advanced logic: If a parent is deselected, also deselect its children.
+                        // This can be complex depending on how you manage multi-selection.
+                        // For now, we assume deselecting a child just removes that child.
+                        // If you need to remove parent on child deselect, consider if other children are still selected.
+                    }
+                } else { // If categoryId is null, clear all
+                    selectedIdsArray = [];
+                }
+
+                // Remove duplicates and sort for consistency (optional)
+                selectedIdsArray = [...new Set(selectedIdsArray)].sort((a, b) => a - b);
+
+                $('#selectedCategoryIdsHidden').val(JSON.stringify(selectedIdsArray));
             }
 
             function loadTagsForProductModal(selectedTagIds = []) {
@@ -712,7 +880,7 @@
                         if (response.variants.length === 0) {
                             variantsTableBody.append(
                                 '<tr><td colspan="9" class="text-center">No variants found. Add a new one.</td></tr>'
-                                );
+                            );
                         } else {
                             response.variants.forEach(variant => {
                                 let variantStatus = variant.status ? 'Active' : 'Inactive';
@@ -803,12 +971,13 @@
                 selectedVariantAttrValues = []; // Reset selected attributes for the variant
                 updateSelectedAttributesDisplay(); // Cập nhật hiển thị và hidden input
                 updateVariantNameAndSku(); // Cập nhật lại tên biến thể và SKU
-                loadAttributeTypesForVariantModal([]); // Call with empty array to clear checkboxes in the selection modal
+                loadAttributeTypesForVariantModal(
+                    []); // Call with empty array to clear checkboxes in the selection modal
             }
 
             // Function to generate Variant Name and SKU dynamically
             function updateVariantNameAndSku() {
-                let baseName = $('#productName').val(); 
+                let baseName = $('#productName').val();
                 let selectedAttrValueNames = [];
 
                 $('#selectAttributesContainer .variant-attribute-checkbox:checked').each(function() {
@@ -827,10 +996,11 @@
                 if (selectedAttrValueNames.length > 0) {
                     variantName += ' - ' + selectedAttrValueNames.join(', ');
                 }
-                
+
                 let sku = baseName.replace(/\s+/g, '-').toLowerCase();
                 if (selectedAttrValueNames.length > 0) {
-                    sku += '-' + selectedAttrValueNames.map(name => name.replace(/\s+/g, '-').toLowerCase()).join('-');
+                    sku += '-' + selectedAttrValueNames.map(name => name.replace(/\s+/g, '-').toLowerCase()).join(
+                        '-');
                 }
                 sku = sku.substring(0, 250);
 
@@ -840,18 +1010,22 @@
 
             // Function to load attribute types and values for the "Select Attributes for Variant" modal (#selectAttributeModal)
             function loadAttributeTypesForVariantModal(initialSelectedAttributeValueIds = []) {
-                selectedVariantAttrValues = initialSelectedAttributeValueIds; 
+                selectedVariantAttrValues = initialSelectedAttributeValueIds;
                 updateSelectedAttributesDisplay(); // Update display immediately before AJAX call
 
                 $.ajax({
                     url: "{{ route('product_attribute_type.index') }}",
                     method: 'GET',
                     success: function(response) {
-                        let attributesContainer = $('#variantAttributesSelectionContainer'); // Target container within #variantsModal (main variant form)
+                        let attributesContainer = $(
+                            '#variantAttributesSelectionContainer'
+                        ); // Target container within #variantsModal (main variant form)
                         attributesContainer.empty();
 
                         if (response.attributeTypes.length === 0) {
-                            attributesContainer.append('<p class="text-muted small">No attribute types defined. Please add them via "Manage Attributes" modal.</p>');
+                            attributesContainer.append(
+                                '<p class="text-muted small">No attribute types defined. Please add them via "Manage Attributes" modal.</p>'
+                            );
                             return;
                         }
 
@@ -866,8 +1040,10 @@
                             `;
                             if (attrType.values && attrType.values.length > 0) {
                                 attrType.values.forEach(attrValue => {
-                                    let checked = initialSelectedAttributeValueIds.includes(attrValue.id) ? 'checked' : '';
-                                    let attrValueName = attrValue.value ? attrValue.value : 'Unknown Value'; // Safe check
+                                    let checked = initialSelectedAttributeValueIds
+                                        .includes(attrValue.id) ? 'checked' : '';
+                                    let attrValueName = attrValue.value ? attrValue
+                                        .value : 'Unknown Value'; // Safe check
                                     attrTypeHtml += `
                                         <div class="form-check me-3">
                                             <input class="form-check-input variant-attribute-checkbox" type="checkbox" value="${attrValue.id}" id="select-attr-value-${attrValue.id}" ${checked} data-value-name="${attrValueName}" data-type-name="${attrType.name}">
@@ -876,7 +1052,8 @@
                                     `;
                                 });
                             } else {
-                                attrTypeHtml += `<p class="text-muted small">No values defined for this attribute type.</p>`;
+                                attrTypeHtml +=
+                                    `<p class="text-muted small">No values defined for this attribute type.</p>`;
                             }
                             attrTypeHtml += `
                                     </div>
@@ -885,21 +1062,27 @@
                             attributesContainer.append(attrTypeHtml);
                         });
                         // Attach change listener to new checkboxes
-                        attributesContainer.find('.variant-attribute-checkbox').off('change').on('change', function() {
-                            let id = parseInt($(this).val()); // Ensure ID is integer
-                            if ($(this).is(':checked')) {
-                                if (!selectedVariantAttrValues.includes(id)) {
-                                    selectedVariantAttrValues.push(id);
+                        attributesContainer.find('.variant-attribute-checkbox').off('change').on(
+                            'change',
+                            function() {
+                                let id = parseInt($(this).val()); // Ensure ID is integer
+                                if ($(this).is(':checked')) {
+                                    if (!selectedVariantAttrValues.includes(id)) {
+                                        selectedVariantAttrValues.push(id);
+                                    }
+                                } else {
+                                    selectedVariantAttrValues = selectedVariantAttrValues.filter(
+                                        val => val !== id);
                                 }
-                            } else {
-                                selectedVariantAttrValues = selectedVariantAttrValues.filter(val => val !== id);
-                            }
-                            updateSelectedAttributesDisplay(); // Update the main display and SKU
-                        });
+                                updateSelectedAttributesDisplay
+                                    (); // Update the main display and SKU
+                            });
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error loading attribute types and values for variant modal:", error);
-                        Swal.fire('Error!', 'Failed to load variant attributes.', 'error'); // Show error to user
+                        console.error("Error loading attribute types and values for variant modal:",
+                            error);
+                        Swal.fire('Error!', 'Failed to load variant attributes.',
+                            'error'); // Show error to user
                     }
                 });
             }
@@ -908,36 +1091,47 @@
             function updateSelectedAttributesDisplay() {
                 let container = $('#selectedVariantAttributesContainer');
                 container.empty();
-                $('#noAttrsSelectedText').remove(); 
+                $('#noAttrsSelectedText').remove();
 
                 if (selectedVariantAttrValues.length === 0) {
-                    container.append('<p class="text-muted small" id="noAttrsSelectedText">No attributes selected.</p>');
-                    $('#attributeValueIdsInput').val(''); 
-                    updateVariantNameAndSku(); 
+                    container.append(
+                        '<p class="text-muted small" id="noAttrsSelectedText">No attributes selected.</p>');
+                    $('#attributeValueIdsInput').val('');
+                    updateVariantNameAndSku();
                     return;
                 }
 
                 let uniqueSelectedIds = [...new Set(selectedVariantAttrValues)];
 
                 $.ajax({
-                    url: `/product-attribute-values/get-by-ids`, 
+                    url: `/product-attribute-values/get-by-ids`,
                     method: 'POST',
-                    data: { _token: '{{ csrf_token() }}', ids: uniqueSelectedIds },
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        ids: uniqueSelectedIds
+                    },
                     success: function(response) {
                         if (response.attributeValues.length > 0) {
                             response.attributeValues.forEach(attrValue => {
-                                let attrTypeName = attrValue.attribute_type ? attrValue.attribute_type.name + ': ' : '';
-                                container.append(`<span class="badge bg-primary me-1 mb-1">${attrTypeName}${attrValue.value}</span>`);
+                                let attrTypeName = attrValue.attribute_type ? attrValue
+                                    .attribute_type.name + ': ' : '';
+                                container.append(
+                                    `<span class="badge bg-primary me-1 mb-1">${attrTypeName}${attrValue.value}</span>`
+                                );
                             });
                         } else {
-                             container.append('<p class="text-muted small" id="noAttrsSelectedText">No attributes selected.</p>');
+                            container.append(
+                                '<p class="text-muted small" id="noAttrsSelectedText">No attributes selected.</p>'
+                            );
                         }
-                        $('#attributeValueIdsInput').val(JSON.stringify(uniqueSelectedIds)); 
-                        updateVariantNameAndSku(); 
+                        $('#attributeValueIdsInput').val(JSON.stringify(uniqueSelectedIds));
+                        updateVariantNameAndSku();
                     },
                     error: function(xhr, status, error) {
                         console.error("Error loading selected attribute details for display:", error);
-                        container.append(`<span class="badge bg-danger me-1 mb-1">Error loading attributes</span>`);
+                        container.append(
+                            `<span class="badge bg-danger me-1 mb-1">Error loading attributes</span>`
+                        );
                         $('#attributeValueIdsInput').val(''); // Clear on error
                         updateVariantNameAndSku();
                     }
@@ -956,7 +1150,7 @@
                         if (response.attributeTypes.length === 0) {
                             tableBody.append(
                                 '<tr><td colspan="3" class="text-center">No attribute types found.</td></tr>'
-                                );
+                            );
                         } else {
                             response.attributeTypes.forEach(type => {
                                 tableBody.append(`
@@ -995,7 +1189,7 @@
                         if (response.attributeValues.length === 0) {
                             tableBody.append(
                                 '<tr><td colspan="2" class="text-center">No values found.</td></tr>'
-                                );
+                            );
                         } else {
                             response.attributeValues.forEach(value => {
                                 tableBody.append(`
@@ -1040,7 +1234,8 @@
                 $('#productStatus').prop('checked', true);
                 $('#productIsFeatured').prop('checked', false);
 
-                loadCategoriesForProductModal([]);
+                // Truyền tham số `false` cho chế độ thêm mới
+                loadCategoriesForProductModal([], false);
                 loadTagsForProductModal([]);
 
                 $('.text-danger').text('');
@@ -1079,7 +1274,8 @@
                             $('#currentProductImage').hide().attr('src', '');
                         }
 
-                        loadCategoriesForProductModal(productCategoryIds);
+                        // Truyền tham số `true` cho chế độ chỉnh sửa
+                        loadCategoriesForProductModal(productCategoryIds, true);
                         loadTagsForProductModal(productTagIds);
 
                         $('#variantManagementSection').show(); // Hiện phần quản lý biến thể
@@ -1091,6 +1287,65 @@
                         Swal.fire('Error!',
                             'Failed to load product details. Check console for more info.',
                             'error');
+                    }
+                });
+            });
+
+            // Handle form submission (Add/Edit Product)
+            $('#productForm').on('submit', function(e) {
+                e.preventDefault();
+
+                // Clear previous errors
+                $('.text-danger').text('');
+
+                let formData = new FormData(this);
+
+                // Remove any existing category_ids entries from formData
+                // because we're manually adding them from the hidden input.
+                // This is crucial if a product starts with categories and then changes.
+                if (formData.has('category_ids[]')) {
+                    formData.delete('category_ids[]');
+                }
+
+                // Parse the JSON string from the hidden input and append each ID
+                let selectedCategoryIds = JSON.parse($('#selectedCategoryIdsHidden').val() || '[]');
+                selectedCategoryIds.forEach(id => {
+                    formData.append('category_ids[]', id);
+                });
+
+                // Existing logic for product ID, method, URL
+                let productId = $('#productId').val();
+                let method = $('#formMethod').val();
+                let url = method === 'POST' ? "{{ route('product.store') }}" : `/product/${productId}`;
+
+                $.ajax({
+                    url: url,
+                    method: 'POST', // Always POST for FormData with _method override (Laravel will handle _method parameter)
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire('Success!', response.success, 'success');
+                        $('#productModal').modal('hide');
+                        updateProductTable(response.products); // Cập nhật lại bảng sản phẩm
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", xhr.responseText);
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            for (let field in errors) {
+                                let errorId = field.replace('.', '_') + 'Error';
+                                // Handle validation for category_ids (if it's an array, errors might be on category_ids.0, category_ids.1)
+                                if (field.startsWith('category_ids.')) {
+                                    $('#category_idsError').text(errors[field][0]);
+                                } else {
+                                    $(`#${errorId}`).text(errors[field][0]);
+                                }
+                            }
+                        } else {
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
+                        }
                     }
                 });
             });
@@ -1199,7 +1454,7 @@
                     $('#variantProductIdField').val(currentEditingProductId);
                     let productName = $('#productName').val();
                     $('#variantProductName').text(productName);
-                    
+
                     resetAndHideVariantForm(); // Reset và ẩn form khi mở modal biến thể
                     loadVariantsForProduct(currentEditingProductId); // Load variants table
                     $('#variantsModal').modal('show');
@@ -1248,14 +1503,17 @@
                         }
 
                         if (variant.img) {
-                            $('#currentVariantImage').attr('src', `/storage/${variant.img}`).show();
+                            $('#currentVariantImage').attr('src', `/storage/${variant.img}`)
+                                .show();
                         } else {
                             $('#currentVariantImage').hide().attr('src', '');
                         }
                         $('#cancelEditVariantBtn').show();
 
-                        let selectedAttributeValueIds = variant.attribute_values.map(av => av.id);
-                        loadAttributeTypesForVariantModal(selectedAttributeValueIds); // Load attributes for editing
+                        let selectedAttributeValueIds = variant.attribute_values.map(av => av
+                            .id);
+                        loadAttributeTypesForVariantModal(
+                            selectedAttributeValueIds); // Load attributes for editing
                         $('#variantForm').slideDown(); // Show the form for editing
                     },
                     error: function(xhr, status, error) {
@@ -1264,7 +1522,7 @@
                     }
                 });
             });
-            
+
             $('#cancelEditVariantBtn').on('click', function() {
                 resetAndHideVariantForm(); // Reset and hide variant form
                 $('#saveVariantBtn').text('Save Variant'); // Reset button text
@@ -1285,7 +1543,8 @@
             $('#variantName').on('input', updateVariantNameAndSku);
             // Lắng nghe sự kiện thay đổi checkbox thuộc tính biến thể để tự động cập nhật tên biến thể và SKU
             // Sự kiện này được gán lại mỗi khi loadAttributeTypesForVariantModal chạy
-            $(document).on('change', '#variantAttributesSelectionContainer .variant-attribute-checkbox', updateVariantNameAndSku);
+            $(document).on('change', '#variantAttributesSelectionContainer .variant-attribute-checkbox',
+                updateVariantNameAndSku);
 
 
             $('#variantForm').on('submit', function(e) {
@@ -1309,7 +1568,8 @@
                 let variantId = $('#variantId').val();
                 let productId = $('#variantProductIdField').val();
                 let method = $('#variantFormMethod').val();
-                let url = method === 'POST' ? `/product/${productId}/variants` : `/product-variant/${variantId}`;
+                let url = method === 'POST' ? `/product/${productId}/variants` :
+                    `/product-variant/${variantId}`;
 
                 $('.text-danger').text('');
 
@@ -1334,7 +1594,8 @@
                                 $(`#${errorId}`).text(errors[field][0]);
                             }
                         } else {
-                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
                         }
                     }
                 });
@@ -1357,7 +1618,9 @@
                         $.ajax({
                             url: `/product-variant/${variantId}`,
                             method: 'DELETE',
-                            data: { _token: '{{ csrf_token() }}' },
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
                             success: function(response) {
                                 Swal.fire('Deleted!', response.success, 'success');
                                 loadVariantsForProduct(productId);
@@ -1365,7 +1628,8 @@
                             },
                             error: function(xhr, status, error) {
                                 console.error("Error deleting variant:", error);
-                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete variant.', 'error');
+                                Swal.fire('Error!', xhr.responseJSON.error ||
+                                    'Failed to delete variant.', 'error');
                             }
                         });
                     }
@@ -1447,7 +1711,8 @@
                 let formData = new FormData(this);
                 let id = $('#attrTypeId').val();
                 let method = $('#attrTypeFormMethod').val();
-                let url = method === 'POST' ? "{{ route('product_attribute_type.store') }}" : `/product-attribute-types/${id}`;
+                let url = method === 'POST' ? "{{ route('product_attribute_type.store') }}" :
+                    `/product-attribute-types/${id}`;
 
                 $('.text-danger').text('');
 
@@ -1462,7 +1727,7 @@
                         loadAttributeTypesForManageModal();
                         resetAttrTypeForm();
                         if ($('#variantsModal').hasClass('show')) {
-                             loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                            loadAttributeTypesForVariantModal(selectedVariantAttrValues);
                         }
                     },
                     error: function(xhr, status, error) {
@@ -1473,7 +1738,8 @@
                                 $(`#attr_type_${field}Error`).text(errors[field][0]);
                             }
                         } else {
-                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
                         }
                     }
                 });
@@ -1494,24 +1760,31 @@
                         $.ajax({
                             url: `/product-attribute-types/${id}`,
                             method: 'DELETE',
-                            data: { _token: '{{ csrf_token() }}' },
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
                             success: function(response) {
                                 Swal.fire('Deleted!', response.success, 'success');
                                 loadAttributeTypesForManageModal();
                                 if (currentManagingAttrTypeId === id) {
-                                    $('#attrValueContext').show().text('Select an Attribute Type to manage its values.');
+                                    $('#attrValueContext').show().text(
+                                        'Select an Attribute Type to manage its values.'
+                                    );
                                     $('#attributeValuesTable').hide();
                                     $('#addAttrValueBtn').hide();
                                     $('#attrValueForm').hide();
                                     resetAttrValueForm();
                                 }
                                 if ($('#variantsModal').hasClass('show')) {
-                                     loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                                    loadAttributeTypesForVariantModal(
+                                        selectedVariantAttrValues);
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error("Error deleting attribute type:", xhr.responseText);
-                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete attribute type.', 'error');
+                                console.error("Error deleting attribute type:", xhr
+                                    .responseText);
+                                Swal.fire('Error!', xhr.responseJSON.error ||
+                                    'Failed to delete attribute type.', 'error');
                             }
                         });
                     }
@@ -1545,7 +1818,7 @@
                 let id = $(this).data('id');
                 let typeId = $(this).data('type-id');
                 currentManagingAttrTypeId = typeId;
-                
+
                 $('#attrValueForm').slideDown();
 
                 $.ajax({
@@ -1577,7 +1850,8 @@
                 let id = $('#attrValueId').val();
                 let typeId = $('#currentAttrTypeIdForValue').val();
                 let method = $('#attrValueFormMethod').val();
-                let url = method === 'POST' ? `/product-attribute-types/${typeId}/values` : `/product-attribute-values/${id}`;
+                let url = method === 'POST' ? `/product-attribute-types/${typeId}/values` :
+                    `/product-attribute-values/${id}`;
 
                 $('.text-danger').text('');
 
@@ -1592,7 +1866,7 @@
                         loadAttributeValuesForManageModal(typeId);
                         resetAttrValueForm();
                         if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
-                             loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                            loadAttributeTypesForVariantModal(selectedVariantAttrValues);
                         }
                     },
                     error: function(xhr, status, error) {
@@ -1604,7 +1878,8 @@
                                 $(`#${errorId}`).text(errors[field][0]);
                             }
                         } else {
-                            Swal.fire('Error!', xhr.responseJSON.error || 'Something went wrong.', 'error');
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
                         }
                     }
                 });
@@ -1626,17 +1901,23 @@
                         $.ajax({
                             url: `/product-attribute-values/${id}`,
                             method: 'DELETE',
-                            data: { _token: '{{ csrf_token() }}' },
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
                             success: function(response) {
                                 Swal.fire('Deleted!', response.success, 'success');
                                 loadAttributeValuesForManageModal(typeId);
-                                if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
-                                     loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                                if ($('#variantsModal').hasClass('show') &&
+                                    currentEditingProductId) {
+                                    loadAttributeTypesForVariantModal(
+                                        selectedVariantAttrValues);
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error("Error deleting attribute value:", xhr.responseText);
-                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to delete attribute value.', 'error');
+                                console.error("Error deleting attribute value:", xhr
+                                    .responseText);
+                                Swal.fire('Error!', xhr.responseJSON.error ||
+                                    'Failed to delete attribute value.', 'error');
                             }
                         });
                     }
@@ -1677,16 +1958,20 @@
                             data: {
                                 _token: '{{ csrf_token() }}',
                                 price: bulkPrice,
-                                discount_price: isNaN(bulkDiscountPrice) ? null : bulkDiscountPrice,
+                                discount_price: isNaN(bulkDiscountPrice) ? null :
+                                    bulkDiscountPrice,
                             },
                             success: function(response) {
                                 Swal.fire('Success!', response.success, 'success');
                                 loadVariantsForProduct(currentEditingProductId);
                             },
                             error: function(xhr, status, error) {
-                                console.error("Error bulk updating prices:", xhr.responseText);
-                                $('#bulk_price_error').text(xhr.responseJSON.error || 'Failed to bulk update prices.');
-                                Swal.fire('Error!', xhr.responseJSON.error || 'Failed to bulk update prices.', 'error');
+                                console.error("Error bulk updating prices:", xhr
+                                    .responseText);
+                                $('#bulk_price_error').text(xhr.responseJSON.error ||
+                                    'Failed to bulk update prices.');
+                                Swal.fire('Error!', xhr.responseJSON.error ||
+                                    'Failed to bulk update prices.', 'error');
                             }
                         });
                     }
