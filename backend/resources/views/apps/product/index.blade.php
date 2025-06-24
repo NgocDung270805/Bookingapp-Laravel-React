@@ -298,37 +298,37 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="variantsModalLabel">Manage Variants for Product: <span
+                    <h5 class="modal-title" id="variantsModalLabel">Quản lý biến thể cho sản phẩm: <span
                             id="variantProductName"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="currentProductIdForVariants">
-                    <h6>Existing Variants:</h6>
+                    <h6>Các biến thể hiện có:</h6>
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>Tên</th>
                                 <th>SKU</th>
-                                <th>Price Type</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Image</th>
-                                <th>Status</th>
-                                <th>Featured</th>
-                                <th>Actions</th>
+                                <th>Loại giá</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th>Hình ảnh</th>
+                                <th>Trạng thái</th>
+                                <th>Nổi bật</th>
+                                <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody id="variantsTableBody">
-                            {{-- Variants will be loaded here via JS --}}
+                            {{-- Các biến thể sẽ được tải ở đây qua JS --}}
                         </tbody>
                     </table>
-                    <button type="button" class="btn btn-success btn-sm mt-3" id="addVariantBtn">Add New
-                        Variant</button>
+                    <button type="button" class="btn btn-success btn-sm mt-3" id="addVariantBtn">Thêm biến thể
+                        mới</button>
 
                     <hr class="my-4">
 
-                    <h6>Add/Edit Variant:</h6>
+                    <h6>Thêm/Sửa biến thể:</h6>
                     {{-- FORM NÀY BAN ĐẦU SẼ BỊ ẨN --}}
                     <form id="variantForm" enctype="multipart/form-data" style="display: none;">
                         @csrf
@@ -336,120 +336,134 @@
                         <input type="hidden" name="variant_id" id="variantId">
                         <input type="hidden" name="product_id" id="variantProductIdField">
 
-                        <div class="mb-3">
-                            <label for="variantName" class="form-label">Variant Name</label>
-                            <input type="text" class="form-control" id="variantName" name="variant_name" required>
-                            <div class="text-danger" id="variant_nameError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="variantSku" class="form-label">SKU (Stock Keeping Unit)</label>
-                            <input type="text" class="form-control" id="variantSku" name="sku" readonly>
-                            <div class="text-danger" id="skuError"></div>
-                        </div>
-
-                        {{-- Phần chọn loại giá --}}
-                        <div class="mb-3">
-                            <label class="form-label">Pricing Type</label>
-                            <div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pricing_type"
-                                        id="pricingTypePublic" value="public_price" checked>
-                                    <label class="form-check-label" for="pricingTypePublic">Public Price</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="pricing_type"
-                                        id="pricingTypeQuote" value="request_quote">
-                                    <label class="form-check-label" for="pricingTypeQuote">Request Quote</label>
-                                </div>
-                            </div>
-                            <div class="text-danger" id="pricing_typeError"></div>
-                        </div>
-
-                        {{-- Các trường giá, chỉ hiển thị khi pricing_type là public_price --}}
-                        <div id="publicPriceFields">
-                            <div class="mb-3">
-                                <label for="variantPrice" class="form-label">Price</label>
-                                <input type="number" step="0.01" class="form-control" id="variantPrice"
-                                    name="price">
-                                <div class="text-danger" id="priceError"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="variantDiscountPrice" class="form-label">Discount Price</label>
-                                <input type="number" step="0.01" class="form-control" id="variantDiscountPrice"
-                                    name="discount_price">
-                                <div class="text-danger" id="discount_priceError"></div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="variantDiscountPercent" class="form-label">Discount Percent (%)</label>
-                                <input type="number" class="form-control" id="variantDiscountPercent"
-                                    name="discount_percent" min="0" max="100">
-                                <div class="text-danger" id="discount_percentError"></div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="variantQuantity" class="form-label">Quantity</label>
-                            <input type="number" class="form-control" id="variantQuantity" name="quantity" required
-                                min="0">
-                            <div class="text-danger" id="quantityError"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="variantImage" class="form-label">Variant Image</label>
-                            <input class="form-control" type="file" id="variantImage" name="img">
-                            <div class="text-danger" id="variant_imgError"></div>
-                            <img id="currentVariantImage" src="" alt="Current Image" class="img-thumbnail mt-2"
-                                style="max-width: 80px; display: none;">
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="variantStatus" name="status"
-                                value="1" checked>
-                            <label class="form-check-label" for="variantStatus">Active</label>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="variantIsFeatured" name="is_featured"
-                                value="1">
-                            <label class="form-check-label" for="variantIsFeatured">Featured</label>
-                        </div>
-
                         {{-- Phần quản lý thuộc tính biến thể --}}
                         <div class="mb-3 border p-3 rounded">
-                            <label class="form-label d-block">Variant Attributes</label>
+                            <label class="form-label d-block">Thuộc tính biến thể</label>
                             <div id="variantAttributesSelectionContainer">
-                                {{-- Attribute Types and Values will be loaded here via JS --}}
-                                <p class="text-muted small">Loading attributes...</p>
+                                {{-- Các loại thuộc tính và giá trị sẽ được tải ở đây qua JS --}}
+                                <p class="text-muted small">Đang tải thuộc tính...</p>
                             </div>
+                            {{-- Input ẩn để lưu các ID giá trị thuộc tính đã chọn --}}
                             <input type="hidden" name="attribute_value_ids" id="attributeValueIdsInput">
                             <div class="text-danger" id="attribute_value_idsError"></div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" id="saveVariantBtn">Save Variant</button>
-                        <button type="button" class="btn btn-secondary" id="cancelEditVariantBtn">Cancel Edit</button>
-                        {{-- Bỏ style display none --}}
+                        {{-- Nút để mở/đóng phần chi tiết biến thể --}}
+                        <button type="button" class="btn btn-info mb-3" id="toggleVariantDetailsBtn">
+                            <span class="fas fa-cog me-2"></span>Cấu hình chi tiết biến thể
+                        </button>
+
+                        {{-- Nhóm các trường chi tiết biến thể này vào một div có thể đóng/mở --}}
+                        <div id="variantDetailsFields" style="display: none;">
+                            {{-- Tên biến thể và SKU sẽ TỰ ĐỘNG SINH, không cho nhập tay nữa --}}
+                            <div class="mb-3">
+                                <label for="variantNameDisplay" class="form-label">Tên biến thể</label>
+                                <input type="text" class="form-control" id="variantNameDisplay" readonly>
+                                <input type="hidden" name="variant_name" id="variantNameHidden">
+                            </div>
+                            <div class="mb-3">
+                                <label for="variantSkuDisplay" class="form-label">SKU (Mã giữ kho)</label>
+                                <input type="text" class="form-control" id="variantSkuDisplay" readonly>
+                                <input type="hidden" name="sku" id="variantSkuHidden">
+                            </div>
+
+                            {{-- Phần chọn loại giá --}}
+                            <div class="mb-3">
+                                <label class="form-label">Loại giá</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="pricing_type"
+                                            id="pricingTypePublic" value="public_price" checked>
+                                        <label class="form-check-label" for="pricingTypePublic">Giá công khai</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="pricing_type"
+                                            id="pricingTypeQuote" value="request_quote">
+                                        <label class="form-check-label" for="pricingTypeQuote">Yêu cầu báo giá</label>
+                                    </div>
+                                </div>
+                                <div class="text-danger" id="pricing_typeError"></div>
+                            </div>
+
+                            {{-- Các trường giá, chỉ hiển thị khi pricing_type là public_price --}}
+                            <div id="publicPriceFields">
+                                <div class="mb-3">
+                                    <label for="variantPrice" class="form-label">Giá</label>
+                                    <input type="number" step="0.01" class="form-control" id="variantPrice"
+                                        name="price">
+                                    <div class="text-danger" id="priceError"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="variantDiscountPrice" class="form-label">Giá giảm</label>
+                                    <input type="number" step="0.01" class="form-control" id="variantDiscountPrice"
+                                        name="discount_price">
+                                    <div class="text-danger" id="discount_priceError"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="variantDiscountPercent" class="form-label">Phần trăm giảm giá (%)</label>
+                                    <input type="number" class="form-control" id="variantDiscountPercent"
+                                        name="discount_percent" min="0" max="100">
+                                    <div class="text-danger" id="discount_percentError"></div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="variantQuantity" class="form-label">Số lượng</label>
+                                <input type="number" class="form-control" id="variantQuantity" name="quantity" required
+                                    min="0">
+                                <div class="text-danger" id="quantityError"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="variantImage" class="form-label">Hình ảnh biến thể</label>
+                                <input class="form-control" type="file" id="variantImage" name="img">
+                                <div class="text-danger" id="variant_imgError"></div>
+                                <img id="currentVariantImage" src="" alt="Hình ảnh hiện tại" class="img-thumbnail mt-2"
+                                    style="max-width: 80px; display: none;">
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="variantStatus" name="status"
+                                    value="1" checked>
+                                <label class="form-check-label" for="variantStatus">Hoạt động</label>
+                            </div>
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="variantIsFeatured" name="is_featured"
+                                    value="1">
+                                <label class="form-check-label" for="variantIsFeatured">Nổi bật</label>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary" id="saveVariantBtn">Lưu biến thể</button>
+                            <button type="button" class="btn btn-secondary" id="cancelEditVariantBtn">Hủy chỉnh sửa</button>
+                        </div>
                     </form>
 
-                    {{-- Phần nhập giá hàng loạt (Bulk Price Update) --}}
+                    {{-- Phần nhập giá hàng loạt (Bulk Price Update)
                     <hr class="my-4">
-                    <h6>Bulk Price Update:</h6>
-                    <div class="row g-3">
+                    <h6>Cập nhật giá hàng loạt:</h6>
+                    <button type="button" class="btn btn-info mb-3" id="toggleBulkPriceUpdateBtn">
+                        <span class="fas fa-money-bill-wave me-2"></span>Cập nhật giá toàn bộ biến thể
+                    </button>
+                    <div class="row g-3" id="bulkPriceUpdateSection" style="display: none;">
                         <div class="col-md-6">
-                            <label for="bulkPriceInput" class="form-label">Price for all variants</label>
+                            <label for="bulkPriceInput" class="form-label">Giá cho tất cả biến thể</label>
                             <input type="number" step="0.01" class="form-control" id="bulkPriceInput"
-                                placeholder="Enter price">
+                                placeholder="Nhập giá">
                         </div>
                         <div class="col-md-6">
-                            <label for="bulkDiscountPriceInput" class="form-label">Discount Price for all variants</label>
+                            <label for="bulkDiscountPriceInput" class="form-label">Giá giảm cho tất cả biến thể</label>
                             <input type="number" step="0.01" class="form-control" id="bulkDiscountPriceInput"
-                                placeholder="Enter discount price">
+                                placeholder="Nhập giá giảm">
                         </div>
                         <div class="col-12">
-                            <button type="button" class="btn btn-warning" id="applyBulkPriceBtn">Apply to All
-                                Variants</button>
+                            <button type="button" class="btn btn-warning" id="applyBulkPriceBtn">Áp dụng cho tất cả
+                                biến thể</button>
                         </div>
                         <div class="text-danger" id="bulk_price_error"></div>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Done</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Xong</button>
                 </div>
             </div>
         </div>
@@ -942,18 +956,35 @@
                 });
             }
 
+            // Hàm mới để kiểm tra và ẩn/hiện các trường chi tiết của biến thể
+            function toggleVariantDetailsFields() {
+                // Hiển thị các trường chi tiết nếu có ít nhất một thuộc tính được chọn
+                if (selectedVariantAttrValues.length > 0) {
+                    $('#toggleVariantDetailsBtn').show(); // Hiển thị nút đóng/mở
+                    // Nếu đang ở chế độ chỉnh sửa hoặc người dùng đã mở, thì hiển thị nội dung
+                    if ($('#variantFormMethod').val() === 'PUT' || $('#variantDetailsFields').is(':visible')) {
+                         $('#variantDetailsFields').slideDown();
+                    }
+                } else {
+                    $('#variantDetailsFields').slideUp(); // Ẩn hoàn toàn nếu không có thuộc tính nào được chọn
+                    $('#toggleVariantDetailsBtn').hide(); // Ẩn nút đóng/mở
+                }
+            }
+
+
             // =======================================================================
             // NEW LOGIC FOR SHOW/HIDE VARIANT FORM & ATTRIBUTE SELECTION
             // =======================================================================
 
-            // Function to reset and hide the variant form
+            // Đặt lại và ẩn biểu mẫu biến thể (Cập nhật)
             function resetAndHideVariantForm() {
-                $('#variantForm').slideUp(); // Hide the form
-                resetVariantForm(); // Reset its fields
-                $('#saveVariantBtn').text('Save Variant'); // Reset button text
+                $('#variantForm').slideUp();
+                resetVariantForm();
+                $('#saveVariantBtn').text('Lưu biến thể');
+                toggleVariantDetailsFields(); // Đảm bảo ẩn các trường chi tiết
             }
 
-            // Hàm reset toàn bộ form biến thể (bao gồm cả trạng thái hiển thị)
+            // Đặt lại toàn bộ biểu mẫu biến thể (Cập nhật)
             function resetVariantForm() {
                 $('#variantForm')[0].reset();
                 $('#variantFormMethod').val('POST');
@@ -964,96 +995,102 @@
                 $('#variantIsFeatured').prop('checked', false);
                 $('.text-danger').text('');
                 $('#cancelEditVariantBtn').hide();
-                $('#pricingTypePublic').prop('checked', true); // Mặc định là Public Price
-                $('#publicPriceFields').show(); // Hiển thị trường giá công khai
-                $('#bulkPriceInput').val('');
-                $('#bulkDiscountPriceInput').val('');
-                selectedVariantAttrValues = []; // Reset selected attributes for the variant
-                updateSelectedAttributesDisplay(); // Cập nhật hiển thị và hidden input
-                updateVariantNameAndSku(); // Cập nhật lại tên biến thể và SKU
-                loadAttributeTypesForVariantModal(
-                    []); // Call with empty array to clear checkboxes in the selection modal
+                $('#pricingTypePublic').prop('checked', true);
+                $('#publicPriceFields').show();
+                selectedVariantAttrValues = []; // Đặt lại các thuộc tính đã chọn
+                updateVariantNameAndSku(); // Cập nhật lại tên biến thể và SKU sau khi reset thuộc tính
+                loadAttributeTypesForVariantModal([]); // Tải thuộc tính cho một biến thể mới (không có thuộc tính nào được chọn)
+                toggleVariantDetailsFields(); // Gọi để ẩn các trường chi tiết khi form reset
             }
 
-            // Function to generate Variant Name and SKU dynamically
+            // Tự động tạo Tên biến thể và SKU (Giữ nguyên)
             function updateVariantNameAndSku() {
-                let baseName = $('#productName').val();
+                let baseName = currentProductName;
                 let selectedAttrValueNames = [];
+                let selectedAttrValueSlugs = [];
 
-                $('#selectAttributesContainer .variant-attribute-checkbox:checked').each(function() {
+                $('#variantAttributesSelectionContainer .variant-attribute-checkbox:checked').each(function() {
                     selectedAttrValueNames.push($(this).data('value-name'));
+                    selectedAttrValueSlugs.push($(this).data('value-name').toLowerCase().replace(/\s+/g, '-'));
                 });
 
-                if (!baseName) {
-                    $('#variantName').val('');
-                    $('#variantSku').val('');
+                if (!baseName || selectedAttrValueNames.length === 0) { // Thêm điều kiện `selectedAttrValueNames.length === 0`
+                    // Nếu không có tên sản phẩm hoặc không có thuộc tính nào được chọn, không hiển thị tên/SKU
+                    $('#variantNameDisplay').val('');
+                    $('#variantNameHidden').val('');
+                    $('#variantSkuDisplay').val('');
+                    $('#variantSkuHidden').val('');
+                    toggleVariantDetailsFields(); // Ẩn nếu không đủ điều kiện
                     return;
                 }
 
                 selectedAttrValueNames.sort();
+                selectedAttrValueSlugs.sort();
 
                 let variantName = baseName;
                 if (selectedAttrValueNames.length > 0) {
                     variantName += ' - ' + selectedAttrValueNames.join(', ');
                 }
 
-                let sku = baseName.replace(/\s+/g, '-').toLowerCase();
-                if (selectedAttrValueNames.length > 0) {
-                    sku += '-' + selectedAttrValueNames.map(name => name.replace(/\s+/g, '-').toLowerCase()).join(
-                        '-');
+                let sku = baseName.toLowerCase().replace(/\s+/g, '-');
+                if (selectedAttrValueSlugs.length > 0) {
+                    sku += '-' + selectedAttrValueSlugs.join('-');
                 }
                 sku = sku.substring(0, 250);
 
-                $('#variantName').val(variantName);
-                $('#variantSku').val(sku);
+                $('#variantNameDisplay').val(variantName);
+                $('#variantNameHidden').val(variantName);
+                $('#variantSkuDisplay').val(sku);
+                $('#variantSkuHidden').val(sku);
+
+                toggleVariantDetailsFields(); // Luôn gọi để cập nhật trạng thái hiển thị
             }
 
-            // Function to load attribute types and values for the "Select Attributes for Variant" modal (#selectAttributeModal)
+            // Tải các loại thuộc tính và giá trị cho phần chọn thuộc tính của biến thể (Cập nhật)
             function loadAttributeTypesForVariantModal(initialSelectedAttributeValueIds = []) {
                 selectedVariantAttrValues = initialSelectedAttributeValueIds;
-                updateSelectedAttributesDisplay(); // Update display immediately before AJAX call
 
                 $.ajax({
                     url: "{{ route('product_attribute_type.index') }}",
                     method: 'GET',
                     success: function(response) {
-                        let attributesContainer = $(
-                            '#variantAttributesSelectionContainer'
-                        ); // Target container within #variantsModal (main variant form)
+                        let attributesContainer = $('#variantAttributesSelectionContainer');
                         attributesContainer.empty();
 
                         if (response.attributeTypes.length === 0) {
                             attributesContainer.append(
-                                '<p class="text-muted small">No attribute types defined. Please add them via "Manage Attributes" modal.</p>'
+                                '<p class="text-muted small">Chưa có loại thuộc tính nào được định nghĩa. Vui lòng thêm chúng qua modal "Quản lý thuộc tính".</p>'
                             );
                             return;
                         }
 
-                        response.attributeTypes.forEach(attrType => {
+                        const allAttributeTypesAndValues = response.attributeTypes;
+
+                        allAttributeTypesAndValues.forEach(attrType => {
                             let attrTypeHtml = `
                                 <div class="mb-3 border p-2 rounded">
                                     <strong>${attrType.name}:</strong>
                                     <button type="button" class="btn btn-link btn-sm float-end add-attr-value-from-variant-modal" data-attr-type-id="${attrType.id}" data-attr-type-name="${attrType.name}">
-                                        <i class="fas fa-plus"></i> Add Value
+                                        <i class="fas fa-plus"></i> Thêm giá trị
                                     </button>
-                                    <div class="d-flex flex-wrap mt-2" id="attr-values-for-type-${attrType.id}">
+                                    <div class="d-flex flex-wrap mt-2" data-attribute-type-id="${attrType.id}">
                             `;
                             if (attrType.values && attrType.values.length > 0) {
                                 attrType.values.forEach(attrValue => {
-                                    let checked = initialSelectedAttributeValueIds
-                                        .includes(attrValue.id) ? 'checked' : '';
-                                    let attrValueName = attrValue.value ? attrValue
-                                        .value : 'Unknown Value'; // Safe check
+                                    let checked = initialSelectedAttributeValueIds.includes(attrValue.id) ? 'checked' : '';
+                                    let attrValueName = attrValue.value ? attrValue.value : 'Giá trị không xác định';
                                     attrTypeHtml += `
                                         <div class="form-check me-3">
-                                            <input class="form-check-input variant-attribute-checkbox" type="checkbox" value="${attrValue.id}" id="select-attr-value-${attrValue.id}" ${checked} data-value-name="${attrValueName}" data-type-name="${attrType.name}">
+                                            <input class="form-check-input variant-attribute-checkbox" type="checkbox"
+                                                value="${attrValue.id}" id="select-attr-value-${attrValue.id}" ${checked}
+                                                data-value-name="${attrValueName}" data-type-id="${attrType.id}">
                                             <label class="form-check-label" for="select-attr-value-${attrValue.id}">${attrValueName}</label>
                                         </div>
                                     `;
                                 });
                             } else {
                                 attrTypeHtml +=
-                                    `<p class="text-muted small">No values defined for this attribute type.</p>`;
+                                    `<p class="text-muted small">Không có giá trị nào được định nghĩa cho loại thuộc tính này.</p>`;
                             }
                             attrTypeHtml += `
                                     </div>
@@ -1061,28 +1098,41 @@
                             `;
                             attributesContainer.append(attrTypeHtml);
                         });
-                        // Attach change listener to new checkboxes
-                        attributesContainer.find('.variant-attribute-checkbox').off('change').on(
-                            'change',
-                            function() {
-                                let id = parseInt($(this).val()); // Ensure ID is integer
-                                if ($(this).is(':checked')) {
-                                    if (!selectedVariantAttrValues.includes(id)) {
-                                        selectedVariantAttrValues.push(id);
-                                    }
-                                } else {
-                                    selectedVariantAttrValues = selectedVariantAttrValues.filter(
-                                        val => val !== id);
-                                }
-                                updateSelectedAttributesDisplay
-                                    (); // Update the main display and SKU
-                            });
+
+                        attributesContainer.off('change', '.variant-attribute-checkbox').on('change', '.variant-attribute-checkbox', function() {
+                            let selectedValueId = parseInt($(this).val());
+                            let attributeTypeId = parseInt($(this).data('type-id'));
+
+                            if ($(this).is(':checked')) {
+                                // Bỏ chọn tất cả các checkbox khác cùng loại thuộc tính
+                                $(`#variantAttributesSelectionContainer div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`).not(this).prop('checked', false);
+
+                                // Cập nhật `selectedVariantAttrValues`: loại bỏ giá trị cũ của loại thuộc tính này (nếu có)
+                                // và thêm giá trị mới được chọn.
+                                selectedVariantAttrValues = selectedVariantAttrValues.filter(valId => {
+                                    const valObj = allAttributeTypesAndValues.flatMap(type => type.values).find(v => v.id === valId);
+                                    return !valObj || valObj.attribute_type_id !== attributeTypeId;
+                                });
+                                selectedVariantAttrValues.push(selectedValueId);
+                            } else {
+                                // Nếu bỏ chọn, chỉ loại bỏ giá trị đó khỏi mảng
+                                selectedVariantAttrValues = selectedVariantAttrValues.filter(val => val !== selectedValueId);
+                            }
+
+                            // Cập nhật input ẩn và tên/SKU biến thể, sau đó ẩn/hiện các trường chi tiết
+                            $('#attributeValueIdsInput').val(JSON.stringify(selectedVariantAttrValues));
+                            updateVariantNameAndSku();
+                            toggleVariantDetailsFields(); // Kích hoạt ẩn/hiện ngay sau khi thay đổi thuộc tính
+                        });
+
+                        // Gọi `updateVariantNameAndSku` và `toggleVariantDetailsFields` lần đầu
+                        // để thiết lập trạng thái ban đầu của form (khi thêm hoặc sửa biến thể)
+                        updateVariantNameAndSku();
+                        toggleVariantDetailsFields();
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error loading attribute types and values for variant modal:",
-                            error);
-                        Swal.fire('Error!', 'Failed to load variant attributes.',
-                            'error'); // Show error to user
+                        console.error("Lỗi khi tải các loại thuộc tính và giá trị cho modal biến thể:", error);
+                        Swal.fire('Lỗi!', 'Không thể tải thuộc tính biến thể.', 'error');
                     }
                 });
             }
@@ -1452,28 +1502,28 @@
             $('#openVariantModalBtn').on('click', function() {
                 if (currentEditingProductId) {
                     $('#variantProductIdField').val(currentEditingProductId);
-                    let productName = $('#productName').val();
-                    $('#variantProductName').text(productName);
+                    currentProductName = $('#productName').val();
+                    $('#variantProductName').text(currentProductName);
 
-                    resetAndHideVariantForm(); // Reset và ẩn form khi mở modal biến thể
-                    loadVariantsForProduct(currentEditingProductId); // Load variants table
+                    resetAndHideVariantForm();
+                    loadVariantsForProduct(currentEditingProductId);
                     $('#variantsModal').modal('show');
                 } else {
-                    Swal.fire('Info', 'Please save the product first to manage variants.', 'info');
+                    Swal.fire('Thông tin', 'Vui lòng lưu sản phẩm trước để quản lý biến thể.', 'info');
                 }
             });
 
-            // Handle "Add New Variant" button in Variants Modal
             $('#addVariantBtn').on('click', function() {
-                resetVariantForm(); // Reset all fields
-                loadAttributeTypesForVariantModal([]); // Load attributes for a new variant
-                $('#variantForm').slideDown(); // Show the form for adding
+                resetVariantForm();
+                $('#variantForm').slideDown();
+                // Khi thêm mới, mặc định ẩn các trường chi tiết cho đến khi chọn thuộc tính
+                toggleVariantDetailsFields(); // Đảm bảo ẩn lúc mới mở form thêm
             });
 
-            // Handle "Edit Variant" button in Variants Table
             $(document).on('click', '.edit-variant-btn', function() {
                 let variantId = $(this).data('id');
-                $('#saveVariantBtn').text('Update Variant');
+                $('#saveVariantBtn').text('Cập nhật biến thể');
+                $('.text-danger').text('');
 
                 $.ajax({
                     url: `/product-variant/${variantId}/edit`,
@@ -1482,8 +1532,11 @@
                         let variant = response.variant;
                         $('#variantFormMethod').val('PUT');
                         $('#variantId').val(variant.id);
-                        $('#variantName').val(variant.variant_name);
-                        $('#variantSku').val(variant.sku);
+                        $('#variantNameDisplay').val(variant.variant_name);
+                        $('#variantNameHidden').val(variant.variant_name);
+                        $('#variantSkuDisplay').val(variant.sku);
+                        $('#variantSkuHidden').val(variant.sku);
+
                         $('#variantQuantity').val(variant.quantity);
                         $('#variantStatus').prop('checked', variant.status == 1);
                         $('#variantIsFeatured').prop('checked', variant.is_featured == 1);
@@ -1503,29 +1556,26 @@
                         }
 
                         if (variant.img) {
-                            $('#currentVariantImage').attr('src', `/storage/${variant.img}`)
-                                .show();
+                            $('#currentVariantImage').attr('src', `/storage/${variant.img}`).show();
                         } else {
                             $('#currentVariantImage').hide().attr('src', '');
                         }
                         $('#cancelEditVariantBtn').show();
 
-                        let selectedAttributeValueIds = variant.attribute_values.map(av => av
-                            .id);
-                        loadAttributeTypesForVariantModal(
-                            selectedAttributeValueIds); // Load attributes for editing
-                        $('#variantForm').slideDown(); // Show the form for editing
+                        let selectedAttributeValueIds = variant.attribute_values.map(av => av.id);
+                        loadAttributeTypesForVariantModal(selectedAttributeValueIds); // Tải thuộc tính cho chỉnh sửa
+                        $('#variantForm').slideDown(); // Hiển thị biểu mẫu để chỉnh sửa
+                        toggleVariantDetailsFields(); // Đảm bảo các trường chi tiết hiển thị khi sửa
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error fetching variant for edit:", error);
-                        Swal.fire('Error!', 'Failed to load variant details.', 'error');
+                        console.error("Lỗi khi tìm nạp biến thể để chỉnh sửa:", error);
+                        Swal.fire('Lỗi!', 'Không thể tải chi tiết biến thể.', 'error');
                     }
                 });
             });
 
             $('#cancelEditVariantBtn').on('click', function() {
-                resetAndHideVariantForm(); // Reset and hide variant form
-                $('#saveVariantBtn').text('Save Variant'); // Reset button text
+                resetAndHideVariantForm();
             });
 
             $('input[name="pricing_type"]').on('change', function() {
@@ -1539,6 +1589,7 @@
                 }
             });
 
+
             // Lắng nghe sự kiện input trên Variant Name để tự động cập nhật SKU
             $('#variantName').on('input', updateVariantNameAndSku);
             // Lắng nghe sự kiện thay đổi checkbox thuộc tính biến thể để tự động cập nhật tên biến thể và SKU
@@ -1549,27 +1600,21 @@
 
             $('#variantForm').on('submit', function(e) {
                 e.preventDefault();
-
                 let formData = new FormData(this);
-                // Ensure attribute_value_ids is properly sent
+
                 if (selectedVariantAttrValues.length > 0) {
                     selectedVariantAttrValues.forEach(function(id) {
                         formData.append('attribute_value_ids[]', id);
                     });
                 } else {
-                    // Gửi một mảng rỗng nếu không có gì được chọn để Laravel nhận dạng là mảng
-                    // Laravel yêu cầu 'attribute_value_ids' là một mảng, ngay cả khi rỗng.
-                    // Nếu không có checkbox nào được chọn và không có dòng này,
-                    // 'attribute_value_ids' sẽ không tồn tại trong FormData.
-                    formData.append('attribute_value_ids[]', ''); // Gửi một giá trị rỗng trong mảng
+                    // Nếu không có thuộc tính nào được chọn, và bạn vẫn muốn gửi form, có thể gửi mảng rỗng
+                    formData.append('attribute_value_ids[]', '');
                 }
-
 
                 let variantId = $('#variantId').val();
                 let productId = $('#variantProductIdField').val();
                 let method = $('#variantFormMethod').val();
-                let url = method === 'POST' ? `/product/${productId}/variants` :
-                    `/product-variant/${variantId}`;
+                let url = method === 'POST' ? `/product/${productId}/variants` : `/product-variant/${variantId}`;
 
                 $('.text-danger').text('');
 
@@ -1580,13 +1625,13 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        Swal.fire('Success!', response.success, 'success');
+                        Swal.fire('Thành công!', response.success, 'success');
                         loadVariantsForProduct(productId);
-                        resetAndHideVariantForm(); // Reset và ẩn form sau khi lưu
+                        resetAndHideVariantForm();
                         updateProductTable(response.products);
                     },
                     error: function(xhr, status, error) {
-                        console.error("Error:", xhr.responseText);
+                        console.error("Lỗi:", xhr.responseText);
                         let errors = xhr.responseJSON.errors;
                         if (errors) {
                             for (let field in errors) {
@@ -1594,8 +1639,8 @@
                                 $(`#${errorId}`).text(errors[field][0]);
                             }
                         } else {
-                            Swal.fire('Error!', xhr.responseJSON.error ||
-                                'Something went wrong.', 'error');
+                            Swal.fire('Lỗi!', xhr.responseJSON.error ||
+                                'Đã xảy ra lỗi.', 'error');
                         }
                     }
                 });
@@ -1634,6 +1679,10 @@
                         });
                     }
                 });
+            });
+
+            $('#toggleVariantDetailsBtn').on('click', function() {
+                $('#variantDetailsFields').slideToggle();
             });
 
             // ===============================================
