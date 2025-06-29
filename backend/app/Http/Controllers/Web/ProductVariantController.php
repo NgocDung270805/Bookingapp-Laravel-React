@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use App\Models\ProductAttributeType;
 use Illuminate\Support\Facades\Storage;
+use App\Models\ProductAttributeValueConfig;
 
 class ProductVariantController extends Controller
 {
@@ -17,7 +18,8 @@ class ProductVariantController extends Controller
      */
     public function index(Product $product)
     {
-        $variants = $product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get(); // Load attributeValues và attributeType
+        // Loại bỏ 'attributeValueConfigs' khỏi eager load của ProductVariant
+        $variants = $product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get(); 
         return response()->json(['variants' => $variants]);
     }
 
@@ -34,10 +36,19 @@ class ProductVariantController extends Controller
             'img' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'status' => 'boolean',
             'is_featured' => 'boolean',
-            'attribute_value_ids' => 'nullable|array', // KHÔNG CẦN json_decode nữa
+            'attribute_value_ids' => 'nullable|array',
             'attribute_value_ids.*' => 'exists:product_attribute_values,id',
+            'attribute_value_configs' => 'nullable|array',
+            'attribute_value_configs.*.product_attribute_value_id' => 'required|exists:product_attribute_values,id',
+            'attribute_value_configs.*.price' => 'nullable|numeric|min:0',
+            'attribute_value_configs.*.discount_price' => 'nullable|numeric|min:0',
+            'attribute_value_configs.*.discount_percent' => 'nullable|integer|min:0|max:100',
+            'attribute_value_configs.*.quantity' => 'nullable|integer|min:0',
+            'attribute_value_configs.*.image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'attribute_value_configs.*.current_image_path' => 'nullable|string|max:255',
+            'attribute_value_configs.*.is_active' => 'boolean',
+            'attribute_value_configs.*.is_featured' => 'boolean',
         ];
-
 
         if ($request->pricing_type === 'public_price') {
             $rules['price'] = 'required|numeric|min:0';
@@ -49,7 +60,7 @@ class ProductVariantController extends Controller
             $rules['discount_percent'] = 'nullable|integer|min:0|max:100';
         }
 
-        $request->validate($rules);
+        $validatedData = $request->validate($rules);
 
         $imgPath = null;
         if ($request->hasFile('img')) {
@@ -58,27 +69,64 @@ class ProductVariantController extends Controller
         }
 
         $variant = $product->variants()->create([
-            'variant_name' => $request->variant_name,
-            'sku' => $request->sku,
-            'pricing_type' => $request->pricing_type,
-            'price' => $request->pricing_type === 'public_price' ? $request->price : null,
-            'discount_price' => $request->pricing_type === 'public_price' ? $request->discount_price : null,
-            'discount_percent' => $request->pricing_type === 'public_price' ? $request->discount_percent : null,
-            'quantity' => $request->quantity,
+            'variant_name' => $validatedData['variant_name'],
+            'sku' => $validatedData['sku'],
+            'pricing_type' => $validatedData['pricing_type'],
+            'price' => $validatedData['pricing_type'] === 'public_price' ? ($validatedData['price'] ?? null) : null,
+            'discount_price' => $validatedData['pricing_type'] === 'public_price' ? ($validatedData['discount_price'] ?? null) : null,
+            'discount_percent' => $validatedData['pricing_type'] === 'public_price' ? ($validatedData['discount_percent'] ?? null) : null,
+            'quantity' => $validatedData['quantity'],
             'img' => $imgPath,
-            'status' => $request->status ?? 1,
-            'is_featured' => $request->is_featured ?? 0,
+            'status' => $validatedData['status'] ?? 1,
+            'is_featured' => $validatedData['is_featured'] ?? 0,
         ]);
 
-        
-        // Đồng bộ các giá trị thuộc tính cho biến thể
-        if ($request->has('attribute_value_ids')) {
-            $variant->attributeValues()->sync($request->attribute_value_ids); // Laravel tự nhận đây là mảng
+        if (isset($validatedData['attribute_value_ids'])) {
+            $variant->attributeValues()->sync($validatedData['attribute_value_ids']);
         } else {
             $variant->attributeValues()->detach();
         }
 
-        return response()->json(['success' => 'Variant created successfully.', 'variants' => $product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get()]);
+        if (isset($validatedData['attribute_value_configs']) && is_array($validatedData['attribute_value_configs'])) {
+            foreach ($validatedData['attribute_value_configs'] as $configData) {
+                $configImgPath = $configData['current_image_path'] ?? null;
+
+                if (isset($configData['image_file']) && $configData['image_file']) {
+                    if ($configImgPath && Storage::disk('public')->exists($configImgPath)) {
+                        Storage::disk('public')->delete($configImgPath);
+                    }
+                    $configImgPath = Storage::disk('public')->putFile('uploads/attribute_configs', $configData['image_file']);
+                }
+
+                ProductAttributeValueConfig::updateOrCreate(
+                    [
+                        'product_id' => $product->id,
+                        'product_attribute_value_id' => $configData['product_attribute_value_id']
+                    ],
+                    [
+                        'price' => $configData['price'] ?? null,
+                        'discount_price' => $configData['discount_price'] ?? null,
+                        'discount_percent' => $configData['discount_percent'] ?? null,
+                        'quantity' => $configData['quantity'] ?? 0,
+                        'img_path' => $configImgPath,
+                        'is_active' => $configData['is_active'] ?? 1,
+                        'is_featured' => $configData['is_featured'] ?? 0,
+                    ]
+                );
+            }
+            $submittedConfigValueIds = collect($validatedData['attribute_value_configs'])->pluck('product_attribute_value_id')->toArray();
+            ProductAttributeValueConfig::where('product_id', $product->id)
+                                    ->whereNotIn('product_attribute_value_id', $submittedConfigValueIds)
+                                    ->delete();
+
+        } else {
+            ProductAttributeValueConfig::where('product_id', $product->id)->delete();
+        }
+
+        // Tải lại products với các mối quan hệ cần thiết.
+        // attributeValueConfigs được load trực tiếp từ Product model.
+        $products = Product::with('categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs')->get(); 
+        return response()->json(['success' => 'Variant created successfully.', 'products' => $products]);
     }
 
     /**
@@ -86,19 +134,19 @@ class ProductVariantController extends Controller
      */
     public function edit(ProductVariant $productVariant)
     {
-        // Tải các giá trị thuộc tính hiện có của biến thể
         $productVariant->load('attributeValues'); 
+        
+        $attributeValueConfigs = ProductAttributeValueConfig::where('product_id', $productVariant->product_id)->get();
 
-        // Lấy tất cả loại thuộc tính và giá trị của chúng
         $attributeTypes = ProductAttributeType::with('values')->orderBy('name')->get(); 
 
-        // Lấy IDs của các giá trị thuộc tính hiện tại của biến thể
         $selectedAttributeValueIds = $productVariant->attributeValues->pluck('id')->toArray();
 
         return response()->json([
             'variant' => $productVariant,
-            'attributeTypes' => $attributeTypes, // Gửi tất cả loại thuộc tính và giá trị của chúng
-            'selectedAttributeValueIds' => $selectedAttributeValueIds, // Gửi các ID đã chọn
+            'attributeTypes' => $attributeTypes,
+            'selectedAttributeValueIds' => $selectedAttributeValueIds,
+            'attributeValueConfigs' => $attributeValueConfigs,
         ]);
     }
 
@@ -117,6 +165,16 @@ class ProductVariantController extends Controller
             'is_featured' => 'boolean',
             'attribute_value_ids' => 'nullable|array',
             'attribute_value_ids.*' => 'exists:product_attribute_values,id',
+            'attribute_value_configs' => 'nullable|array',
+            'attribute_value_configs.*.product_attribute_value_id' => 'required|exists:product_attribute_values,id',
+            'attribute_value_configs.*.price' => 'nullable|numeric|min:0',
+            'attribute_value_configs.*.discount_price' => 'nullable|numeric|min:0',
+            'attribute_value_configs.*.discount_percent' => 'nullable|integer|min:0|max:100',
+            'attribute_value_configs.*.quantity' => 'nullable|integer|min:0',
+            'attribute_value_configs.*.image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'attribute_value_configs.*.current_image_path' => 'nullable|string|max:255',
+            'attribute_value_configs.*.is_active' => 'boolean',
+            'attribute_value_configs.*.is_featured' => 'boolean',
         ];
 
         if ($request->pricing_type === 'public_price') {
@@ -129,7 +187,7 @@ class ProductVariantController extends Controller
             $rules['discount_percent'] = 'nullable|integer|min:0|max:100';
         }
 
-        $request->validate($rules);
+        $validatedData = $request->validate($rules);
 
         $imgPath = $productVariant->img;
         if ($request->hasFile('img')) {
@@ -141,26 +199,64 @@ class ProductVariantController extends Controller
         }
 
         $productVariant->update([
-            'variant_name' => $request->variant_name,
-            'sku' => $request->sku,
-            'pricing_type' => $request->pricing_type,
-            'price' => $request->pricing_type === 'public_price' ? $request->price : null,
-            'discount_price' => $request->pricing_type === 'public_price' ? $request->discount_price : null,
-            'discount_percent' => $request->pricing_type === 'public_price' ? $request->discount_percent : null,
-            'quantity' => $request->quantity,
+            'variant_name' => $validatedData['variant_name'],
+            'sku' => $validatedData['sku'],
+            'pricing_type' => $validatedData['pricing_type'],
+            'price' => $validatedData['pricing_type'] === 'public_price' ? ($validatedData['price'] ?? null) : null,
+            'discount_price' => $validatedData['pricing_type'] === 'public_price' ? ($validatedData['discount_price'] ?? null) : null,
+            'discount_percent' => $validatedData['pricing_type'] === 'public_price' ? ($validatedData['discount_percent'] ?? null) : null,
+            'quantity' => $validatedData['quantity'],
             'img' => $imgPath,
-            'status' => $request->status ?? 1,
-            'is_featured' => $request->is_featured ?? 0,
+            'status' => $validatedData['status'] ?? 1,
+            'is_featured' => $validatedData['is_featured'] ?? 0,
         ]);
 
-        // Đồng bộ các giá trị thuộc tính cho biến thể
-        if ($request->has('attribute_value_ids')) {
-            $productVariant->attributeValues()->sync($request->attribute_value_ids);
+        if (isset($validatedData['attribute_value_ids'])) {
+            $productVariant->attributeValues()->sync($validatedData['attribute_value_ids']);
         } else {
             $productVariant->attributeValues()->detach();
         }
 
-        return response()->json(['success' => 'Variant updated successfully.', 'variants' => $productVariant->product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get()]);
+        if (isset($validatedData['attribute_value_configs']) && is_array($validatedData['attribute_value_configs'])) {
+            foreach ($validatedData['attribute_value_configs'] as $configData) {
+                $configImgPath = $configData['current_image_path'] ?? null;
+
+                if (isset($configData['image_file']) && $configData['image_file']) {
+                    if ($configImgPath && Storage::disk('public')->exists($configImgPath)) {
+                        Storage::disk('public')->delete($configImgPath);
+                    }
+                    $configImgPath = Storage::disk('public')->putFile('uploads/attribute_configs', $configData['image_file']);
+                }
+
+                ProductAttributeValueConfig::updateOrCreate(
+                    [
+                        'product_id' => $productVariant->product_id,
+                        'product_attribute_value_id' => $configData['product_attribute_value_id']
+                    ],
+                    [
+                        'price' => $configData['price'] ?? null,
+                        'discount_price' => $configData['discount_price'] ?? null,
+                        'discount_percent' => $configData['discount_percent'] ?? null,
+                        'quantity' => $configData['quantity'] ?? 0,
+                        'img_path' => $configImgPath,
+                        'is_active' => $configData['is_active'] ?? 1,
+                        'is_featured' => $configData['is_featured'] ?? 0,
+                    ]
+                );
+            }
+            $submittedConfigValueIds = collect($validatedData['attribute_value_configs'])->pluck('product_attribute_value_id')->toArray();
+            ProductAttributeValueConfig::where('product_id', $productVariant->product_id)
+                                    ->whereNotIn('product_attribute_value_id', $submittedConfigValueIds)
+                                    ->delete();
+
+        } else {
+            ProductAttributeValueConfig::where('product_id', $productVariant->product_id)->delete();
+        }
+
+        // Tải lại products với các mối quan hệ cần thiết.
+        // attributeValueConfigs được load trực tiếp từ Product model.
+        $products = Product::with('categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs')->get();
+        return response()->json(['success' => 'Variant updated successfully.', 'products' => $products]);
     }
 
     /**
@@ -169,13 +265,25 @@ class ProductVariantController extends Controller
     public function destroy(ProductVariant $productVariant)
     {
         $productId = $productVariant->product_id;
-        // Xóa mối quan hệ với attribute values trước khi xóa biến thể
         $productVariant->attributeValues()->detach();
 
         if ($productVariant->img && Storage::disk('public')->exists($productVariant->img)) {
             Storage::disk('public')->delete($productVariant->img);
         }
         $productVariant->delete();
-        return response()->json(['success' => 'Variant deleted successfully.', 'variants' => Product::find($productId)->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get()]);
+        
+        // Tải lại products với các mối quan hệ cần thiết.
+        // attributeValueConfigs được load trực tiếp từ Product model.
+        $products = Product::with('categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs')->get();
+        return response()->json(['success' => 'Variant deleted successfully.', 'products' => $products]);
+    }
+    
+    // Phương thức mới để lấy các cấu hình giá trị thuộc tính cho một sản phẩm
+    public function getAttributeValueConfigs(Product $product)
+    {
+        $configs = ProductAttributeValueConfig::where('product_id', $product->id)
+                                             ->with('attributeValue.attributeType')
+                                             ->get();
+        return response()->json(['configs' => $configs]);
     }
 }

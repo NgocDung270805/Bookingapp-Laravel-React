@@ -9,6 +9,8 @@ use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
 use App\Http\Controllers\Web\ProductAttributeValueController;
+use App\Http\Controllers\Web\ProductAttributeValueConfigController;
+
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
@@ -85,4 +87,6 @@ Route::prefix('product-attribute-values')->name('product_attribute_value.')->gro
     Route::delete('/{attributeValue}', [ProductAttributeValueController::class, 'destroy'])->name('destroy');
     Route::post('/get-by-ids', [ProductAttributeValueController::class, 'getByIds']);
 });
-
+// Route để lấy các cấu hình giá trị thuộc tính cho một sản phẩm cụ thể
+Route::get('/product/{product}/attribute-value-configs', [ProductAttributeValueConfigController::class, 'index'])->name('product.attribute_value_configs.index');
+Route::get('/product/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs'])->name('product.attribute_value_configs.index');

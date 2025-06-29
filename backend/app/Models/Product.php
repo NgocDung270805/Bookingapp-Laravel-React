@@ -59,4 +59,9 @@ class Product extends Model
     {
         return $this->variants->min('price');
     }
+
+    public function attributeValueConfigs()
+    {
+        return $this->hasMany(ProductAttributeValueConfig::class);
+    }
 }
