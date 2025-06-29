@@ -23,8 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Bắt buộc dùng HTTPS
-        URL::forceScheme('https');
         // Chỉ force HTTPS khi môi trường là production
         if (App::environment('production')) {
             URL::forceScheme('https');
