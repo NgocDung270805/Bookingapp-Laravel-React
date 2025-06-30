@@ -12,8 +12,8 @@ export const PATHS = {
   REGISTER: '/register',
   PROFILE: '/user/profile',
   LOGOUT: '/logout',
-//   PRODUCTS: '/products',
-//   ADMIN_DASHBOARD: '/admin',
+  PRODUCTS: '/products',
+  ADMIN_DASHBOARD: '/admin',
 };
 
 // Bạn có thể định nghĩa các giá trị giới tính nếu cần kiểm tra

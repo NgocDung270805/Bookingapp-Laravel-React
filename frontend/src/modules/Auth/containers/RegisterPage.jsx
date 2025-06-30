@@ -38,7 +38,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto', border: '1px solid #ccc', borderRadius: '8px' }}>
+    <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto', border: '1px solid #ccc', borderRadius: '8px', color: '#000000'}}>
       <h2>Đăng ký</h2>
       <form onSubmit={handleSubmit}>
         <div>
