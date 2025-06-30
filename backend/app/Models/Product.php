@@ -64,4 +64,19 @@ class Product extends Model
     {
         return $this->hasMany(ProductAttributeValueConfig::class);
     }
+
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'product_favorites', 'product_id', 'user_id')->withTimestamps();
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

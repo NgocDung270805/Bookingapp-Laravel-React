@@ -2,10 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\Auth\LoginController;
-use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\ProfileController;
+use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Web\ProductVariantController;
+use App\Http\Controllers\Api\ProductActions\BookingController;
+use App\Http\Controllers\Api\ProductActions\CommentController;
+use App\Http\Controllers\Api\ProductActions\FavoriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +36,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Bạn có thể thêm các route API khác cần xác thực tại đây
     // Ví dụ cho quản lý sản phẩm:
-    // Route::apiResource('products', ProductController::class); // Đảm bảo bạn đã tạo ProductController
+    // Product API Routes
+    Route::apiResource('products', ProductController::class); // Tạo các route CRUD RESTful cho products
+    // Thêm các route tùy chỉnh nếu cần, ví dụ lấy variants cho một product:
+    Route::get('products/{product}/variants', [ProductVariantController::class, 'index']); // Nếu bạn đã có route này
+    Route::get('products/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs']); // Nếu bạn đã có route này
+
+    // Favorites
+    Route::post('products/{product}/favorite/toggle', [FavoriteController::class, 'toggle'])->name('api.products.favorite.toggle');
+    Route::get('products/{product}/favorite/status', [FavoriteController::class, 'checkStatus'])->name('api.products.favorite.status');
+    Route::get('user/favorites', [FavoriteController::class, 'index'])->name('api.user.favorites'); // Lấy danh sách sản phẩm yêu thích của user
+
+    // Bookings
+    Route::apiResource('products/{product}/bookings', BookingController::class)->only(['store', 'index']); // Đặt lịch cho 1 sản phẩm
+    Route::apiResource('bookings', BookingController::class)->except(['store']); // Quản lý bookings (show, update, destroy)
+
+    // Comments
+    Route::apiResource('products/{product}/comments', CommentController::class)->only(['index', 'store']); // Xem và thêm comment cho 1 sản phẩm
+    Route::apiResource('comments', CommentController::class)->except(['index', 'store']); // Quản lý comments (show, update, destroy)
 });
 
 // Api Url 

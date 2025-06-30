@@ -69,4 +69,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(User_details::class);
     }
+
+    public function favorites()
+    {
+        return $this->belongsToMany(Product::class, 'product_favorites', 'user_id', 'product_id')->withTimestamps();
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }
