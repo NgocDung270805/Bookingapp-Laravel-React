@@ -12,10 +12,12 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.10.0",
+    "feather-icons": "^4.29.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
-    "react-router-dom": "^7.6.3"
+    "react-router-dom": "^7.6.3",
+    "typed.js": "^2.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

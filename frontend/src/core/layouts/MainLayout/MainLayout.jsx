@@ -3,21 +3,19 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom'; // Dùng Outlet để render các route con
 import Header from '../components/Header'; // Import Header
-import Sidebar from '../components/Sidebar'; // Import Sidebar
-// import styles from './MainLayout.module.css'; // Nếu bạn có CSS module riêng
+import Footer from '../components/Footer'; // Import Footer
 
 const MainLayout = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <>
       <Header /> {/* Hiển thị Header */}
-      <div style={{ display: 'flex', flexGrow: 1 }}>
-        <Sidebar /> {/* Hiển thị Sidebar */}
-        <main style={{ flexGrow: 1, padding: '20px', backgroundColor: '#fff' }}>
+      <div style={{ display: 'flex', flexGrow: 1, width: '100%' }}>
+        <main style={{ flexGrow: 1, padding: '20px', backgroundColor: '#fff', width: '1900px' }}>
           <Outlet /> {/* Đây là nơi các trang (pages) sẽ được render */}
         </main>
       </div>
-      {/* <Footer /> // Nếu bạn có component Footer */}
-    </div>
+      <Footer />
+    </>
   );
 };
 
