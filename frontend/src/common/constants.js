@@ -1,5 +1,5 @@
 // src/common/constants.js
-
+export const BASE_URL_ADMIN = 'http://localhost:8000/'; // Đảm bảo đúng với URL API Laravel của bạn
 export const API_BASE_URL = 'http://localhost:8000/api'; // Đảm bảo đúng với URL API Laravel của bạn
 
 export const TOKEN_KEY = 'authToken'; // Key để lưu token xác thực trong Local Storage
@@ -13,7 +13,7 @@ export const PATHS = {
   PROFILE: '/user/profile',
   LOGOUT: '/logout',
   PRODUCTS: '/products',
-  ADMIN_DASHBOARD: '/admin',
+  ADMIN_DASHBOARD: BASE_URL_ADMIN,
 };
 
 // Bạn có thể định nghĩa các giá trị giới tính nếu cần kiểm tra
