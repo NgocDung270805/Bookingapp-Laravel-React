@@ -77,7 +77,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: 'auto', border: '1px solid #ccc', borderRadius: '8px' }}>
+    <div style={{ width: '100%', height: '100%' }}>
       <h2>Hồ sơ của tôi</h2>
       <form onSubmit={handleSubmit}>
         <div>

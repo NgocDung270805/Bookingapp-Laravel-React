@@ -13,6 +13,10 @@ import CommentFormModal from '../components/CommentFormModal';
 import BookingFormModal from '../components/BookingFormModal';
 
 const ProductsPage = () => {
+  useEffect(() => {
+      // Thay đổi tiêu đề trang khi component này được render
+      document.title = 'Products - BookingApp';
+    }, []); // [] đảm bảo hiệu ứng chỉ chạy một lần sau khi render đầu tiên
   const dispatch = useAppDispatch();
   const { products, loading, error } = useAppSelector((state) => state.products);
 
@@ -72,10 +76,10 @@ const ProductsPage = () => {
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto', border: '1px solid #ccc', borderRadius: '8px', color: '#000000'}}>
+    <div style={{ width: '100%', height: '100%', color: '#000000'}}>
       <h2>Danh sách Sản phẩm</h2>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse'}}>
         <thead>
           <tr style={{ backgroundColor: '#e2e6ea' }}>
             <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>ID</th>

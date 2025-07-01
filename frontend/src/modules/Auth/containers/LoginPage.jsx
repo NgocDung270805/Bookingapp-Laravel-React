@@ -1,38 +1,50 @@
-// src/modules/Auth/containers/LoginPage.jsx
+// // src/modules/Auth/containers/LoginPage.jsx
 
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../../appRedux'; // Dùng hooks tùy chỉnh
-import { loginUser } from '../slice'; // Import async thunk loginUser
-import { useNavigate } from 'react-router-dom'; // Để chuyển hướng sau khi đăng nhập
-import { PATHS } from '../../../common/constants'; // Import đường dẫn
+import { useAppDispatch, useAppSelector } from '../../../appRedux';
+import { loginUser } from '../slice';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '../../../common/constants';
 
 const LoginPage = () => {
   const dispatch = useAppDispatch();
-  const { loading, error, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, user } = useAppSelector((state) => state.auth); // Thêm 'user'
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Nếu người dùng đã đăng nhập, chuyển hướng về trang chủ
+  // Nếu người dùng đã đăng nhập, chuyển hướng về trang chủ hoặc admin dashboard
   if (isAuthenticated) {
-    navigate(PATHS.HOME);
-    return null; // Không render gì khi đang chuyển hướng
+    // Kiểm tra nếu user là admin
+    const isAdmin = user && user.roles && user.roles.some(role => role.name === 'admin');
+
+    if (isAdmin) {
+      window.location.href = 'BASE_URL'; // Chuyển hướng cứng đến Laravel Admin
+    } else {
+      navigate(PATHS.HOME); // Chuyển hướng về trang chủ React cho user thường
+    }
+    return null;
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Ngăn chặn hành vi mặc định của form
+    e.preventDefault();
     const resultAction = await dispatch(loginUser({ email, password, device_name: 'react_app' }));
 
-    // Kiểm tra nếu login thành công, chuyển hướng
     if (loginUser.fulfilled.match(resultAction)) {
-      navigate(PATHS.HOME);
+      const loggedInUser = resultAction.payload.user;
+      const isAdmin = loggedInUser.roles && loggedInUser.roles.some(role => role.name === 'admin');
+
+      if (isAdmin) {
+        window.location.href = 'http://localhost:8000/'; // Chuyển hướng cứng đến Laravel Admin
+      } else {
+        navigate(PATHS.HOME); // Chuyển hướng về trang chủ React
+      }
     }
-    // Lỗi sẽ được hiển thị qua `error` state từ Redux
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto', border: '1px solid #ccc', borderRadius: '8px', color: '#000000'}}>
+    <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto', border: '1px solid #ccc', borderRadius: '8px' }}>
       <h2>Đăng nhập</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -57,7 +69,7 @@ const LoginPage = () => {
             style={{ width: '100%', padding: '8px', margin: '5px 0' }}
           />
         </div>
-        {error && <p style={{ color: 'red' }}>{error}</p>} {/* Hiển thị lỗi từ Redux */}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit" disabled={loading} style={{ padding: '10px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
           {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
         </button>
