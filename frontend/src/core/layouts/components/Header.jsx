@@ -248,12 +248,23 @@ const Header = () => {
                     </>
                   ) : (
                     <>
-                      <Link to={PATHS.LOGIN} style={{ textDecoration: 'none', color: '#007bff', marginRight: '15px' }}>
-                        Đăng nhập
-                      </Link>
-                      <Link to={PATHS.REGISTER} style={{ textDecoration: 'none', color: '#28a745' }}>
-                        Đăng ký
-                      </Link>
+                      <div class="card-footer p-0 border-top border-translucent">
+                        <ul class="nav d-flex flex-column my-3">
+                          <li class="nav-item">
+                            <Link to={PATHS.REGISTER} class="nav-link px-3 d-block">
+                              <span class="me-2 text-body align-bottom" data-feather="user-plus"></span>
+                              Đăng ký tài khoản
+                            </Link>
+                          </li>
+                        </ul>
+                        <hr />
+                        <div class="px-3">
+                          <Link to={PATHS.LOGIN} class="btn btn-phoenix-secondary d-flex flex-center w-100">
+                            <span class="me-2" data-feather="log-in"> </span>Đăng nhập
+                          </Link>
+                        </div>
+                        <div class="my-2 text-center fw-bold fs-10 text-body-quaternary"><a class="text-body-quaternary me-1" href="#!">Chính sách bảo mật</a>&bull;<a class="text-body-quaternary mx-1" href="#!">Điều khoản</a>&bull;<a class="text-body-quaternary ms-1" href="#!">Cookies</a></div>
+                      </div>
                     </>
                   )}
                 </div>
