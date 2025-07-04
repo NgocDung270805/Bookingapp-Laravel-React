@@ -74,3 +74,465 @@ my-react-app/
 ├── public/                            # Chứa favicon, robots.txt, ảnh công khai
 │   └── favicon.ico
 │
+<!--  -->
+Directory structure:
+└── ngocdung270805-bookingapp-laravel-react/
+    ├── docker-compose.yml
+    ├── backend/
+    │   ├── README.md
+    │   ├── artisan
+    │   ├── CHANGELOG.md
+    │   ├── composer.json
+    │   ├── composer.lock
+    │   ├── Dockerfile
+    │   ├── package.json
+    │   ├── phpunit.xml
+    │   ├── vite.config.js
+    │   ├── .editorconfig
+    │   ├── .env.example
+    │   ├── .gitattributes
+    │   ├── .gitignore
+    │   ├── .styleci.yml
+    │   ├── app/
+    │   │   ├── Http/
+    │   │   │   └── Controllers/
+    │   │   │       ├── CategoriesController.php
+    │   │   │       ├── Controller.php
+    │   │   │       ├── HomeController.php
+    │   │   │       ├── ProductsController.php
+    │   │   │       ├── UserDetailsController.php
+    │   │   │       ├── UsersProfilesController.php
+    │   │   │       ├── Api/
+    │   │   │       │   ├── ProductController.php
+    │   │   │       │   ├── Auth/
+    │   │   │       │   │   ├── LoginController.php
+    │   │   │       │   │   ├── LogoutController.php
+    │   │   │       │   │   ├── ProfileController.php
+    │   │   │       │   │   └── RegisterController.php
+    │   │   │       │   └── ProductActions/
+    │   │   │       │       ├── BookingController.php
+    │   │   │       │       ├── CommentController.php
+    │   │   │       │       └── FavoriteController.php
+    │   │   │       ├── Auth/
+    │   │   │       │   └── LoginController.php
+    │   │   │       └── Web/
+    │   │   │           ├── ProductAttributeTypeController.php
+    │   │   │           ├── ProductAttributeValueConfigController.php
+    │   │   │           ├── ProductAttributeValueController.php
+    │   │   │           ├── ProductController.php
+    │   │   │           ├── ProductVariantController.php
+    │   │   │           └── TagController.php
+    │   │   ├── Models/
+    │   │   │   ├── Booking.php
+    │   │   │   ├── Category.php
+    │   │   │   ├── Comment.php
+    │   │   │   ├── Product.php
+    │   │   │   ├── ProductAttributeType.php
+    │   │   │   ├── ProductAttributeValue.php
+    │   │   │   ├── ProductAttributeValueConfig.php
+    │   │   │   ├── ProductFavorite.php
+    │   │   │   ├── ProductImage.php
+    │   │   │   ├── ProductVariant.php
+    │   │   │   ├── Tag.php
+    │   │   │   ├── User.php
+    │   │   │   ├── User_details.php
+    │   │   │   └── Users_profiles.php
+    │   │   └── Providers/
+    │   │       └── AppServiceProvider.php
+    │   ├── bootstrap/
+    │   │   ├── app.php
+    │   │   ├── providers.php
+    │   │   └── cache/
+    │   │       └── .gitignore
+    │   ├── config/
+    │   │   ├── app.php
+    │   │   ├── auth.php
+    │   │   ├── cache.php
+    │   │   ├── database.php
+    │   │   ├── filesystems.php
+    │   │   ├── logging.php
+    │   │   ├── mail.php
+    │   │   ├── queue.php
+    │   │   ├── sanctum.php
+    │   │   ├── services.php
+    │   │   └── session.php
+    │   ├── database/
+    │   │   ├── .gitignore
+    │   │   ├── factories/
+    │   │   │   ├── CategoriesFactory.php
+    │   │   │   ├── ProductsFactory.php
+    │   │   │   ├── UserDetailsFactory.php
+    │   │   │   ├── UserFactory.php
+    │   │   │   └── UsersProfilesFactory.php
+    │   │   ├── migrations/
+    │   │   │   ├── 0001_01_01_000000_create_users_table.php
+    │   │   │   ├── 0001_01_01_000001_create_cache_table.php
+    │   │   │   ├── 0001_01_01_000002_create_jobs_table.php
+    │   │   │   ├── 2025_05_15_155515_create_permission_tables.php
+    │   │   │   ├── 2025_05_23_072204_create_users_profiles_table.php
+    │   │   │   ├── 2025_05_23_073645_create_user_details_table.php
+    │   │   │   ├── 2025_05_23_160448_create_categories_table.php
+    │   │   │   ├── 2025_05_23_161217_create_products_table.php
+    │   │   │   ├── 2025_06_18_070550_create_tags_table.php
+    │   │   │   ├── 2025_06_18_070640_create_category_tag_table.php
+    │   │   │   ├── 2025_06_18_095645_create_product_tag_table.php
+    │   │   │   ├── 2025_06_19_064231_create_product_variants_table.php
+    │   │   │   ├── 2025_06_19_064739_create_product_images_table.php
+    │   │   │   ├── 2025_06_19_071932_create_product_category_table.php
+    │   │   │   ├── 2025_06_19_154535_create_product_attribute_types_table.php
+    │   │   │   ├── 2025_06_19_154548_create_product_attribute_values_table.php
+    │   │   │   ├── 2025_06_19_154559_create_product_variant_attribute_value_table.php
+    │   │   │   ├── 2025_06_24_080241_create_product_attribute_value_configs_table.php
+    │   │   │   ├── 2025_06_29_072232_create_personal_access_tokens_table.php
+    │   │   │   ├── 2025_06_30_073330_create_product_favorites_table.php
+    │   │   │   ├── 2025_06_30_073347_create_bookings_table.php
+    │   │   │   └── 2025_06_30_073354_create_comments_table.php
+    │   │   └── seeders/
+    │   │       ├── CategoriesSeeder.php
+    │   │       ├── DatabaseSeeder.php
+    │   │       ├── ProductsSeeder.php
+    │   │       ├── UserDetailsSeeder.php
+    │   │       └── UsersProfilesSeeder.php
+    │   ├── public/
+    │   │   ├── index.php
+    │   │   ├── robots.txt
+    │   │   ├── .htaccess
+    │   │   ├── assets/
+    │   │   │   ├── css/
+    │   │   │   ├── img/
+    │   │   │   │   ├── bg/
+    │   │   │   │   ├── country/
+    │   │   │   │   ├── favicons/
+    │   │   │   │   │   └── manifest.json
+    │   │   │   │   ├── gallery/
+    │   │   │   │   ├── generic/
+    │   │   │   │   ├── icons/
+    │   │   │   │   ├── nav-icons/
+    │   │   │   │   │   ├── behance.webp
+    │   │   │   │   │   ├── bitbucket.webp
+    │   │   │   │   │   ├── figma.webp
+    │   │   │   │   │   ├── gitlab.webp
+    │   │   │   │   │   ├── google-cloud.webp
+    │   │   │   │   │   ├── google-drive.webp
+    │   │   │   │   │   ├── google-maps.webp
+    │   │   │   │   │   ├── google-photos.webp
+    │   │   │   │   │   ├── ln.webp
+    │   │   │   │   │   ├── pinterest.webp
+    │   │   │   │   │   ├── slack.webp
+    │   │   │   │   │   ├── spotify.webp
+    │   │   │   │   │   ├── trello.webp
+    │   │   │   │   │   └── twitter.webp
+    │   │   │   │   ├── products/
+    │   │   │   │   │   └── 60x60/
+    │   │   │   │   ├── spot-illustrations/
+    │   │   │   │   └── team/
+    │   │   │   │       ├── 30.webp
+    │   │   │   │       ├── 35.webp
+    │   │   │   │       ├── 57.webp
+    │   │   │   │       ├── 59.webp
+    │   │   │   │       ├── avatar.webp
+    │   │   │   │       ├── 40x40/
+    │   │   │   │       │   ├── 24.webp
+    │   │   │   │       │   ├── 26.webp
+    │   │   │   │       │   ├── 29.webp
+    │   │   │   │       │   ├── 3.webp
+    │   │   │   │       │   ├── 30.webp
+    │   │   │   │       │   ├── 57.webp
+    │   │   │   │       │   ├── 58.webp
+    │   │   │   │       │   ├── 59.webp
+    │   │   │   │       │   ├── 8.webp
+    │   │   │   │       │   ├── 9.webp
+    │   │   │   │       │   └── avatar.webp
+    │   │   │   │       └── 72x72/
+    │   │   │   │           └── 57.webp
+    │   │   │   ├── js/
+    │   │   │   │   ├── config.js
+    │   │   │   │   ├── ecommerce-dashboard.js
+    │   │   │   │   ├── phoenix.js
+    │   │   │   │   └── dashboards/
+    │   │   │   │       ├── ecommerce-dashboard.js
+    │   │   │   │       └── projectmanagement-dashboard.js
+    │   │   │   └── video/
+    │   │   └── vendors/
+    │   │       ├── anchorjs/
+    │   │       ├── bigpicture/
+    │   │       │   └── BigPicture.js
+    │   │       ├── bootstrap/
+    │   │       ├── choices/
+    │   │       ├── dayjs/
+    │   │       ├── dhtmlx-gantt/
+    │   │       │   ├── dhtmlxgantt.css
+    │   │       │   └── dhtmlxgantt.js
+    │   │       ├── dropzone/
+    │   │       │   ├── dropzone-min.js
+    │   │       │   └── dropzone.css
+    │   │       ├── echarts/
+    │   │       ├── feather-icons/
+    │   │       ├── flatpickr/
+    │   │       ├── fontawesome/
+    │   │       ├── imagesloaded/
+    │   │       ├── is/
+    │   │       ├── isotope-layout/
+    │   │       ├── isotope-packery/
+    │   │       ├── leaflet/
+    │   │       │   ├── leaflet.css
+    │   │       │   └── leaflet.js
+    │   │       ├── leaflet.markercluster/
+    │   │       │   ├── leaflet.markercluster.js
+    │   │       │   ├── MarkerCluster.css
+    │   │       │   └── MarkerCluster.Default.css
+    │   │       ├── leaflet.tilelayer.colorfilter/
+    │   │       ├── list.js/
+    │   │       ├── lodash/
+    │   │       ├── popper/
+    │   │       ├── simplebar/
+    │   │       ├── swiper/
+    │   │       ├── tinymce/
+    │   │       │   ├── icons/
+    │   │       │   │   └── default/
+    │   │       │   ├── model/
+    │   │       │   │   └── dom/
+    │   │       │   ├── plugins/
+    │   │       │   │   ├── image/
+    │   │       │   │   ├── link/
+    │   │       │   │   ├── lists/
+    │   │       │   │   ├── media/
+    │   │       │   │   └── table/
+    │   │       │   └── themes/
+    │   │       │       └── silver/
+    │   │       └── typed.js/
+    │   │           └── typed.umd.js
+    │   ├── resources/
+    │   │   ├── css/
+    │   │   │   └── app.css
+    │   │   ├── js/
+    │   │   │   ├── app.js
+    │   │   │   └── bootstrap.js
+    │   │   └── views/
+    │   │       ├── index.blade.php
+    │   │       ├── welcome.blade.php
+    │   │       ├── apps/
+    │   │       │   ├── category/
+    │   │       │   │   └── index.blade.php
+    │   │       │   ├── product/
+    │   │       │   │   └── index.blade.php
+    │   │       │   └── tag/
+    │   │       │       └── index.blade.php
+    │   │       ├── layouts/
+    │   │       │   └── app.blade.php
+    │   │       ├── pages/
+    │   │       │   └── authentication/
+    │   │       │       └── card/
+    │   │       │           └── sign-in.blade.php
+    │   │       └── partials/
+    │   │           ├── footer.blade.php
+    │   │           ├── header.blade.php
+    │   │           └── sidebar.blade.php
+    │   ├── routes/
+    │   │   ├── api.php
+    │   │   ├── console.php
+    │   │   └── web.php
+    │   ├── storage/
+    │   │   ├── app/
+    │   │   │   ├── .gitignore
+    │   │   │   ├── private/
+    │   │   │   │   └── .gitignore
+    │   │   │   └── public/
+    │   │   │       └── .gitignore
+    │   │   ├── framework/
+    │   │   │   ├── .gitignore
+    │   │   │   ├── cache/
+    │   │   │   │   ├── .gitignore
+    │   │   │   │   └── data/
+    │   │   │   │       └── .gitignore
+    │   │   │   ├── sessions/
+    │   │   │   │   └── .gitignore
+    │   │   │   ├── testing/
+    │   │   │   │   └── .gitignore
+    │   │   │   └── views/
+    │   │   │       └── .gitignore
+    │   │   └── logs/
+    │   │       └── .gitignore
+    │   ├── tests/
+    │   │   ├── TestCase.php
+    │   │   ├── Feature/
+    │   │   │   └── ExampleTest.php
+    │   │   └── Unit/
+    │   │       └── ExampleTest.php
+    │   └── .github/
+    │       └── workflows/
+    │           ├── issues.yml
+    │           ├── pull-requests.yml
+    │           ├── tests.yml
+    │           └── update-changelog.yml
+    └── frontend/
+        ├── README.md
+        ├── Dockerfile
+        ├── eslint.config.js
+        ├── index.html
+        ├── nginx.conf
+        ├── package-lock.json
+        ├── package.json
+        ├── vite.config.js
+        ├── .gitignore
+        ├── public/
+        │   ├── assets/
+        │   │   ├── css/
+        │   │   ├── img/
+        │   │   │   ├── bg/
+        │   │   │   ├── country/
+        │   │   │   ├── favicons/
+        │   │   │   │   └── manifest.json
+        │   │   │   ├── gallery/
+        │   │   │   ├── generic/
+        │   │   │   ├── icons/
+        │   │   │   ├── nav-icons/
+        │   │   │   │   ├── behance.webp
+        │   │   │   │   ├── bitbucket.webp
+        │   │   │   │   ├── figma.webp
+        │   │   │   │   ├── gitlab.webp
+        │   │   │   │   ├── google-cloud.webp
+        │   │   │   │   ├── google-drive.webp
+        │   │   │   │   ├── google-maps.webp
+        │   │   │   │   ├── google-photos.webp
+        │   │   │   │   ├── ln.webp
+        │   │   │   │   ├── pinterest.webp
+        │   │   │   │   ├── slack.webp
+        │   │   │   │   ├── spotify.webp
+        │   │   │   │   ├── trello.webp
+        │   │   │   │   └── twitter.webp
+        │   │   │   ├── products/
+        │   │   │   │   └── 60x60/
+        │   │   │   ├── spot-illustrations/
+        │   │   │   └── team/
+        │   │   │       ├── 30.webp
+        │   │   │       ├── 35.webp
+        │   │   │       ├── 57.webp
+        │   │   │       ├── 59.webp
+        │   │   │       ├── avatar.webp
+        │   │   │       ├── 40x40/
+        │   │   │       │   ├── 24.webp
+        │   │   │       │   ├── 26.webp
+        │   │   │       │   ├── 29.webp
+        │   │   │       │   ├── 3.webp
+        │   │   │       │   ├── 30.webp
+        │   │   │       │   ├── 57.webp
+        │   │   │       │   ├── 58.webp
+        │   │   │       │   ├── 59.webp
+        │   │   │       │   ├── 8.webp
+        │   │   │       │   ├── 9.webp
+        │   │   │       │   └── avatar.webp
+        │   │   │       └── 72x72/
+        │   │   │           └── 57.webp
+        │   │   ├── js/
+        │   │   │   ├── config.js
+        │   │   │   ├── ecommerce-dashboard.js
+        │   │   │   ├── phoenix.js
+        │   │   │   └── dashboards/
+        │   │   │       ├── ecommerce-dashboard.js
+        │   │   │       └── projectmanagement-dashboard.js
+        │   │   └── video/
+        │   └── vendors/
+        │       ├── anchorjs/
+        │       ├── bigpicture/
+        │       │   └── BigPicture.js
+        │       ├── bootstrap/
+        │       ├── choices/
+        │       ├── dayjs/
+        │       ├── dhtmlx-gantt/
+        │       │   ├── dhtmlxgantt.css
+        │       │   └── dhtmlxgantt.js
+        │       ├── dropzone/
+        │       │   ├── dropzone-min.js
+        │       │   └── dropzone.css
+        │       ├── echarts/
+        │       ├── feather-icons/
+        │       ├── flatpickr/
+        │       ├── fontawesome/
+        │       ├── imagesloaded/
+        │       ├── is/
+        │       ├── isotope-layout/
+        │       ├── isotope-packery/
+        │       ├── leaflet/
+        │       │   ├── leaflet.css
+        │       │   └── leaflet.js
+        │       ├── leaflet.markercluster/
+        │       │   ├── leaflet.markercluster.js
+        │       │   ├── MarkerCluster.css
+        │       │   └── MarkerCluster.Default.css
+        │       ├── leaflet.tilelayer.colorfilter/
+        │       ├── list.js/
+        │       ├── lodash/
+        │       ├── popper/
+        │       ├── prism/
+        │       │   ├── prism-okaidia.css
+        │       │   └── prism.js
+        │       ├── simplebar/
+        │       ├── swiper/
+        │       ├── tinymce/
+        │       │   ├── icons/
+        │       │   │   └── default/
+        │       │   ├── model/
+        │       │   │   └── dom/
+        │       │   ├── plugins/
+        │       │   │   ├── image/
+        │       │   │   ├── link/
+        │       │   │   ├── lists/
+        │       │   │   ├── media/
+        │       │   │   └── table/
+        │       │   └── themes/
+        │       │       └── silver/
+        │       └── typed.js/
+        │           └── typed.umd.js
+        └── src/
+            ├── App.css
+            ├── App.jsx
+            ├── index.css
+            ├── index.jsx
+            ├── main.jsx
+            ├── appRedux/
+            │   ├── hooks.js
+            │   ├── index.js
+            │   └── store.js
+            ├── common/
+            │   ├── API.js
+            │   └── constants.js
+            ├── core/
+            │   └── layouts/
+            │       ├── AuthLayout/
+            │       │   └── AuthLayout.jsx
+            │       ├── components/
+            │       │   ├── Footer.jsx
+            │       │   └── Header.jsx
+            │       └── MainLayout/
+            │           └── MainLayout.jsx
+            ├── hoc/
+            │   └── withAuth.jsx
+            ├── hooks/
+            │   └── useAuth.js
+            ├── modules/
+            │   ├── Auth/
+            │   │   ├── api.js
+            │   │   ├── index.js
+            │   │   ├── slice.js
+            │   │   └── containers/
+            │   │       ├── LoginPage.jsx
+            │   │       └── RegisterPage.jsx
+            │   ├── Products/
+            │   │   ├── api.js
+            │   │   ├── slice.js
+            │   │   ├── components/
+            │   │   │   ├── BookingFormModal.jsx
+            │   │   │   └── CommentFormModal.jsx
+            │   │   └── containers/
+            │   │       └── ProductsPage.jsx
+            │   └── profile/
+            │       ├── api.js
+            │       ├── slice.js
+            │       └── containers/
+            │           └── ProfilePage.jsx
+            └── pages/
+                ├── Home/
+                │   └── HomePage.jsx
+                └── Products/
+                    └── ProductsPage.jsx
