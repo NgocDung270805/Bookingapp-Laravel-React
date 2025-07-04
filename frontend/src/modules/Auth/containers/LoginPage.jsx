@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../appRedux';
 import { loginUser } from '../slice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '../../../common/constants';
 
 const LoginPage = () => {
@@ -161,7 +161,10 @@ const LoginPage = () => {
                           {/* <button type="submit" disabled={loading}>
                             {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
                           </button> */}
-                          {/* {{-- < div class="text-center"><a class="fs-9 fw-bold" href="../../../pages/authentication/card/sign-up.html">Create an account</a></> --}} */}
+                          <div class="text-center">
+                            {/* <a class="fs-9 fw-bold" href="../../../pages/authentication/card/sign-up.html">Create an account</a> */}
+                            <Link to={PATHS.REGISTER} className="fs-9 fw-bold">Create an account</Link>
+                          </div>
                         </form>
                       </div>
                     </div>
