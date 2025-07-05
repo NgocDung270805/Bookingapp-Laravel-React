@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from '../../../appRedux';
 import { fetchUserProfile, updateUserProfile } from '../slice';
 import { useAuth } from '../../../hooks/useAuth';
 import { GENDER_TYPES } from '../../../common/constants'; // Import GENDER_TYPES nếu cần
+import { PATHS } from '../../../common/constants';
+// import '../../../assets/css/profile.css'
 
 const ProfilePage = () => {
   const dispatch = useAppDispatch();
@@ -77,59 +79,223 @@ const ProfilePage = () => {
   }
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
-      <h2>Hồ sơ của tôi</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name">Tên:</label>
-          <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </div>
-        {/* Các trường từ users_profiles */}
-        <div>
-          <label htmlFor="phone">Điện thoại:</label>
-          <input type="text" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="address">Địa chỉ:</label>
-          <input type="text" id="address" value={address} onChange={(e) => setAddress(e.target.value)} />
-        </div>
-        <div>
-          <label htmlFor="gender">Giới tính:</label>
-          <select id="gender" value={gender} onChange={(e) => setGender(e.target.value)}>
-            <option value="">Chọn giới tính</option>
-            <option value={GENDER_TYPES.MALE}>Nam</option>
-            <option value={GENDER_TYPES.FEMALE}>Nữ</option>
-            <option value={GENDER_TYPES.OTHER}>Khác</option>
-          </select>
-        </div>
-        <div>
-          <label htmlFor="bio">Mô tả bản thân:</label>
-          <textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} rows="4" />
-        </div>
-        <div>
-          <label htmlFor="avatar">Ảnh đại diện:</label>
-          <input type="file" id="avatar" onChange={(e) => setAvatarFile(e.target.files ? e.target.files[0] : null)} />
-          {profileData.profile?.avatar && (
-            <img src={`http://localhost:8000/storage/${profileData.profile.avatar}`} alt="Avatar hiện tại" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', marginTop: '10px' }} />
-          )}
-        </div>
-        {/* Các trường từ user_details có thể thêm tương tự */}
+    // <div style={{ width: '100%', height: '100%' }}>
+    //   <h2>Hồ sơ của tôi</h2>
+    //   <form onSubmit={handleSubmit}>
+    //     <div>
+    //       <label htmlFor="name">Tên:</label>
+    //       <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required />
+    //     </div>
+    //     <div>
+    //       <label htmlFor="email">Email:</label>
+    //       <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+    //     </div>
+    //     {/* Các trường từ users_profiles */}
+    //     <div>
+    //       <label htmlFor="phone">Điện thoại:</label>
+    //       <input type="text" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+    //     </div>
+    //     <div>
+    //       <label htmlFor="address">Địa chỉ:</label>
+    //       <input type="text" id="address" value={address} onChange={(e) => setAddress(e.target.value)} />
+    //     </div>
+    //     <div>
+    //       <label htmlFor="gender">Giới tính:</label>
+    //       <select id="gender" value={gender} onChange={(e) => setGender(e.target.value)}>
+    //         <option value="">Chọn giới tính</option>
+    //         <option value={GENDER_TYPES.MALE}>Nam</option>
+    //         <option value={GENDER_TYPES.FEMALE}>Nữ</option>
+    //         <option value={GENDER_TYPES.OTHER}>Khác</option>
+    //       </select>
+    //     </div>
+    //     <div>
+    //       <label htmlFor="bio">Mô tả bản thân:</label>
+    //       <textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} rows="4" />
+    //     </div>
+    //     <div>
+    //       <label htmlFor="avatar">Ảnh đại diện:</label>
+    //       <input type="file" id="avatar" onChange={(e) => setAvatarFile(e.target.files ? e.target.files[0] : null)} />
+    //       {profileData.profile?.avatar && (
+    //         <img src={`http://localhost:8000/storage/${profileData.profile.avatar}`} alt="Avatar hiện tại" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', marginTop: '10px' }} />
+    //       )}
+    //     </div>
+    //     {/* Các trường từ user_details có thể thêm tương tự */}
 
-        <button type="submit">Cập nhật hồ sơ</button>
-      </form>
+    //     <button type="submit">Cập nhật hồ sơ</button>
+    //   </form>
 
-      {profileData.details && (
-        <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
-          <h3>Chi tiết khác</h3>
-          <p><strong>Số CCCD:</strong> {profileData.details.id_number}</p>
-          <p><strong>Ngày cấp:</strong> {profileData.details.id_issued_date}</p>
-          {/* ... các chi tiết khác từ profileData.details */}
+    //   {profileData.details && (
+    //     <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
+    //       <h3>Chi tiết khác</h3>
+    //       <p><strong>Số CCCD:</strong> {profileData.details.id_number}</p>
+    //       <p><strong>Ngày cấp:</strong> {profileData.details.id_issued_date}</p>
+    //       {/* ... các chi tiết khác từ profileData.details */}
+    //     </div>
+    //   )}
+    // </div>
+    <div className="container-fluid mt-5">
+      <div className="row">
+        {/* Cột trái: Ảnh đại diện và thông tin tóm tắt */}
+        <div className="col-lg-4 mb-4">
+          <div className="card shadow-sm">
+            <div className="card-body text-center">
+              <img
+                src=
+                {`${PATHS.ADMIN_DASHBOARD}storage/${profileData.profile.avatar}`}
+                // {user.profile?.avatar ? `${BASE_URL_ADMIN}storage/${user.profile.avatar}` : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkgjgrCNlnMAjfAJmzC9Q8OGQKwKQpq3HtUQ&s'}
+                className="rounded-circle mb-3"
+                alt="Avatar"
+                style={{ width: '150px', height: '150px', objectFit: 'cover' }}
+              />
+              <h3 className="card-title">{profileData.name}</h3>
+              <p className="text-muted">{profileData.email}</p>
+              <p className="card-text">
+                <i className="bi bi-geo-alt-fill me-2"></i>
+                {profileData.profile?.address ? (
+                  profileData.profile.address
+                ) : (
+                  <span className="text-warning">Chưa cập nhật địa chỉ</span>
+                )}
+              </p>
+              <p className="card-text">
+                {profileData.profile?.bio ? (
+                  profileData.profile.bio
+                ) : (
+                  <span className="text-warning">Chưa có mô tả bản thân.</span>
+                )}
+              </p>
+            </div>
+          </div>
         </div>
-      )}
+
+        {/* Cột phải: Form chỉnh sửa thông tin */}
+        <div className="col-lg-8">
+          <div className="card shadow-sm">
+            <div className="card-header bg-primary text-white">
+              <h5 className="mb-0 text-white">Chỉnh sửa hồ sơ</h5>
+            </div>
+            <div className="card-body">
+              <form onSubmit={handleSubmit}>
+                <h6 className="text-muted mb-3">Thông tin người dùng</h6>
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label htmlFor="input-name" className="form-label">Tên:</label>
+                    <input
+                      type="text"
+                      id="input-name"
+                      className="form-control"
+                      placeholder="Tên của bạn"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="input-email" className="form-label">Email:</label>
+                    <input
+                      type="email"
+                      id="input-email"
+                      className="form-control"
+                      placeholder="email@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      disabled // Email thường không cho phép sửa trực tiếp
+                    />
+                  </div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label htmlFor="input-phone" className="form-label">Điện thoại:</label>
+                    <input
+                      type="text"
+                      id="input-phone"
+                      className="form-control"
+                      placeholder="Số điện thoại"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="input-gender" className="form-label">Giới tính:</label>
+                    <select
+                      id="input-gender"
+                      className="form-select"
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                    >
+                      <option value="">Chọn giới tính</option>
+                      <option value={GENDER_TYPES.MALE}>Nam</option>
+                      <option value={GENDER_TYPES.FEMALE}>Nữ</option>
+                      <option value={GENDER_TYPES.OTHER}>Khác</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="input-address" className="form-label">Địa chỉ:</label>
+                  <input
+                    type="text"
+                    id="input-address"
+                    className="form-control"
+                    placeholder="Địa chỉ của bạn"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="input-bio" className="form-label">Mô tả bản thân:</label>
+                  <textarea
+                    id="input-bio"
+                    className="form-control"
+                    rows="3"
+                    placeholder="Một vài lời về bạn..."
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                  ></textarea>
+                </div>
+
+                <div className="mb-3">
+                  <label htmlFor="input-avatar" className="form-label">Ảnh đại diện:</label>
+                  <input
+                    type="file"
+                    id="input-avatar"
+                    className="form-control"
+                    onChange={(e) => setAvatarFile(e.target.files ? e.target.files[0] : null)}
+                  />
+                </div>
+
+                <div className="d-grid gap-2">
+                  <button type="submit" className="btn btn-success">
+                    Cập nhật hồ sơ
+                  </button>
+                </div>
+              </form>
+
+              {/* Phần thông tin chi tiết khác (CCCD) */}
+              {profileData.details && (
+                <>
+                  <hr className="my-4" />
+                  <h6 className="text-muted mb-3">Thông tin chi tiết khác</h6>
+                  <div className="row">
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Số CCCD:</label>
+                      <p className="form-control-plaintext">{profileData.details.id_number || 'Chưa cập nhật'}</p>
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label">Ngày cấp:</label>
+                      <p className="form-control-plaintext">{profileData.details.id_issued_date || 'Chưa cập nhật'}</p>
+                    </div>
+                  </div>
+                  {/* Bạn có thể thêm các trường chi tiết khác tại đây */}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
