@@ -24,7 +24,9 @@ const Footer = () => {
                 <div className="row gy-3 justify-content-between">
                     <div className="col-auto"> <a className="text-white me-4" href="#!"><span className="fa-brands fa-facebook-f"> </span></a><a className="text-white me-4" href="#!"><span className="fa-brands fa-twitter"></span></a><a className="text-white me-4" href="#!"><span className="fa-brands fa-linkedin-in"></span></a><a className="text-white" href="#!"><span className="fa-brands fa-behance"></span></a></div>
                     <div className="col-auto">
-                        <p className="mb-0 text-white">Thank you for creating with Phoenix | 2023 © <a className="text-white" href="https://themewagon.com/">Themewagon</a></p>
+                        <p className="mb-0 text-white">Developed & Designed by <a class="mx-1" href="https://www.facebook.com/phung.ngoc.dung.164568">Phùng Ngọc Dũng</a>. All rights reserved<span
+                            class="d-none d-sm-inline-block"></span><span class="d-none d-sm-inline-block mx-1">|</span><br
+                                class="d-sm-none" />2025 &copy;<a class="mx-1" href="https://www.facebook.com/phung.ngoc.dung.164568"></a></p>
                     </div>
                 </div>
             </div>
