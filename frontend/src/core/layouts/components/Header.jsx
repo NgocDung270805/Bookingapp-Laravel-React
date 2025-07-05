@@ -52,7 +52,7 @@ const Header = () => {
 
   // Kiểm tra nếu user là admin (logic thông thường, sau các Hooks)
   const isAdmin = user && user.roles && user.roles.some(role => role.name === 'admin');
-
+  console.log(isAdmin);
 
   return (
     <div className="bg-body-emphasis sticky-top" data-navbar-shadow-on-scroll="data-navbar-shadow-on-scroll">
@@ -62,13 +62,13 @@ const Header = () => {
             <img src="../../assets/img/icons/logo.png" alt="" style={{ height: "40px", width: "auto", maxWidth: "200px", objectFit: "contain", marginRight: "10px", display: "block" }} />
           </div>
         </Link>
-        <div className="col-auto order-md-1" style={{ transform: window.innerWidth < 768 ? "translateX(180px)" : "none", marginTop: window.innerWidth < 768 ? "-50px" : "0px", }}>
-          <ul className="navbar-nav navbar-nav-icons flex-row me-n2">
-            <li className="nav-item d-flex align-items-center">
-              <div className="theme-control-toggle fa-icon-wait px-2">
-                <input className="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" value="dark" id="themeControlToggle" />
-                <label className="mb-0 theme-control-toggle-label theme-control-toggle-light" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Switch theme" style={{ height: '32px', width: '32px' }}>
-                  <span className="icon" data-feather="moon"></span>
+        <div class="col-auto order-md-1">
+          <ul class="navbar-nav navbar-nav-icons flex-row me-n2">
+            <li class="nav-item d-flex align-items-center">
+              <div class="theme-control-toggle fa-icon-wait px-2">
+                <input class="form-check-input ms-0 theme-control-toggle-input" type="checkbox" data-theme-control="phoenixTheme" value="dark" id="themeControlToggle" />
+                <label class="mb-0 theme-control-toggle-label theme-control-toggle-light" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Switch theme" style={{ height: '32px', width: '32px' }}>
+                  <span class="icon" data-feather="moon"></span>
                 </label>
                 <label className="mb-0 theme-control-toggle-label theme-control-toggle-dark" htmlFor="themeControlToggle" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Switch theme" style={{ height: '32px', width: '32px' }}>
                   <span className="icon" data-feather="sun"></span>
@@ -207,42 +207,32 @@ const Header = () => {
                           <div className="avatar avatar-xl ">
                             <img className="rounded-circle " src={user.profile?.avatar ? `${BASE_URL_ADMIN}storage/${user.profile.avatar}` : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkgjgrCNlnMAjfAJmzC9Q8OGQKwKQpq3HtUQ&s'} alt="" />
                           </div>
-                          <h6 className="mt-2 text-body-emphasis">{user?.name || 'Bạn'}{user.is_verified === 1 && <VerifiedBadge />}</h6>
+                          <h6 class="mt-2 text-body-emphasis">{user?.name || 'Bạn'}!</h6>
                         </div>
                         <div className="mb-3 mx-3"><input className="form-control form-control-sm" id="statusUpdateInput" type="text" placeholder="Update your status" /></div>
                       </div>
-                      <div className="overflow-auto scrollbar" style={{ height: '10rem' }}>
-                        <ul className="nav d-flex flex-column mb-2 pb-1">
-                          {isAdmin && ( 
-                            <li className="nav-item">
-                              <a className="nav-link px-3 d-block" href={PATHS.ADMIN_DASHBOARD}>
-                                <span className="me-2 text-body align-bottom" data-feather="shield"></span>
-                                <span>ADMIN/MANAGER</span>
+                      <div class="overflow-auto scrollbar" style={{ height: '10rem' }}>
+                        <ul class="nav d-flex flex-column mb-2 pb-1">
+                          {isAdmin && ( // Chỉ hiển thị link "Quản lý" nếu là admin
+                            // <a href="http://localhost:8000/" style={{ textDecoration: 'none', color: '#007bff', marginRight: '15px' }}>Quản lý</a>
+                            <li class="nav-item">
+                              <a class="nav-link px-3 d-block" href="{PATHS.ADMIN_DASHBOARD}">
+                                <span class="me-2 text-body align-bottom" data-feather="user"></span>
+                                <span>ADMIN</span>
                               </a>
                             </li>
                           )}
-                          <Link to={PATHS.PROFILE} className="nav-link px-3 d-block">
-                            <span className="me-2 text-body align-bottom" data-feather="user"></span>
-                            <span>Hồ sơ cá nhân</span>
-                          </Link>
-                          <Link to={PATHS.FAVORITE_PRODUCTS} className="nav-link px-3 d-block">
-                            <span className="me-2 text-body align-bottom" data-feather="heart"></span>
-                            <span>Sản phẩm yêu thích</span>
-                          </Link>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"><span className="me-2 text-body align-bottom" data-feather="pie-chart"></span>Dashboard</a></li>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="lock"></span>Posts &amp; Activity</a></li>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="settings"></span>Settings &amp; Privacy </a></li>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="help-circle"></span>Help Center</a></li>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="globe"></span>Language</a></li>
+                          <li class="nav-item"><a class="nav-link px-3 d-block" href={PATHS.ADMIN_DASHBOARD}> <span class="me-2 text-body align-bottom" data-feather="user"></span><span>Profile</span></a></li>
+                          <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"><span class="me-2 text-body align-bottom" data-feather="pie-chart"></span>Dashboard</a></li>
+                          <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span class="me-2 text-body align-bottom" data-feather="lock"></span>Posts &amp; Activity</a></li>
+                          <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span class="me-2 text-body align-bottom" data-feather="settings"></span>Settings &amp; Privacy </a></li>
+                          <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span class="me-2 text-body align-bottom" data-feather="help-circle"></span>Help Center</a></li>
+                          <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span class="me-2 text-body align-bottom" data-feather="globe"></span>Language</a></li>
                         </ul>
                       </div>
-                      <div className="card-footer p-0 border-top border-translucent">
-                        <ul className="nav d-flex flex-column my-3">
-                          <li className="nav-item">
-                            <Link to={PATHS.MY_BOOKINGS} className="nav-link px-3 d-block">
-                              <span className="me-2 text-body align-bottom" data-feather="calendar"></span>Lịch đã đặt
-                            </Link>
-                          </li>
+                      <div class="card-footer p-0 border-top border-translucent">
+                        <ul class="nav d-flex flex-column my-3">
+                          <li class="nav-item"><a class="nav-link px-3 d-block" href="#!"> <span class="me-2 text-body align-bottom" data-feather="user-plus"></span>Add another account</a></li>
                         </ul>
                         <hr />
                         <div className="px-3">
