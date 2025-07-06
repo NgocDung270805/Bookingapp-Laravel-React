@@ -237,14 +237,38 @@ const Header = () => {
         <button className="navbar-toggler fs-8 ps-1 ps-sm-3 pe-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mt-3 mt-lg-0">
-            <li className="nav-item border-bottom border-translucent border-bottom-lg-0"><a className="nav-link" href="../../apps/travel-agency/hotel/customer/homepage.html">Hotel</a></li>
-            <li className="nav-item border-bottom border-translucent border-bottom-lg-0"><a className="nav-link" href="../../apps/travel-agency/flight/homepage.html">Flight</a></li>
-            <li className="nav-item border-bottom border-translucent border-bottom-lg-0"><a className="nav-link" href="../../apps/travel-agency/trip/homepage.html">Trip</a></li>
-            <li className="nav-item border-bottom border-translucent border-bottom-lg-0"><a className="nav-link" href="../../apps/events/event-detail.html">Event</a></li>
-            <li className="nav-item border-bottom border-translucent border-bottom-lg-0"><a className="nav-link" href="#!">Package</a></li>
-            <li className="nav-item"><a className="nav-link" href="#!">Trending</a></li>
+        <div className="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center pb-0" id="navbarTopCollapse">
+          <ul className="navbar-nav travel-nav-top me-auto" data-dropdown-on-hover="data-dropdown-on-hover">
+            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle text-primary" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Thương hiệu</a>
+              <ul className="dropdown-menu navbar-dropdown-caret">
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/homepage.html">Homepage</a></li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/hotel-details.html">Hotel Details</a></li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/hotel-compare.html">Hotel Compare</a></li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/checkout.html">Check out</a></li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/payment.html">Payment</a></li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/gallery.html">Gallery</a></li>
+              </ul>
+            </li>
+            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Xe</a>
+              <ul className="dropdown-menu navbar-dropdown-caret">
+                <li>
+                  <a className="dropdown-item" href={PATHS.PRODUCTS}>Danh sách xe</a>
+                </li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/booking.html">Booking</a></li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/payment.html">Payment</a></li>
+              </ul>
+            </li>
+            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Trip</a>
+              <ul className="dropdown-menu navbar-dropdown-caret">
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/trip/homepage.html">Homepage</a></li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/trip/trip-details.html">Trip Details</a></li>
+                <li><a className="dropdown-item" href="../../../../apps/travel-agency/trip/checkout.html">Checkout</a></li>
+              </ul>
+            </li>
+            <li className="nav-item dropdown">
+              <a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Event</a>
+            </li>
+            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Package</a></li>
           </ul>
         </div>
       </nav>
