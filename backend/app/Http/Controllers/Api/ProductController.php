@@ -13,16 +13,23 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Lấy tất cả sản phẩm cùng với các mối quan hệ cần thiết
-        // Sử dụng eager loading để tránh N+1 problem
-        $products = Product::with([
+        $query = Product::with([
             'categories',
             'tags',
-            'variants.attributeValues.attributeType', // Tải variants và thuộc tính của nó
-            'attributeValueConfigs.attributeValue.attributeType' // Tải config thuộc tính
-        ])->orderBy('id', 'desc')->get(); // Sắp xếp theo ID hoặc trường nào đó
+            'variants.attributeValues.attributeType',
+            'attributeValueConfigs.attributeValue.attributeType'
+        ]);
+
+        // Thêm logic tìm kiếm nếu có query param 'q' hoặc 'name'
+        if ($request->has('q') && !empty($request->q)) {
+            $searchQuery = $request->q;
+            $query->where('name', 'like', '%' . $searchQuery . '%')
+                ->orWhere('description', 'like', '%' . $searchQuery . '%');
+        }
+
+        $products = $query->orderBy('id')->get();
 
         return response()->json(['products' => $products]);
     }
@@ -67,7 +74,7 @@ class ProductController extends Controller
         } else {
             $product->categories()->detach();
         }
-        
+
         if (isset($validatedData['tag_ids'])) {
             $product->tags()->sync($validatedData['tag_ids']);
         } else {
@@ -125,13 +132,13 @@ class ProductController extends Controller
             'status' => $validatedData['status'] ?? 1,
             'is_featured' => $validatedData['is_featured'] ?? 0,
         ]);
-        
+
         if (isset($validatedData['category_ids'])) {
             $product->categories()->sync($validatedData['category_ids']);
         } else {
             $product->categories()->detach();
         }
-        
+
         if (isset($validatedData['tag_ids'])) {
             $product->tags()->sync($validatedData['tag_ids']);
         } else {
@@ -161,7 +168,7 @@ class ProductController extends Controller
         if ($product->img && Storage::disk('public')->exists($product->img)) {
             Storage::disk('public')->delete($product->img);
         }
-        
+
         $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully']);
