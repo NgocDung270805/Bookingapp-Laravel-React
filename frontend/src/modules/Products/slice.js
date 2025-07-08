@@ -10,6 +10,7 @@ import {
   toggleFavoriteApi, // Import mới
   createBookingApi,  // Import mới
   addCommentApi,     // Import mới
+  getGeminiChatResponse, // Import mới
 } from './api';
 
 const initialState = {
@@ -24,9 +25,9 @@ const initialState = {
 // Async Thunks cho Products (đã có)
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (_, { rejectWithValue }) => {
+  async (query = '', { rejectWithValue }) => { // query mặc định rỗng
     try {
-      const response = await fetchProductsApi();
+      const response = await fetchProductsApi(query); // Truyền query vào hàm API
       return response.products;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Không thể tải danh sách sản phẩm.');
@@ -125,6 +126,21 @@ export const addComment = createAsyncThunk(
   }
 );
 
+// ===========================================
+// ASYNC THUNKS MỚI CHO GEMINI AI CHAT
+// ===========================================
+
+export const sendGeminiMessage = createAsyncThunk(
+  'chat/sendGeminiMessage',
+  async (messageText, { rejectWithValue }) => {
+    try {
+      const response = await getGeminiChatResponse(messageText);
+      return response; // Trả về { ai_response, suggested_products }
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Lỗi kết nối AI.');
+    }
+  }
+);
 
 const productsSlice = createSlice({
   name: 'products',
@@ -171,10 +187,10 @@ const productsSlice = createSlice({
         // Cập nhật trạng thái yêu thích của sản phẩm trong danh sách
         const productIndex = state.products.findIndex(p => p.id === action.payload.productId);
         if (productIndex !== -1) {
-            // Cập nhật thuộc tính is_favorited (nếu có trong payload hoặc re-fetch đã xử lý)
-            // Nếu bạn re-fetch fetchProducts sau khi toggle, không cần cập nhật ở đây
-            // Nếu không re-fetch, bạn cần cập nhật thủ công:
-            // state.products[productIndex].is_favorited = action.payload.is_favorited;
+          // Cập nhật thuộc tính is_favorited (nếu có trong payload hoặc re-fetch đã xử lý)
+          // Nếu bạn re-fetch fetchProducts sau khi toggle, không cần cập nhật ở đây
+          // Nếu không re-fetch, bạn cần cập nhật thủ công:
+          // state.products[productIndex].is_favorited = action.payload.is_favorited;
         }
       })
       .addCase(toggleFavorite.rejected, (state, action) => {
@@ -208,6 +224,20 @@ const productsSlice = createSlice({
         // state.commentingStatus = 'failed';
         state.error = action.payload;
         alert('Bình luận thất bại: ' + JSON.stringify(action.payload));
+      })
+      // Xử lý sendGeminiMessage
+      .addCase(sendGeminiMessage.pending, (state) => {
+        // state.chatAILoading = true; // Nếu có state loading riêng
+        state.error = null;
+      })
+      .addCase(sendGeminiMessage.fulfilled, (state, action) => {
+        // state.chatAILoading = false;
+        // Bạn có thể xử lý suggested_products ở đây nếu muốn lưu vào Redux
+        // Hoặc chỉ để SupportChatWidget xử lý.
+      })
+      .addCase(sendGeminiMessage.rejected, (state, action) => {
+        // state.chatAILoading = false;
+        state.error = action.payload; // Lỗi từ backend
       });
   },
 });

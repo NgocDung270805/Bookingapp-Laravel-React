@@ -3,8 +3,8 @@
 import api from '../../common/API';
 
 // Lấy danh sách sản phẩm
-export const fetchProductsApi = async () => {
-  const response = await api.get('/products');
+export const fetchProductsApi = async (query = '') => { // Thêm tham số query
+  const response = await api.get('/products', { params: { q: query } }); // Gửi query param 'q'
   return response.data;
 };
 
@@ -99,4 +99,10 @@ export const createBookingApi = async (productId, bookingData) => {
 export const addCommentApi = async (productId, commentData) => {
   const response = await api.post(`/products/${productId}/comments`, commentData);
   return response.data;
+};
+
+// Đảm bảo hàm này được EXPORT
+export const getGeminiChatResponse = async (message) => { // Dòng này phải có 'export'
+    const response = await api.post('/chat/gemini', { message });
+    return response.data; // Mong đợi { ai_response: "...", suggested_products: [...] }
 };

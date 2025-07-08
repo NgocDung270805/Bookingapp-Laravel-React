@@ -1,92 +1,234 @@
 // src/core/layouts/components/SupportChatWidget.jsx
 
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { PATHS } from '../../../common/constants';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { sendGeminiMessage, fetchProducts } from '../../../modules/Products/slice';
+
+// Import SimpleBar cho React và CSS của nó
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 
 const SupportChatWidget = () => {
-    // Sử dụng state để kiểm soát việc hiển thị chat widget
-    const [showChat, setShowChat] = useState(false);
+    // Refs
+    // chatContainerRef: Không còn dùng để điều khiển display/opacity/visibility nữa,
+    // mà chỉ dùng nếu cần truy cập phần tử DOM này cho mục đích khác (ví dụ: debug).
+    // Nếu không dùng, có thể bỏ. Tôi sẽ giữ lại nhưng không dùng cho logic hiển thị.
+    const chatContainerRef = useRef(null); 
+    const chatDropdownRef = useRef(null); 
+    const messagesEndRef = useRef(null); 
+    const simplebarReactRef = useRef(null); // Ref cho SimpleBar component để truy cập instance của nó
 
-    // Hàm xử lý khi nhấp vào nút "Chat demo" hoặc nút "Close Support"
-    const handleChatToggle = () => {
+    // State cho hiển thị widget (GIỮ NGUYÊN HOÀN TOÀN NHƯ YÊU CẦU CỦA BẠN)
+    const [showChat, setShowChat] = useState(false); 
+
+    // State cho CHAT LOGIC
+    const [messages, setMessages] = useState([]); 
+    const [inputValue, setInputValue] = useState(''); 
+
+    // Redux Hook
+    const dispatch = useDispatch(); 
+
+    // Hàm xử lý khi nhấp vào nút "Chat demo" hoặc nút "Close Support" (GIỮ NGUYÊN HOÀN TOÀN)
+    const handleChatToggle = (e) => {
+        if (e) e.preventDefault(); 
         setShowChat(prev => !prev);
     };
 
-    // useEffect để khởi tạo SimpleBar khi chat được mở
-    // hoặc đảm bảo SimpleBar được cập nhật khi kích thước thay đổi
-    useEffect(() => {
-        if (showChat) {
-            // Tìm phần tử có lớp 'scrollbar' bên trong chat
-            const scrollbarElement = document.querySelector('.support-chat .scrollbar');
-            if (window.SimpleBar && scrollbarElement) {
-                // Khởi tạo SimpleBar. Nếu nó đã được khởi tạo, nó sẽ được cập nhật.
-                new window.SimpleBar(scrollbarElement);
+    // Hàm tự động cuộn xuống cuối tin nhắn (sử dụng simplebar-react ref)
+    const scrollToBottom = () => {
+        if (simplebarReactRef.current && messagesEndRef.current) {
+            const scrollElement = simplebarReactRef.current.getScrollElement();
+            if (scrollElement) {
+                scrollElement.scrollTop = scrollElement.scrollHeight;
             }
         }
-        // Dependency array: chạy lại effect này khi showChat thay đổi
-    }, [showChat]);
+    };
+
+    // ===============================================
+    // LOGIC CHAT VÀ TƯ VẤN AI
+    // ===============================================
+
+    // Xử lý gửi tin nhắn của người dùng
+    const handleSendMessage = async (e) => {
+        e.preventDefault(); 
+        console.log("handleSendMessage triggered.");
+        console.log("Current inputValue:", inputValue);
+        if (inputValue.trim() === ''){
+            console.log("Input value is empty, not sending.");
+            return; 
+        } 
+
+        const userMessage = { type: 'user', text: inputValue };
+        setMessages((prev) => [...prev, userMessage]); 
+        setInputValue(''); 
+
+        await getAIResponseFromGemini(userMessage.text);
+    };
+
+    // Hàm gọi AI Gemini và xử lý phản hồi, sau đó tìm kiếm sản phẩm
+    const getAIResponseFromGemini = async (userText) => {
+        setMessages((prev) => [...prev, { type: 'ai', text: 'Đang kết nối AI... Vui lòng đợi.' }]); 
+        
+        try {
+            const geminiResultAction = await dispatch(sendGeminiMessage(userText)); 
+            console.log("Gemini dispatch resultAction:", geminiResultAction);
+            
+            if (sendGeminiMessage.fulfilled.match(geminiResultAction)) {
+                const { ai_response, suggested_products } = geminiResultAction.payload; 
+                let finalAiText = ai_response;
+                let productsToDisplay = [];
+
+                if (suggested_products && suggested_products.length > 0) {
+                    productsToDisplay = suggested_products;
+                } else {
+                    const lowerCaseUserText = userText.toLowerCase();
+                    const productKeywords = ['sản phẩm', 'xe', 'tư vấn', 'tìm kiếm', 'muốn biết về', 'về'];
+                    let searchQuery = '';
+
+                    const regex = new RegExp(`(?:${productKeywords.join('|')})\\s*(.*)`, 'i');
+                    const match = lowerCaseUserText.match(regex);
+                    searchQuery = match && match[1] ? match[1].trim() : lowerCaseUserText;
+
+                    const commonWords = ['tôi', 'bạn', 'là', 'có', 'cái', 'nào', 'gì', 'thế', 'này', 'đó', 'xin', 'chào', 'cảm ơn', 'hỏi', 'về'];
+                    searchQuery = searchQuery.split(' ').filter(word => !commonWords.includes(word)).join(' ').trim();
+
+                    if (searchQuery.length > 2) { 
+                        const productsResultAction = await dispatch(fetchProducts(searchQuery));
+                        if (fetchProducts.fulfilled.match(productsResultAction)) {
+                            productsToDisplay = productsResultAction.payload;
+                        } else {
+                            console.error("Error fetching products for AI suggestion:", productsResultAction.payload);
+                        }
+                    }
+                }
+
+                if (productsToDisplay && productsToDisplay.length > 0) {
+                    finalAiText += '\n\nCác sản phẩm gợi ý phù hợp:\n';
+                    productsToDisplay.forEach(p => {
+                        finalAiText += `- ${p.name} (ID: ${p.id})\n`;
+                    });
+                    finalAiText += '\nBạn muốn biết thêm chi tiết về sản phẩm nào?';
+                } else if (userText.toLowerCase().includes('sản phẩm') || userText.toLowerCase().includes('xe')) {
+                    finalAiText += '\n\nXin lỗi, tôi không tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn trong hệ thống.';
+                }
+
+                setMessages((prev) => [...prev, { type: 'ai', text: finalAiText }]); 
+            } else {
+                setMessages((prev) => [...prev, { type: 'ai', text: 'Xin lỗi, có lỗi xảy ra khi nhận phản hồi từ AI.' }]);
+                console.error("Error from AI dispatch (rejected):", geminiResultAction.payload);
+            }
+        } catch (error) {
+            console.error("Error calling AI API:", error);
+            setMessages((prev) => [...prev, { type: 'ai', text: 'Rất tiếc, không thể kết nối với dịch vụ AI.' }]);
+        }
+    };
+
+
+    // ===============================================
+    // USEEFFECTS CHO KHỞI TẠO THƯ VIỆN VÀ CUỘN TỰ ĐỘNG
+    // ===============================================
+
+    // useEffect đầu tiên: Khởi tạo các thư viện JS bên ngoài (Bootstrap Dropdown, Font Awesome)
+    // Chạy MỘT LẦN khi component mount
+    useEffect(() => {
+        // Khởi tạo Bootstrap Dropdown (dùng ref)
+        if (window.bootstrap && window.bootstrap.Dropdown && chatDropdownRef.current) {
+            new window.bootstrap.Dropdown(chatDropdownRef.current);
+        }
+        // Khởi tạo Font Awesome (nếu các icon fa-solid chưa được hiển thị)
+        if (window.FontAwesome && window.FontAwesome.dom) {
+            window.FontAwesome.dom.i2svg();
+        }
+        // Cleanup function (nếu thư viện có phương thức destroy)
+        return () => { /* ... */ };
+    }, []); // Dependencies array rỗng để chỉ chạy một lần khi mount
+
+    // useEffect để tự động cuộn xuống cuối tin nhắn mỗi khi messages thay đổi
+    useEffect(() => {
+        scrollToBottom(); 
+    }, [messages]); 
+
 
     return (
-        <div className={`${showChat ? 'show' : ''}`}>
+        // Container ngoài cùng. Class 'show' sẽ được thêm/bớt để điều khiển hiển thị
+        // Vị trí cố định (fixed) của widget sẽ được điều khiển bởi CSS của template cho .support-chat-container
+        <div className={`${showChat ? 'show' : ''}`} ref={chatContainerRef}> {/* Gắn ref cho div này */}
             {/* Thêm class 'show-chat' cho 'support-chat' để CSS có thể điều khiển hiển thị nội dung chat */}
-            <div className={`container-fluid support-chat ${showChat ? 'show-chat' : ''}`}>
+            <div className={`container-fluid support-chat ${showChat ? 'show-chat' : ''}`}> 
                 <div className="card bg-body-emphasis">
                     <div className="card-header d-flex flex-between-center px-4 py-3 border-bottom border-translucent">
-                        <h5 className="mb-0 d-flex align-items-center gap-2">Demo widget<span className="fa-solid fa-circle text-success fs-11"></span></h5>
+                        <h5 className="mb-0 d-flex align-items-center gap-2">Chat trục tuyến<span
+                            className="fa-solid fa-circle text-success fs-11"></span></h5>
                         <div className="btn-reveal-trigger">
-                            <button className="btn btn-link p-0 dropdown-toggle dropdown-caret-none transition-none d-flex" type="button" id="support-chat-dropdown" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">
+                            <button
+                                className="btn btn-link p-0 dropdown-toggle dropdown-caret-none transition-none d-flex" type="button" 
+                                id="support-chat-dropdown" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" 
+                                aria-expanded="false" data-bs-reference="parent" ref={chatDropdownRef}> {/* GẮN REF */}
                                 <span className="fas fa-ellipsis-h text-body"></span>
                             </button>
                             <div className="dropdown-menu dropdown-menu-end py-2" aria-labelledby="support-chat-dropdown">
-                                <a className="dropdown-item" href="#!">Request a callback</a>
-                                <a className="dropdown-item" href="#!">Search in chat</a>
-                                <a className="dropdown-item" href="#!">Show history</a>
-                                <a className="dropdown-item" href="#!">Report to Admin</a>
-                                {/* Thêm onClick để đóng chat khi nhấp vào "Close Support" */}
-                                <a className="dropdown-item btn-support-chat" href="#!" onClick={handleChatToggle}>Close Support</a>
+                                <a className="dropdown-item" href="#!">Yêu cầu gọi lại</a>
+                                <a className="dropdown-item" href="#!">Tìm kiếm trong chat</a>
+                                <a className="dropdown-item" href="#!">Hiển thị lịch sử</a>
+                                <a className="dropdown-item" href="#!">Báo cáo cho Admin</a>
+                                <a className="dropdown-item" href="#!" onClick={handleChatToggle}>Đóng hỗ trợ</a>
                             </div>
                         </div>
                     </div>
                     <div className="card-body chat p-0">
-                        {/* Giữ nguyên class 'scrollbar' cho nội dung cuộn */}
-                        <div className="d-flex flex-column-reverse scrollbar h-100 p-3">
-                            <div className="text-end mt-6">
-                                <Link className="mb-2 d-inline-flex align-items-center text-decoration-none text-body-emphasis bg-body-hover rounded-pill border border-primary py-2 ps-4 pe-3" to="#!">
-                                    <p className="mb-0 fw-semibold fs-9">I need help with something</p><span className="fa-solid fa-paper-plane text-primary fs-9 ms-3"></span>
-                                </Link>
-                                <Link className="mb-2 d-inline-flex align-items-center text-decoration-none text-body-emphasis bg-body-hover rounded-pill border border-primary py-2 ps-4 pe-3" to="#!">
-                                    <p className="mb-0 fw-semibold fs-9">I can’t reorder a product I previously ordered</p><span className="fa-solid fa-paper-plane text-primary fs-9 ms-3"></span>
-                                </Link>
-                                <Link className="mb-2 d-inline-flex align-items-center text-decoration-none text-body-emphasis bg-body-hover rounded-pill border border-primary py-2 ps-4 pe-3" to="#!">
-                                    <p className="mb-0 fw-semibold fs-9">How do I place an order?</p><span className="fa-solid fa-paper-plane text-primary fs-9 ms-3"></span>
-                                </Link>
-                                <Link className="false d-inline-flex align-items-center text-decoration-none text-body-emphasis bg-body-hover rounded-pill border border-primary py-2 ps-4 pe-3" to="#!">
-                                    <p className="mb-0 fw-semibold fs-9">My payment method not working</p><span className="fa-solid fa-paper-plane text-primary fs-9 ms-3"></span>
-                                </Link>
-                            </div>
-                            <div className="text-center mt-auto">
-                                <div className="avatar avatar-3xl status-online"><img className="rounded-circle border border-3 border-light-subtle" src="../../../../assets/img/team/30.webp" alt="" /></div>
-                                <h5 className="mt-2 mb-3">Eric</h5>
-                                <p className="text-center text-body-emphasis mb-0">Ask us anything – we’ll get back to you here or by email within 24 hours.</p>
-                            </div>
-                        </div>
+                        {/* KHUNG TIN NHẮN ĐƯỢC QUẢN LÝ BẰNG SimpleBar */}
+                        <SimpleBar className="d-flex flex-column-reverse scrollbar h-100 p-3" ref={simplebarReactRef}> {/* GẮN REF simplebarReactRef */}
+                            {messages.map((msg, index) => (
+                                <div key={index} style={{
+                                    alignSelf: msg.type === 'user' ? 'flex-end' : 'flex-start', 
+                                    marginBottom: '8px',
+                                    maxWidth: '80%',
+                                    wordWrap: 'break-word',
+                                }}>
+                                    <span style={{
+                                        backgroundColor: msg.type === 'user' ? '#007bff' : '#e0e0e0',
+                                        color: msg.type === 'user' ? 'white' : 'black',
+                                        padding: '8px 12px',
+                                        borderRadius: '15px',
+                                        display: 'inline-block',
+                                    }}>
+                                        {msg.text}
+                                    </span>
+                                </div>
+                            ))}
+                            <div ref={messagesEndRef} /> 
+                        </SimpleBar>
                     </div>
                     <div className="card-footer d-flex align-items-center gap-2 border-top border-translucent ps-3 pe-4 py-3">
-                        <div className="d-flex align-items-center flex-1 gap-3 border border-translucent rounded-pill px-4">
-                            <input className="form-control outline-none border-0 flex-1 fs-9 px-0" type="text" placeholder="Write message" />
-                            <label className="btn btn-link d-flex p-0 text-body-quaternary fs-9 border-0" htmlFor="supportChatPhotos"><span className="fa-solid fa-image"></span></label>
-                            <input className="d-none" type="file" accept="image/*" id="supportChatPhotos" />
-                            <label className="btn btn-link d-flex p-0 text-body-quaternary fs-9 border-0" htmlFor="supportChatAttachment"> <span className="fa-solid fa-paperclip"></span></label>
-                            <input className="d-none" type="file" id="supportChatAttachment" />
-                        </div>
-                        <button className="btn p-0 border-0 send-btn"><span className="fa-solid fa-paper-plane fs-9"></span></button>
+                        {/* Form gửi tin nhắn */}
+                        <form onSubmit={handleSendMessage} style={{ display: 'flex', flex: 1, gap: '10px' }}> 
+                            <div className="d-flex align-items-center flex-1 gap-3 border border-translucent rounded-pill px-4">
+                                <input
+                                    className="form-control outline-none border-0 flex-1 fs-9 px-0"
+                                    type="text"
+                                    placeholder="Write message"
+                                    value={inputValue} 
+                                    onChange={(e) => setInputValue(e.target.value)} 
+                                />
+                                <label className="btn btn-link d-flex p-0 text-body-quaternary fs-9 border-0" htmlFor="supportChatPhotos">
+                                    <span className="fa-solid fa-image"></span>
+                                </label>
+                                <input className="d-none" type="file" accept="image/*" id="supportChatPhotos" />
+                                <label className="btn btn-link d-flex p-0 text-body-quaternary fs-9 border-0" htmlFor="supportChatAttachment">
+                                    <span className="fa-solid fa-paperclip"></span>
+                                </label>
+                                <input className="d-none" type="file" id="supportChatAttachment" />
+                            </div>
+                            <button type="submit" className="btn p-0 border-0 send-btn">
+                                <span className="fa-solid fa-paper-plane fs-9"></span>
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
-            {/* Nút "Chat demo" - Thêm onClick để bật/tắt chat */}
+            {/* Nút "Chat Với AI" - GẮN ONCLICK */}
             <button className={`btn btn-support-chat p-0 border border-translucent ${showChat ? 'btn-chat-close' : ''}`} onClick={handleChatToggle}>
-                <span className="fs-8 btn-text text-primary text-nowrap">Chat demo</span>
+                <span className="fs-8 btn-text text-primary text-nowrap">Chat Với AI</span>
                 <span className="ping-icon-wrapper mt-n4 ms-n6 mt-sm-0 ms-sm-2 position-absolute position-sm-relative">
                     <span className="ping-icon-bg"></span>
                     <span className="fa-solid fa-circle ping-icon"></span>

@@ -42,4 +42,10 @@ api.interceptors.response.use(
   }
 );
 
+// Hàm gọi API của bạn để tương tác với Gemini qua Backend Laravel
+export const getGeminiChatResponse = async (message) => {
+    const response = await api.post('/chat/gemini', { message });
+    return response.data; // Mong đợi { ai_response: "...", suggested_products: [...] }
+};
+
 export default api;
