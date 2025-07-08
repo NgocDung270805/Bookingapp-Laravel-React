@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
@@ -42,6 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('products/{product}/variants', [ProductVariantController::class, 'index']); // Nếu bạn đã có route này
     Route::get('products/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs']); // Nếu bạn đã có route này
 
+    // Gemini AI Chat API
+    Route::post('/chat/gemini', [ChatController::class, 'geminiChat'])->name('api.chat.gemini');
+    
     // Favorites
     Route::post('products/{product}/favorite/toggle', [FavoriteController::class, 'toggle'])->name('api.products.favorite.toggle');
     Route::get('products/{product}/favorite/status', [FavoriteController::class, 'checkStatus'])->name('api.products.favorite.status');
