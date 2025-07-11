@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Web\TagController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\Web\BannerController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
@@ -90,3 +91,6 @@ Route::prefix('product-attribute-values')->name('product_attribute_value.')->gro
 // Route để lấy các cấu hình giá trị thuộc tính cho một sản phẩm cụ thể
 Route::get('/product/{product}/attribute-value-configs', [ProductAttributeValueConfigController::class, 'index'])->name('product.attribute_value_configs.index');
 Route::get('/product/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs'])->name('product.attribute_value_configs.index');
+
+// Route cho quản lý banners
+Route::resource('banners', BannerController::class);

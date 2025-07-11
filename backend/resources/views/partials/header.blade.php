@@ -514,18 +514,18 @@
                 <a class="nav-link lh-1 pe-0" id="navbarDropdownUser" href="#!"
                     role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true"
                     aria-expanded="false">
-                    <div class="avatar avatar-l ">
+                    {{-- <div class="avatar avatar-l ">
                         <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}"alt="Avatar" />
-                    </div>
+                    </div> --}}
                 </a>
                 <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
                     aria-labelledby="navbarDropdownUser">
                     <div class="card position-relative border-0">
                         <div class="card-body p-0">
                             <div class="text-center pt-4 pb-3">
-                                <div class="avatar avatar-xl ">
+                                {{-- <div class="avatar avatar-xl ">
                                     <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" />
-                                </div>
+                                </div> --}}
                                 {{-- Toán tử 3 ngôi check name --}}
                                 
                                 <h6 class="mt-2 text-body-emphasis">{{ $user->name }}</h6>

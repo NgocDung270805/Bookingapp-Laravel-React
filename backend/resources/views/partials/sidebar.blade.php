@@ -224,6 +224,11 @@
                                                 class="nav-link-text">Products</span></div>
                                     </a><!-- more inner pages-->
                                 </li>
+                                <li class="nav-item"><a class="nav-link" href="{{ route('banners.index') }}">
+                                        <div class="d-flex align-items-center"><span
+                                                class="nav-link-text">Banners</span></div>
+                                    </a><!-- more inner pages-->
+                                </li>
                                 {{-- <li class="nav-item">
                                     <a class="nav-link dropdown-indicator" href="#nv-system-hotel"
                                         data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-system-hotel">
