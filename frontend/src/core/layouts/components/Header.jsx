@@ -1,27 +1,31 @@
 // src/core/layouts/components/Header.jsx
 
 import React, { useEffect } from 'react';
-// import feather from 'feather-icons'; // Import feather-icons
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../../hooks/useAuth'; 
+import { useAuth } from '../../../hooks/useAuth';
 import { PATHS } from '../../../common/constants';
-import { BASE_URL_ADMIN } from '../../../common/constants'; // Không cần nếu không dùng
-import { useDispatch, useSelector } from 'react-redux';
+import { BASE_URL_ADMIN } from '../../../common/constants';
+// Import các custom hooks của Redux nếu bạn đã tạo (như useAppDispatch, useAppSelector)
+import { useDispatch, useSelector } from 'react-redux'; // Hoặc import { useAppDispatch, useAppSelector } from '../../../appRedux';
 import { fetchBanners, selectLogoBanner } from '../../../modules/Banners/slice';
 
 const Header = () => {
   // --- TẤT CẢ CÁC CUỘC GỌI HOOKS PHẢI NẰM Ở ĐÂY, TRƯỚC BẤT KỲ LOGIC NÀO KHÁC ---
-  const { isAuthenticated, user, logout } = useAuth(); // Hook đầu tiên
-  const dispatch = useDispatch(); // Hook thứ hai
+  const { isAuthenticated, user, logout } = useAuth();
+  const dispatch = useDispatch(); // Hoặc useAppDispatch()
   const logoBanner = useSelector(selectLogoBanner); // Hook thứ ba
   const bannersLoading = useSelector(state => state.banners.loading); // Hook thứ tư
 
+  // Lấy danh sách banners ở cấp cao nhất của component
+  const allBanners = useSelector(state => state.banners.banners); // Đặt Hook này ở đây
+
   // Các useEffect cũng là Hooks, đặt sau các useState/useRef/useSelector/useDispatch
   useEffect(() => {
-    if (!bannersLoading && useSelector(state => state.banners.banners).length === 0) {
+    // Bây giờ bạn có thể sử dụng allBanners mà không vi phạm quy tắc Hooks
+    if (!bannersLoading && allBanners.length === 0) {
       dispatch(fetchBanners());
     }
-  }, [dispatch, bannersLoading]);
+  }, [dispatch, bannersLoading, allBanners.length]); // Thêm allBanners.length vào dependency array
 
   useEffect(() => {
     // Khởi tạo Feather Icons
@@ -39,13 +43,13 @@ const Header = () => {
       <nav className="navbar navbar-landing navbar-expand-lg container-medium">
         <Link to={PATHS.HOME} className="navbar-brand flex-1 flex-lg-grow-0 me-lg-8 me-xl-13">
           <div className="d-flex align-items-center">
-            {/* {bannersLoading ? (
-              <span>Đang tải logo...</span> // Hiển thị trạng thái tải
+            {bannersLoading ? (
+              <span></span> // Hiển thị trạng thái tải
             ) : logoBanner && logoBanner.image_path ? (
               <img src={logoBanner.image_path} alt={logoBanner.title || "Logo BookingApp"} style={{ height: '40px', marginRight: '10px' }} />
             ) : (
-              "BookingApp" // Fallback text nếu không có logo
-            )} */}
+              <img src="../../assets/img/icons/logo.png" alt="" style={{ height: '40px', marginRight: '10px' }} />
+            )}
           </div>
         </Link>
         <div className="col-auto order-md-1">
