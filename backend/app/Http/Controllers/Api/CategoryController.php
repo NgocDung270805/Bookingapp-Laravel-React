@@ -17,7 +17,7 @@ class CategoryController extends Controller
     {
         try {
             // Lấy tất cả danh mục với các trường cần thiết
-            $categories = Category::select('id', 'name', 'slug', 'image_path')->get();
+            $categories = Category::select('id', 'name', 'slug', 'description', 'img', 'parent_id', 'status')->get();
 
             return response()->json([
                 'status' => 'success',
