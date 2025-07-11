@@ -138,26 +138,9 @@ Directory structure:
     │   │   │   ├── User_details.php
     │   │   │   └── Users_profiles.php
     │   │   └── Providers/
-    │   │       └── AppServiceProvider.php
     │   ├── bootstrap/
-    │   │   ├── app.php
-    │   │   ├── providers.php
-    │   │   └── cache/
-    │   │       └── .gitignore
     │   ├── config/
-    │   │   ├── app.php
-    │   │   ├── auth.php
-    │   │   ├── cache.php
-    │   │   ├── database.php
-    │   │   ├── filesystems.php
-    │   │   ├── logging.php
-    │   │   ├── mail.php
-    │   │   ├── queue.php
-    │   │   ├── sanctum.php
-    │   │   ├── services.php
-    │   │   └── session.php
     │   ├── database/
-    │   │   ├── .gitignore
     │   │   ├── factories/
     │   │   │   ├── CategoriesFactory.php
     │   │   │   ├── ProductsFactory.php
@@ -194,11 +177,6 @@ Directory structure:
     │   │       ├── UserDetailsSeeder.php
     │   │       └── UsersProfilesSeeder.php
     │   ├── public/
-    │   │   ├── index.php
-    │   │   ├── robots.txt
-    │   │   ├── .htaccess
-    │   │   ├── assets/
-    │   │   └── vendors/
     │   ├── resources/
     │   │   ├── css/
     │   │   │   └── app.css
@@ -230,38 +208,7 @@ Directory structure:
     │   │   ├── console.php
     │   │   └── web.php
     │   ├── storage/
-    │   │   ├── app/
-    │   │   │   ├── .gitignore
-    │   │   │   ├── private/
-    │   │   │   │   └── .gitignore
-    │   │   │   └── public/
-    │   │   │       └── .gitignore
-    │   │   ├── framework/
-    │   │   │   ├── .gitignore
-    │   │   │   ├── cache/
-    │   │   │   │   ├── .gitignore
-    │   │   │   │   └── data/
-    │   │   │   │       └── .gitignore
-    │   │   │   ├── sessions/
-    │   │   │   │   └── .gitignore
-    │   │   │   ├── testing/
-    │   │   │   │   └── .gitignore
-    │   │   │   └── views/
-    │   │   │       └── .gitignore
-    │   │   └── logs/
-    │   │       └── .gitignore
-    │   ├── tests/
-    │   │   ├── TestCase.php
-    │   │   ├── Feature/
-    │   │   │   └── ExampleTest.php
-    │   │   └── Unit/
-    │   │       └── ExampleTest.php
     │   └── .github/
-    │       └── workflows/
-    │           ├── issues.yml
-    │           ├── pull-requests.yml
-    │           ├── tests.yml
-    │           └── update-changelog.yml
     └── frontend/
         ├── README.md                 # File README của dự án frontend (hướng dẫn cài đặt, chạy, deploy)
         ├── Dockerfile                # Cấu hình Docker cho ứng dụng frontend
