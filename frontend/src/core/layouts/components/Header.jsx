@@ -1,28 +1,51 @@
 // src/core/layouts/components/Header.jsx
 
 import React, { useEffect } from 'react';
-import feather from 'feather-icons';
+// import feather from 'feather-icons'; // Import feather-icons
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth'; 
 import { PATHS } from '../../../common/constants';
-import { BASE_URL_ADMIN } from '../../../common/constants'; // Import PATHS from constants
+import { BASE_URL_ADMIN } from '../../../common/constants'; // Không cần nếu không dùng
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBanners, selectLogoBanner } from '../../../modules/Banners/slice';
 
 const Header = () => {
+  // --- TẤT CẢ CÁC CUỘC GỌI HOOKS PHẢI NẰM Ở ĐÂY, TRƯỚC BẤT KỲ LOGIC NÀO KHÁC ---
+  const { isAuthenticated, user, logout } = useAuth(); // Hook đầu tiên
+  const dispatch = useDispatch(); // Hook thứ hai
+  const logoBanner = useSelector(selectLogoBanner); // Hook thứ ba
+  const bannersLoading = useSelector(state => state.banners.loading); // Hook thứ tư
+
+  // Các useEffect cũng là Hooks, đặt sau các useState/useRef/useSelector/useDispatch
   useEffect(() => {
-    feather.replace();
+    if (!bannersLoading && useSelector(state => state.banners.banners).length === 0) {
+      dispatch(fetchBanners());
+    }
+  }, [dispatch, bannersLoading]);
+
+  useEffect(() => {
+    // Khởi tạo Feather Icons
+    if (feather) { // Kiểm tra feather có tồn tại không
+      feather.replace();
+    }
   }, []);
-  const { isAuthenticated, user, logout } = useAuth();
-  // Kiểm tra nếu user là admin
+
+  // Kiểm tra nếu user là admin (logic thông thường, sau các Hooks)
   const isAdmin = user && user.roles && user.roles.some(role => role.name === 'admin');
-  // console.log(isAdmin);
+
 
   return (
     <div className="bg-body-emphasis sticky-top" data-navbar-shadow-on-scroll="data-navbar-shadow-on-scroll">
       <nav className="navbar navbar-landing navbar-expand-lg container-medium">
         <Link to={PATHS.HOME} className="navbar-brand flex-1 flex-lg-grow-0 me-lg-8 me-xl-13">
           <div className="d-flex align-items-center">
-            <img src="../../assets/img/icons/logo.png" alt="phoenix" width="250" />
-            {/* <h5 className="logo-text ms-2"></h5> */}
+            {/* {bannersLoading ? (
+              <span>Đang tải logo...</span> // Hiển thị trạng thái tải
+            ) : logoBanner && logoBanner.image_path ? (
+              <img src={logoBanner.image_path} alt={logoBanner.title || "Logo BookingApp"} style={{ height: '40px', marginRight: '10px' }} />
+            ) : (
+              "BookingApp" // Fallback text nếu không có logo
+            )} */}
           </div>
         </Link>
         <div className="col-auto order-md-1">
