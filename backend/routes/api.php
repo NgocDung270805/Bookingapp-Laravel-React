@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
@@ -59,6 +60,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('products/{product}/comments', CommentController::class)->only(['index', 'store']); // Xem và thêm comment cho 1 sản phẩm
     Route::apiResource('comments', CommentController::class)->except(['index', 'store']); // Quản lý comments (show, update, destroy)
 });
+
+Route::get('banners', [BannerController::class, 'index'])->name('api.banners.index'); 
+Route::get('banners/{banner}', [BannerController::class, 'show'])->name('api.banners.show'); 
 
 // Api Url 
 // http://localhost:8000/api/login <=> Login(POST)
