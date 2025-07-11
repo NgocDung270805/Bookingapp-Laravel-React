@@ -34626,9 +34626,9 @@ a[href].bg-body-secondary:hover, a[href].bg-body-secondary:focus {
 
 .booking-footer {
   clip-path: polygon(0 12%, 100% 0, 100% 100%, 0% 100%);
-  background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.8)), to(rgba(0, 0, 0, 0.8))), url("../img/bg/41.jpg");
+  /* background-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.8)), to(rgba(0, 0, 0, 0.8))), url("../img/bg/41.jpg");
   background-image: -o-linear-gradient(bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%), url("../img/bg/41.jpg");
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%), url("../img/bg/41.jpg");
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.8) 100%), url("../img/bg/41.jpg"); */
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
