@@ -1,13 +1,32 @@
 // src/pages/Home/HomePage.jsx
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../hooks/useAuth'; // Lấy thông tin user
+import { PATHS } from '../../common/constants';
+import { BASE_URL_ADMIN } from '../../common/constants';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBanners, selectSliderBanners } from '../../modules/Banners/slice';
 
 const HomePage = () => {
+  const dispatch = useDispatch();
+  const sliderBanners = useSelector(selectSliderBanners);
+  const bannersLoading = useSelector((state) => state.banners.loading);
+
+  const firstSliderBanner = sliderBanners && sliderBanners.length > 0 ? sliderBanners[0] : null;
+  const allBanners = useSelector((state) => state.banners.banners); // Lấy toàn bộ banners đã fetch
   useEffect(() => {
     // Thay đổi tiêu đề trang khi component này được render
     document.title = 'Home - BookingApp';
   }, []);
+
+  useEffect(() => {
+    // Điều kiện này để tránh fetch lại nếu đã có dữ liệu hoặc đang loading
+    // Cân nhắc xem bạn có muốn fetch lại mỗi khi vào trang không.
+    // Hiện tại là nếu banners rỗng VÀ không đang loading thì fetch.
+    if (!bannersLoading && allBanners.length === 0) {
+      dispatch(fetchBanners(4)); // Chỉ fetch banner loại 4 (slider)
+    }
+  }, [dispatch, bannersLoading, allBanners.length]); // Thêm allBanners.length vào dependency để re-run khi banners thay đổi
 
   const { user } = useAuth(); // Lấy thông tin user
 
@@ -130,40 +149,32 @@ const HomePage = () => {
   }, []); // [] đảm bảo chỉ chạy một lần khi mount
 
   return (
-    // <div style={{ width: 'auto', height: 'auto'}}>
-    //   <h2>Trang chủ</h2>
-    //   {user ? (
-    //     <p>Chào mừng, {user.name}!</p>
-    //   ) : (
-    //     <p>Chào mừng bạn đến với ứng dụng.</p>
-    //   )}
-    //   <p>Đây là nội dung của trang chủ.</p>
-    // </div>
     <>
-      <div className="booking-hero-header d-flex align-items-center">
-        <div className="bg-holder bg-holder overlay bg-opacity-50" style={{ backgroundImage: 'url(../../assets/video/travel.png)' }}>
-          <video className="bg-video" autoPlay loop muted playsInline>
-            <source src="../../assets/video/travel.mp4" type="video/mp4" />
-          </video>
-        </div>
-        <div className="container-medium position-relative z-5">
-          <h2 className="text-secondary-lighter fs-5 fs-md-3 fw-normal mb-3">Bạn đang tìm kiếm</h2>
-          <h1 className="fs-4 fs-md-1 text-white fw-normal mb-6 overflow-hidden">THƯƠNG HIỆU
-            <span className="typed-text text-primary" data-typed-text='
-            [&quot;&lt;span className=text-primary&gt; BMW!&lt;/span&gt;&quot;,&quot;&lt;span className=text-warning&gt; MERCEDES?&lt;/span&gt;&quot;, &quot;&lt;span className=text-info&gt; RANGE ROVER?&lt;/span&gt;&quot;, &quot;&lt;span className=text-success&gt; TOYOTA?&lt;/span&gt;&quot;
-            ]
-            '></span>
-          </h1>
-          <div className="input-group rounded-2 py-1 ps-2 w-lg-50 border border-light">
-            <div className="form-icon-container flex-1 d-flex align-items-center" data-fa-transform="down-1"><span className="fa-solid fa-location-dot form-icon text-danger-light"></span><input className="form-control form-icon-input bg-transparent border-0 outline-none fs-8 fs-md-7 text-secondary-light" type="text" placeholder="Search Destination" /></div>
-            <div className="dropdown d-flex align-items-center"><button className="btn py-0 bg-transparent text-secondary-light fs-8 fs-md-7 fw-semibold border-0 border-start border-light rounded-0" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">Flight<span className="fa-solid fa-chevron-down ms-2" data-fa-transform="down-1 shrink-4"></span></button>
-              <div className="dropdown-menu dropdown-menu-end" data-bs-theme="dark"><a className="dropdown-item" href="#!">Flight</a><a className="dropdown-item" href="#!">Trip</a><a className="dropdown-item" href="#!">Hotel</a></div>
+      <div
+        className="booking-hero-header position-relative"
+        style={{ height: '737.41px' }} // wrapper cao, giữ layout
+      >
+        <div
+          className="bg-holder position-absolute top-0 start-0 w-100 h-100"
+          style={{
+            backgroundImage: firstSliderBanner?.image_path
+              ? `url(${firstSliderBanner.image_path})`
+              : 'url(../../assets/img/bg/slider.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            imageRendering: 'auto', // hoặc 'crisp-edges' hoặc 'pixelated' nếu ảnh cần
+          }}
+        >
+          {bannersLoading && (
+            <div className="loading-banner text-white text-center pt-5">
+              
             </div>
-          </div>
+          )}
         </div>
       </div>
       {/*  */}
-      <section className="pt-6 pt-md-10 pb-10">
+      <section className="pt-6 pt-md-10 pb-10" >
         <div className="container-medium">
           <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-left-27.png)", backgroundSize: "auto", backgroundPosition: "left" }}></div>
           <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-right-27.png)", backgroundSize: "auto", backgroundPosition: "right" }}></div>
@@ -221,10 +232,6 @@ const HomePage = () => {
         </div>
         <div className="container-fluid px-sm-0">
           <div className="swiper-theme-container swiper-slide-nav-top">
-            {/* <div className="swiper-nav">
-              <div className="swiper-button-next"><span className="fas fa-chevron-right text-primary" data-fa-transform="shrink-3"></span></div>
-              <div className="swiper-button-prev"><span className="fas fa-chevron-left text-primary" data-fa-transform="shrink-3"></span></div>
-            </div> */}
             <div className="swiper-nav">
               <div className="swiper-button-next"><span className="fas fa-chevron-right text-primary" data-fa-transform="shrink-3"></span></div>
               <div className="swiper-button-prev"><span className="fas fa-chevron-left text-primary" data-fa-transform="shrink-3"></span></div>
