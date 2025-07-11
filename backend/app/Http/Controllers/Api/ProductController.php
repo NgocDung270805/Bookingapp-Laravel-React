@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
@@ -31,7 +32,11 @@ class ProductController extends Controller
 
         $products = $query->orderBy('id')->get();
 
-        return response()->json(['products' => $products]);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Lấy danh sách sản phẩm thành công',
+            'products' => $products
+        ]);
     }
 
     /**
@@ -89,10 +94,32 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($product_slug)
     {
-        $product->load(['categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs.attributeValue.attributeType']);
-        return response()->json(['product' => $product]);
+        try {
+            $product = Product::where('slug', $product_slug)
+                                ->with('images', 'categories') // Đã sửa từ 'category' thành 'categories'
+                                // ->with('comments.user', 'variants.attributeValues')
+                                ->first();
+
+            if (!$product) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Không tìm thấy sản phẩm'
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lấy chi tiết sản phẩm thành công',
+                'product' => $product
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không thể tải chi tiết sản phẩm: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -172,5 +199,49 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully']);
+    }
+
+    /**
+     * MỚI / ĐIỀU CHỈNH: Lấy danh sách sản phẩm theo slug danh mục (Many-to-Many).
+     *
+     * @param string $category_slug
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function productsByCategory($category_slug)
+    {
+        try {
+            $category = Category::where('slug', $category_slug)->first();
+
+            if (!$category) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Không tìm thấy danh mục'
+                ], 404);
+            }
+
+            // ĐIỀU CHỈNH: Sử dụng whereHas để lọc sản phẩm thuộc danh mục qua bảng trung gian
+            $products = Product::whereHas('categories', function ($query) use ($category) {
+                                    $query->where('categories.id', $category->id);
+                                })
+                                ->with('images', 'categories') // Đã sửa từ 'category' thành 'categories'
+                                ->paginate(10);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lấy sản phẩm theo danh mục thành công',
+                'category' => [
+                    'id' => $category->id,
+                    'name' => $category->name,
+                    'slug' => $category->slug,
+                    'image_path' => $category->image_path,
+                ],
+                'products' => $products
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Không thể tải sản phẩm theo danh mục: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\Web\BannerController;
 use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
 use App\Http\Controllers\Web\ProductAttributeValueController;
@@ -94,3 +95,17 @@ Route::get('/product/{product}/attribute-value-configs', [ProductVariantControll
 
 // Route cho quản lý banners
 Route::resource('banners', BannerController::class);
+
+
+// ===========================================
+// ROUTES CHO CATEGORIES
+// ===========================================
+// Lấy tất cả danh mục
+Route::get('categories', [CategoryController::class, 'index']);
+// Lấy danh sách sản phẩm theo slug danh mục
+// Ví dụ: /api/categories/sedan-cars/products
+Route::get('categories/{category_slug}/products', [ProductController::class, 'productsByCategory']);
+
+// Lấy chi tiết sản phẩm theo slug
+// Ví dụ: /api/products/vinfast-lux-a2-0
+Route::get('products/{product_slug}', [ProductController::class, 'show']);
