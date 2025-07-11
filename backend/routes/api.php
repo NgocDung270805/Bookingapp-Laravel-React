@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\BannerController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\ProfileController;
@@ -64,6 +65,18 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('banners', [BannerController::class, 'index'])->name('api.banners.index'); 
 Route::get('banners/{banner}', [BannerController::class, 'show'])->name('api.banners.show'); 
 
+// ===========================================
+// ROUTES CHO CATEGORIES
+// ===========================================
+// Lấy tất cả danh mục
+Route::get('categories', [CategoryController::class, 'index']);
+// Lấy danh sách sản phẩm theo slug danh mục
+// Ví dụ: /api/categories/sedan-cars/products
+Route::get('categories/{category_slug}/products', [ProductController::class, 'productsByCategory']);
+
+// Lấy chi tiết sản phẩm theo slug
+// Ví dụ: /api/products/vinfast-lux-a2-0
+Route::get('products/{product_slug}', [ProductController::class, 'show']);
 // Api Url 
 // http://localhost:8000/api/login <=> Login(POST)
 // http://localhost:8000/api/register <=> Register(POST)
