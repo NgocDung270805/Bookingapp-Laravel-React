@@ -6,11 +6,17 @@ import { PATHS } from '../../common/constants';
 import { BASE_URL_ADMIN } from '../../common/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBanners, selectSliderBanners } from '../../modules/Banners/slice';
+import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../modules/Categories/slice'; // Phần import lấy all category
 
 const HomePage = () => {
   const dispatch = useDispatch();
   const sliderBanners = useSelector(selectSliderBanners);
   const bannersLoading = useSelector((state) => state.banners.loading);
+
+  // Lấy dữ liệu danh mục từ Redux store
+  const categories = useSelector(selectAllCategories);
+  const categoriesLoading = useSelector(selectCategoriesLoading);
+  const categoriesError = useSelector(selectCategoriesError);
 
   const firstSliderBanner = sliderBanners && sliderBanners.length > 0 ? sliderBanners[0] : null;
   const allBanners = useSelector((state) => state.banners.banners); // Lấy toàn bộ banners đã fetch
@@ -27,6 +33,13 @@ const HomePage = () => {
       dispatch(fetchBanners(4)); // Chỉ fetch banner loại 4 (slider)
     }
   }, [dispatch, bannersLoading, allBanners.length]); // Thêm allBanners.length vào dependency để re-run khi banners thay đổi
+
+  useEffect(() => {
+    // Điều kiện này để tránh fetch lại categories nếu đã có dữ liệu hoặc đang loading
+    if (!categoriesLoading && categories.length === 0 && !categoriesError) {
+      dispatch(fetchCategories());
+    }
+  }, [dispatch, categoriesLoading, categories.length, categoriesError]);
 
   const { user } = useAuth(); // Lấy thông tin user
 
@@ -168,7 +181,7 @@ const HomePage = () => {
         >
           {bannersLoading && (
             <div className="loading-banner text-white text-center pt-5">
-              
+
             </div>
           )}
         </div>
@@ -236,128 +249,32 @@ const HomePage = () => {
               <div className="swiper-button-next"><span className="fas fa-chevron-right text-primary" data-fa-transform="shrink-3"></span></div>
               <div className="swiper-button-prev"><span className="fas fa-chevron-left text-primary" data-fa-transform="shrink-3"></span></div>
             </div>
-            <div className="swiper theme-slider" data-swiper='{"loop":true,"centeredSlides":true,"autoplay":true,"centeredSlidesBounds":true,"spaceBetween":16,"slidesPerView":1,"speed":1500,"breakpoints":{"576":{"slidesPerView":"auto"}}}' ref={swiperRef1}>
+            <div className="swiper theme-slider" data-swiper='{"loop":false, "centeredSlides":true,"autoplay":true,"centeredSlidesBounds":true,"spaceBetween":16,"slidesPerView":1,"speed":1500,"breakpoints":{"576":{"slidesPerView":"auto"}}}' ref={swiperRef1}>
               <div className="swiper-wrapper">
-                <div className="swiper-slide w-sm-auto"><a className="position-relative rounded-3 overflow-hidden d-block" href="#!"><img className="w-100 w-sm-auto object-fit-cover" src="../../assets/img/gallery/39.png" alt="" height="220" />
-                  <div className="img-backdrop-faded">
-                    <div className="image-reveal-content mb-3">
-                      <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">17 Hotels</h6>
+
+                {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
+                  <div className="swiper-slide w-sm-auto" key={category.id}>
+                    <a className="position-relative rounded-3 overflow-hidden d-block" href={`${PATHS.PRODUCTS}?category=${category.slug}`}>
+                      <img className="w-100 w-sm-auto object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${category.img}`} alt={category.name} width="420px" height="220px" />
+                      <div className="img-backdrop-faded">
+                        <div className="image-reveal-content mb-3">
+                          <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
+                            <h6 className="mb-0 text-secondary-lighter fw-semibold">17 Hotels</h6>
+                          </div>
+                          <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
+                            <h6 className="mb-0 text-secondary-lighter fw-semibold">22 Tour Package</h6>
+                          </div>
+                        </div>
+                        <div className="d-flex align-items-center gap-2">
+                          <img src={`${PATHS.ADMIN_DASHBOARD}storage/${category.img}`} alt="" width="25px" height="18px" />
+                          <h4 className="mb-0 text-white">{category.name}</h4>
+                        </div>
                       </div>
-                      <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">22 Tour Package</h6>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-2"><img src="../../assets/img/country/thailand.png" alt="" />
-                      <h4 className="mb-0 text-white">Thailand</h4>
-                    </div>
+                    </a>
                   </div>
-                </a></div>
-                <div className="swiper-slide w-sm-auto"><a className="position-relative rounded-3 overflow-hidden d-block" href="#!"><img className="w-100 w-sm-auto object-fit-cover" src="../../assets/img/gallery/40.png" alt="" height="220" />
-                  <div className="img-backdrop-faded">
-                    <div className="image-reveal-content mb-3">
-                      <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">15 Hotels</h6>
-                      </div>
-                      <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">24 Tour Package</h6>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-2"><img src="../../assets/img/country/switzerland.png" alt="" />
-                      <h4 className="mb-0 text-white">Switzerland</h4>
-                    </div>
-                  </div>
-                </a></div>
-                <div className="swiper-slide w-sm-auto"><a className="position-relative rounded-3 overflow-hidden d-block" href="#!"><img className="w-100 w-sm-auto object-fit-cover" src="../../assets/img/gallery/42.png" alt="" height="220" />
-                  <div className="img-backdrop-faded">
-                    <div className="image-reveal-content mb-3">
-                      <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">44 Hotels</h6>
-                      </div>
-                      <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">123 Tour Package</h6>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-2"><img src="../../assets/img/country/turkey.png" alt="" />
-                      <h4 className="mb-0 text-white">Turkey</h4>
-                    </div>
-                  </div>
-                </a></div>
-                <div className="swiper-slide w-sm-auto"><a className="position-relative rounded-3 overflow-hidden d-block" href="#!"><img className="w-100 w-sm-auto object-fit-cover" src="../../assets/img/gallery/41.png" alt="" height="220" />
-                  <div className="img-backdrop-faded">
-                    <div className="image-reveal-content mb-3">
-                      <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">55 Hotels</h6>
-                      </div>
-                      <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">41 Tour Package</h6>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-2"><img src="../../assets/img/country/new-zealand.png" alt="" />
-                      <h4 className="mb-0 text-white">New Zealand</h4>
-                    </div>
-                  </div>
-                </a></div>
-                <div className="swiper-slide w-sm-auto"><a className="position-relative rounded-3 overflow-hidden d-block" href="#!"><img className="w-100 w-sm-auto object-fit-cover" src="../../assets/img/gallery/43.png" alt="" height="220" />
-                  <div className="img-backdrop-faded">
-                    <div className="image-reveal-content mb-3">
-                      <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">17 Hotels</h6>
-                      </div>
-                      <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">22 Tour Package</h6>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-2"><img src="../../assets/img/country/sweden.png" alt="" />
-                      <h4 className="mb-0 text-white">Sweden</h4>
-                    </div>
-                  </div>
-                </a></div>
-                <div className="swiper-slide w-sm-auto"><a className="position-relative rounded-3 overflow-hidden d-block" href="#!"><img className="w-100 w-sm-auto object-fit-cover" src="../../assets/img/gallery/44.png" alt="" height="220" />
-                  <div className="img-backdrop-faded">
-                    <div className="image-reveal-content mb-3">
-                      <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">44 Hotels</h6>
-                      </div>
-                      <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">123 Tour Package</h6>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-2"><img src="../../assets/img/country/turkey.png" alt="" />
-                      <h4 className="mb-0 text-white">Turkey</h4>
-                    </div>
-                  </div>
-                </a></div>
-                <div className="swiper-slide w-sm-auto"><a className="position-relative rounded-3 overflow-hidden d-block" href="#!"><img className="w-100 w-sm-auto object-fit-cover" src="../../assets/img/gallery/58.png" alt="" height="220" />
-                  <div className="img-backdrop-faded">
-                    <div className="image-reveal-content mb-3">
-                      <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">54 Hotels</h6>
-                      </div>
-                      <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">123 Tour Package</h6>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-2"><img src="../../assets/img/country/vietnam.png" alt="" />
-                      <h4 className="mb-0 text-white">Vietnam</h4>
-                    </div>
-                  </div>
-                </a></div>
-                <div className="swiper-slide w-sm-auto"><a className="position-relative rounded-3 overflow-hidden d-block" href="#!"><img className="w-100 w-sm-auto object-fit-cover" src="../../assets/img/gallery/57.png" alt="" height="220" />
-                  <div className="img-backdrop-faded">
-                    <div className="image-reveal-content mb-3">
-                      <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">17 Hotels</h6>
-                      </div>
-                      <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                        <h6 className="mb-0 text-secondary-lighter fw-semibold">22 Tour Package</h6>
-                      </div>
-                    </div>
-                    <div className="d-flex align-items-center gap-2"><img src="../../assets/img/country/japan.png" alt="" />
-                      <h4 className="mb-0 text-white">Japan</h4>
-                    </div>
-                  </div>
-                </a></div>
+                ))) : (
+                  !categoriesLoading && !categoriesError && <div className="swiper-slide w-sm-auto"><p>Không có danh mục nào để hiển thị.</p></div>
+                )}
               </div>
             </div>
           </div>
