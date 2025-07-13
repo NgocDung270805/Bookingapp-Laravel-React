@@ -17,7 +17,7 @@ class CategoryController extends Controller
     {
         try {
             // Lấy tất cả danh mục với các trường cần thiết
-            $categories = Category::select('id', 'name', 'slug', 'description', 'img', 'parent_id', 'status')->whereNull('parent_id')->get();
+            $categories = Category::select('id', 'name', 'slug', 'description', 'img', 'parent_id', 'status')->whereNull('parent_id')->withCount('products')->get();
 
             return response()->json([
                 'status' => 'success',
