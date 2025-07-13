@@ -30,6 +30,14 @@ class ProductController extends Controller
                 ->orWhere('description', 'like', '%' . $searchQuery . '%');
         }
 
+        // Lọc sản phẩm theo Category
+        if ($request->has('category') && !empty($request->category)) {
+            $categorySlug = $request->category;
+            $query->whereHas('categories', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
+            });
+        }
+
         $products = $query->orderBy('id')->get();
 
         return response()->json([
