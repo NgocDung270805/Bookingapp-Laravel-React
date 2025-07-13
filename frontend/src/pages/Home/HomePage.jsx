@@ -254,15 +254,16 @@ const HomePage = () => {
 
                 {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
                   <div className="swiper-slide w-sm-auto" key={category.id}>
-                    <a className="position-relative rounded-3 overflow-hidden d-block" href={`${PATHS.PRODUCTS}?category=${category.slug}`}>
+                    <a className="position-relative rounded-3 overflow-hidden d-block" href={`${PATHS.PRODUCTS_BY_CATEGORY_SLUG}${category.slug}`}>
                       <img className="w-100 w-sm-auto object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${category.img}`} alt={category.name} width="420px" height="220px" />
                       <div className="img-backdrop-faded">
                         <div className="image-reveal-content mb-3">
-                          <div className="d-flex align-items-center gap-2 mb-2"><span className="fa-solid fa-hotel text-secondary-lighter"></span>
-                            <h6 className="mb-0 text-secondary-lighter fw-semibold">17 Hotels</h6>
+                          <div className="d-flex align-items-center gap-2 mb-2">
+                            {/* <span className="fa-solid fa-hotel text-secondary-lighter"></span> */}
+                            {/* <h6 className="mb-0 text-secondary-lighter fw-semibold">17 Hotels</h6> */}
                           </div>
-                          <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-tree-city text-secondary-lighter"></span>
-                            <h6 className="mb-0 text-secondary-lighter fw-semibold">22 Tour Package</h6>
+                          <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-car text-secondary-lighter"></span>
+                            <h6 className="mb-0 text-secondary-lighter fw-semibold">{category.products_count} Xe</h6>
                           </div>
                         </div>
                         <div className="d-flex align-items-center gap-2">
