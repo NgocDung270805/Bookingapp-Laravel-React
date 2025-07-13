@@ -4,6 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   fetchProductsApi,
   fetchProductByIdApi,
+  fetchProductBySlugApi,
   createProductApi,
   updateProductApi,
   deleteProductApi,
@@ -43,6 +44,32 @@ export const fetchProductById = createAsyncThunk(
       return response.product;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Không thể tải chi tiết sản phẩm.');
+    }
+  }
+);
+
+// Async Thunk mới để lấy sản phẩm theo slug
+export const fetchProductBySlug = createAsyncThunk(
+  'products/fetchProductBySlug',
+  async (slug, { rejectWithValue }) => {
+    try {
+      const response = await fetchProductBySlugApi(slug);
+
+      // --- PHẦN QUAN TRỌNG CẦN KIỂM TRA ---
+      // Nếu API của bạn trả về đối tượng sản phẩm trực tiếp (ví dụ: {id: 1, name: "Product"}),
+      // thì bạn nên `return response;`.
+      // Nếu API của bạn trả về một đối tượng có key 'product' (ví dụ: {product: {id: 1, name: "Product"}}),
+      // thì `return response.product;` là đúng.
+      if (response && response.product) {
+        return response.product; // Giả định API trả về { product: {...} }
+      } else if (response) {
+        return response; // Giả định API trả về {...} trực tiếp
+      } else {
+        return null; // Xử lý phản hồi rỗng/không mong đợi
+      }
+
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Không thể tải chi tiết sản phẩm theo slug.');
     }
   }
 );
@@ -180,6 +207,21 @@ const productsSlice = createSlice({
         state.selectedProduct = action.payload;
       })
       .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.selectedProduct = null;
+      })
+      // Chi tiết sản phẩm
+      .addCase(fetchProductBySlug.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.selectedProduct = null;
+      })
+      .addCase(fetchProductBySlug.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProduct = action.payload;
+      })
+      .addCase(fetchProductBySlug.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         state.selectedProduct = null;

@@ -32,6 +32,12 @@ export const fetchProductByIdApi = async (id) => {
   return response.data;
 };
 
+// Lấy chi tiết một sản phẩm theo Slug (HÀM MỚI)
+export const fetchProductBySlugApi = async (slug) => {
+  const response = await api.get(`/products/${slug}`); // Giả sử API endpoint là /api/products/slug/{slug}
+  return response.data;
+};
+
 // Tạo sản phẩm mới
 export const createProductApi = async (productData) => {
   const formData = new FormData();

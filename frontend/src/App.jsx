@@ -16,6 +16,7 @@ import LoginPage from './modules/Auth/containers/LoginPage';
 import RegisterPage from './modules/Auth/containers/RegisterPage';
 import ProfilePage from './modules/profile/containers/ProfilePage';
 import ProductsByCategoriesPage from './modules/Products/containers/ProductsByCategoriesPage';
+import ProductDetailPage from './modules/Products/containers/ProductDetailPage.jsx';
 
 
 // HOCs
@@ -28,6 +29,7 @@ import { PATHS } from './common/constants';
 const ProtectedProfilePage = withAuth(ProfilePage);
 const ProtectedProductsPage = withAuth(ProductsPage); // Bọc ProductsPage nếu bạn muốn nó là trang bảo vệ
 const ProtectedProductsByCategoriesPage = withAuth(ProductsByCategoriesPage);
+const ProtectedProductDetailPage = withAuth(ProductDetailPage);
 
 
 const App = () => {
@@ -49,6 +51,7 @@ const App = () => {
             <Route
               path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProductsByCategoriesPage />}
             />
+            <Route path={PATHS.PRODUCT_DETAIL_BY_SLUG} element={<ProductDetailPage />} />
             
             {/* Nếu ProductsPage cần bảo vệ, dùng ProtectedProductsPage */}
             {/* <Route path={PATHS.PRODUCTS} element={<ProtectedProductsPage />} /> */}

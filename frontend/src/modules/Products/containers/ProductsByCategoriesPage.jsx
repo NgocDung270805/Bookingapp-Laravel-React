@@ -200,7 +200,7 @@ const ProductsByCategoriesPage = () => {
                     </button>
                   </div>
                   <div className="backdrop-faded backdrop-secondary-dark h-100 d-flex flex-column justify-content-end">
-                    <a className="stretched-link fs-7 text-white fw-bold" href={`${PATHS.PRODUCT_DETAIL_BY_SLUG}/${product.slug}`}>{product.name}</a>
+                    <a className="stretched-link fs-7 text-white fw-bold" href={`${PATHS.PRODUCT_DETAIL_BY_SLUG}${product.slug}`}>{product.name}</a>
                     <p className="mb-2 text-secondary-lighter">
                       <span className="fa-solid fa-car-side me-2"></span>
                       {product.categories && product.categories.length > 0 ? product.categories.map(cat => cat.name).join(', '): 'N/A'}</p>
