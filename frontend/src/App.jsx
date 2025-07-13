@@ -15,6 +15,8 @@ import ProductsPage from './modules/Products/containers/ProductsPage'; // THAY �
 import LoginPage from './modules/Auth/containers/LoginPage';
 import RegisterPage from './modules/Auth/containers/RegisterPage';
 import ProfilePage from './modules/profile/containers/ProfilePage';
+import ProductsByCategoriesPage from './modules/Products/containers/ProductsByCategoriesPage';
+
 
 // HOCs
 import withAuth from './hoc/withAuth.jsx';
@@ -25,6 +27,8 @@ import { PATHS } from './common/constants';
 // Bọc các trang cần bảo vệ bằng HOC `withAuth`
 const ProtectedProfilePage = withAuth(ProfilePage);
 const ProtectedProductsPage = withAuth(ProductsPage); // Bọc ProductsPage nếu bạn muốn nó là trang bảo vệ
+const ProtectedProductsByCategoriesPage = withAuth(ProductsByCategoriesPage);
+
 
 const App = () => {
   return (
@@ -41,6 +45,10 @@ const App = () => {
 
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} /> 
+
+            <Route
+              path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProductsByCategoriesPage />}
+            />
             
             {/* Nếu ProductsPage cần bảo vệ, dùng ProtectedProductsPage */}
             {/* <Route path={PATHS.PRODUCTS} element={<ProtectedProductsPage />} /> */}

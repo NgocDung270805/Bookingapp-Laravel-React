@@ -3,8 +3,26 @@
 import api from '../../common/API';
 
 // Lấy danh sách sản phẩm
-export const fetchProductsApi = async (query = '') => { // Thêm tham số query
-  const response = await api.get('/products', { params: { q: query } }); // Gửi query param 'q'
+// export const fetchProductsApi = async (query = '') => { // Thêm tham số query
+//   const response = await api.get('/products', { params: { q: query } }); // Gửi query param 'q'
+//   return response.data;
+// };
+export const fetchProductsApi = async (param = '') => {
+  let url = '/products';
+  let params = {};
+
+  if (param) { // Nếu có tham số được truyền vào
+    // Kiểm tra xem đây có phải là một category slug không
+    // Trong ProductsByCategoriesPage.jsx, bạn đang truyền categorySlug từ useParams().
+    // Vì vậy, ở đây, 'param' chính là categorySlug.
+    // Chúng ta sẽ xây dựng URL theo dạng: /products/categories/{categorySlug}
+    url = `/products/categories/${param}`;
+    // Không có params.q trong trường hợp này vì slug đã là một phần của URL.
+  }
+  // Nếu param rỗng, URL sẽ vẫn là '/products', có thể dùng để lấy tất cả sản phẩm
+  // hoặc để tìm kiếm chung nếu sau này bạn muốn thêm query param vào trang products tổng.
+
+  const response = await api.get(url, { params: params }); // params sẽ rỗng nếu là category slug URL
   return response.data;
 };
 

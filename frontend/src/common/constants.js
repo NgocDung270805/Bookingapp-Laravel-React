@@ -13,7 +13,7 @@ export const PATHS = {
   PROFILE: '/user/profile',
   LOGOUT: '/logout',
   PRODUCTS: '/products',
-  PRODUCTS_BY_CATEGORY_SLUG: '/products/category/',
+  PRODUCTS_BY_CATEGORY_SLUG: '/products/categories/:categorySlug',
   PRODUCT_DETAIL_BY_SLUG: '/products/',
   ADMIN_DASHBOARD: BASE_URL_ADMIN,
 };

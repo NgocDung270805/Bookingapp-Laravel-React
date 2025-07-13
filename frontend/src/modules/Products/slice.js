@@ -151,51 +151,104 @@ const productsSlice = createSlice({
     },
     setProductsError: (state, action) => {
       state.error = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Fetch Products
+      // Xử lý fetchProducts
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        // Đảm bảo trạng thái is_favorited được thêm vào mỗi sản phẩm nếu user đã đăng nhập
-        // Hoặc bạn có thể fetch status riêng sau đó gán vào
-        // Để đơn giản, giả sử API products trả về is_favorited cho từng sản phẩm nếu user đăng nhập
-        state.products = action.payload;
+        state.products = action.payload; // Đảm bảo luôn là mảng
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.products = [];
       })
-      // ... (Các extraReducers cho fetchProductById, createProduct, updateProduct, deleteProduct)
-      // Giữ nguyên như code cũ
-
-      // ===========================================
-      // XỬ LÝ EXTRA REDUCERS MỚI CHO CÁC HÀNH ĐỘNG
-      // ===========================================
-      .addCase(toggleFavorite.pending, (state) => {
-        // Có thể thêm trạng thái loading riêng cho favorite nếu muốn
-        // state.favoritingStatus = 'loading';
+      // Xử lý fetchProductById
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.selectedProduct = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedProduct = action.payload;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.selectedProduct = null;
+      })
+      // Xử lý createProduct
+      .addCase(createProduct.pending, (state) => {
+        state.loading = true;
         state.error = null;
       })
-      .addCase(toggleFavorite.fulfilled, (state, action) => {
-        // state.favoritingStatus = 'idle';
-        // Cập nhật trạng thái yêu thích của sản phẩm trong danh sách
-        const productIndex = state.products.findIndex(p => p.id === action.payload.productId);
-        if (productIndex !== -1) {
-          // Cập nhật thuộc tính is_favorited (nếu có trong payload hoặc re-fetch đã xử lý)
-          // Nếu bạn re-fetch fetchProducts sau khi toggle, không cần cập nhật ở đây
-          // Nếu không re-fetch, bạn cần cập nhật thủ công:
-          // state.products[productIndex].is_favorited = action.payload.is_favorited;
-        }
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products.push(action.payload); // Thêm sản phẩm mới vào danh sách
+        alert('Tạo sản phẩm thành công!');
       })
-      .addCase(toggleFavorite.rejected, (state, action) => {
-        // state.favoritingStatus = 'failed';
+      .addCase(createProduct.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload;
+        alert('Tạo sản phẩm thất bại: ' + JSON.stringify(action.payload));
+      })
+      // Xử lý updateProduct
+      .addCase(updateProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        // Cập nhật sản phẩm trong danh sách
+        const index = state.products.findIndex((p) => p.id === action.payload.id);
+        if (index !== -1) {
+          state.products[index] = action.payload;
+        }
+        // Nếu sản phẩm đang được chọn, cũng cập nhật nó
+        if (state.selectedProduct && state.selectedProduct.id === action.payload.id) {
+          state.selectedProduct = action.payload;
+        }
+        alert('Cập nhật sản phẩm thành công!');
+      })
+      .addCase(updateProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        alert('Cập nhật sản phẩm thất bại: ' + JSON.stringify(action.payload));
+      })
+      // Xử lý deleteProduct
+      .addCase(deleteProduct.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        state.loading = false;
+        state.products = state.products.filter((p) => p.id !== action.payload); // Lọc bỏ sản phẩm đã xóa
+        alert('Xóa sản phẩm thành công!');
+      })
+      .addCase(deleteProduct.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        alert('Xóa sản phẩm thất bại: ' + JSON.stringify(action.payload));
+      })
+      // Xử lý toggleFavorite
+      .addCase(toggleFavorite.fulfilled, (state, action) => {
+        // Cập nhật trạng thái yêu thích của sản phẩm trong danh sách
+        const { productId, isFavorited } = action.payload;
+        const productToUpdate = state.products.find((p) => p.id === productId);
+        if (productToUpdate) {
+          productToUpdate.is_favorited = isFavorited; // Cập nhật trường is_favorited
+        }
+        // Cập nhật selectedProduct nếu nó là sản phẩm đang được yêu thích/bỏ yêu thích
+        if (state.selectedProduct && state.selectedProduct.id === productId) {
+          state.selectedProduct.is_favorited = isFavorited;
+        }
       })
       .addCase(createBooking.pending, (state) => {
         // state.bookingStatus = 'loading';
@@ -203,8 +256,7 @@ const productsSlice = createSlice({
       })
       .addCase(createBooking.fulfilled, (state, action) => {
         // state.bookingStatus = 'success';
-        // Có thể thêm booking vào danh sách bookings của user nếu bạn quản lý nó trong Redux
-        alert('Đặt lịch thành công! Booking ID: ' + action.payload.id); // Thông báo trực tiếp
+        alert('Đặt lịch thành công!');
       })
       .addCase(createBooking.rejected, (state, action) => {
         // state.bookingStatus = 'failed';
@@ -243,4 +295,7 @@ const productsSlice = createSlice({
 });
 
 export const { clearSelectedProduct, setProductsError } = productsSlice.actions;
+export const selectAllProducts = (state) => state.products?.products?.data || [];
+export const selectProductsLoading = (state) => state.products.loading;
+export const selectProductsError = (state) => state.products.error;
 export default productsSlice.reducer;
