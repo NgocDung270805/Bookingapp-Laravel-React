@@ -72,7 +72,7 @@ Route::get('banners/{banner}', [BannerController::class, 'show'])->name('api.ban
 Route::get('categories', [CategoryController::class, 'index']);
 // Lấy danh sách sản phẩm theo slug danh mục
 // Ví dụ: /api/categories/sedan-cars/products
-Route::get('/products/categories/{category_slug}', [ProductController::class, 'productsByCategory']);
+Route::get('/products/categories/:categorySlug{category_slug}', [ProductController::class, 'productsByCategory']);
 
 // Lấy chi tiết sản phẩm theo slug
 // Ví dụ: /api/products/vinfast-lux-a2-0
