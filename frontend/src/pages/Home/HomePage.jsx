@@ -1,6 +1,7 @@
 // src/pages/Home/HomePage.jsx
 
 import React, { use, useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth'; // Lấy thông tin user
 import { PATHS } from '../../common/constants';
 import { BASE_URL_ADMIN } from '../../common/constants';
@@ -254,7 +255,7 @@ const HomePage = () => {
 
                 {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
                   <div className="swiper-slide w-sm-auto" key={category.id}>
-                    <a className="position-relative rounded-3 overflow-hidden d-block" href={`${PATHS.PRODUCTS_BY_CATEGORY_SLUG}${category.slug}`}>
+                    <Link to={`${PATHS.PRODUCTS_BY_CATEGORY_SLUG}${category.slug}`} className="position-relative rounded-3 overflow-hidden d-block">
                       <img className="w-100 w-sm-auto object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${category.img}`} alt={category.name} width="420px" height="220px" />
                       <div className="img-backdrop-faded">
                         <div className="image-reveal-content mb-3">
@@ -271,7 +272,7 @@ const HomePage = () => {
                           <h4 className="mb-0 text-white">{category.name}</h4>
                         </div>
                       </div>
-                    </a>
+                    </Link>
                   </div>
                 ))) : (
                   !categoriesLoading && !categoriesError && <div className="swiper-slide w-sm-auto"><p>Không có danh mục nào để hiển thị.</p></div>

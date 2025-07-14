@@ -41,9 +41,9 @@ const ProductsByCategoriesPage = () => {
   }
 
   // Không có sản phẩm
-  if (!products.length) {
-    return <div className="container mt-5">Không tìm thấy sản phẩm nào trong danh mục này.</div>;
-  }
+  // if (!products.length) {
+  //   return <div className="container mt-5">Không tìm thấy sản phẩm nào trong danh mục này.</div>;
+  // }
 
   return (
     // <section className="pb-8 pt-5">
@@ -122,7 +122,7 @@ const ProductsByCategoriesPage = () => {
         <div className="container-small">
           <nav className="navbar navbar-landing navbar-home navbar-expand py-4 px-0">
             <ul className="navbar-nav mx-auto mt-3 mt-lg-0 gap-2">
-              <li className="nav-item"><a className="nav-link fw-bold rounded-3 active" aria-current="page" href="../../../../apps/travel-agency/hotel/customer/homepage.html"> <span className="me-2 fa-solid fa-hotel"></span>Hotel</a></li>
+              <li className="nav-item"><a className="nav-link fw-bold rounded-3 active" aria-current="page" href="../../../../apps/travel-agency/hotel/customer/homepage.html"> <span className="me-2 fa-solid fa-hotel"></span></a></li>
               <li className="nav-item"><a className="nav-link fw-bold rounded-3" aria-current="page" href="../../../../apps/travel-agency/flight/homepage.html"> <span className="me-2 fa-solid fa-plane"></span>Flight</a></li>
               <li className="nav-item"><a className="nav-link fw-bold rounded-3" aria-current="page" href="../../../../apps/travel-agency/trip/homepage.html"> <span className="me-2 fa-solid fa-suitcase-rolling"></span>Trip</a></li>
             </ul>
@@ -186,37 +186,62 @@ const ProductsByCategoriesPage = () => {
             </select><button className="btn btn-phoenix-secondary text-nowrap px-3 px-md-4 ms-auto me-2"><span className="fa-solid fa-map me-md-2"></span><span className="d-none d-md-inline-block">Show in map</span></button><button className="btn btn-phoenix-secondary text-nowrap px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#hotelFilterOffcanvas" aria-controls="hotelFilterOffcanvas"><span className="fa-solid fa-filter me-md-2"></span><span className="d-none d-md-inline-block">Filters</span></button></div>
           </div>
           <div className="row g-3 mb-6">
-            {products.map((product) => (
-              <div className="col-sm-6 col-lg-4 col-xl-3">
-                <div className="hover-actions-trigger mx-auto rounded-3 overflow-hidden">
-                  {product.img ? (
-                    <img src={`${PATHS.ADMIN_DASHBOARD}storage/${product.img}`} alt={product.name} className="img-fluid" style={{ width: '336px', height: '420px', objectFit: 'cover' }} />
-                  ) : (
-                    <img className="img-fluid" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkmw2SF6CxOmnd63-nmTYy2GPZFR-zKQCLLQ&s" alt="" style={{ width: '336px', height: '420px', objectFit: 'cover' }} />
-                  )}
-                  <div className="hover-actions top-0 end-0 mt-4 me-4 z-5">
-                    <button className="btn btn-wish">
-                      <span className="far fa-heart" data-fa-transform="down-1"></span>
-                    </button>
-                  </div>
-                  <div className="backdrop-faded backdrop-secondary-dark h-100 d-flex flex-column justify-content-end">
-                    <a className="stretched-link fs-7 text-white fw-bold" href={`${PATHS.PRODUCT_DETAIL_BY_SLUG}${product.slug}`}>{product.name}</a>
-                    <p className="mb-2 text-secondary-lighter">
-                      <span className="fa-solid fa-car-side me-2"></span>
-                      {product.categories && product.categories.length > 0 ? product.categories.map(cat => cat.name).join(', '): 'N/A'}</p>
-                    <div className="d-flex align-items-center gap-3">
-                      <span className="badge badge-phoenix badge-phoenix-warning fs-8 fw-normal">
-                        <span className="fa-solid fa-star me-1 fs-9" data-fa-transform="up-1"></span>
-                        <span className="badge-label">3.8</span>
-                      </span>
-                      <h4 className="mb-0 text-white fw-bold text-nowrap">$33.48 
-                        <span className="text-secondary-lighter fs-8 fw-normal">/ night</span>
-                      </h4>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <div key={product.id} className="col-sm-6 col-lg-4 col-xl-3">
+                  <div className="hover-actions-trigger mx-auto rounded-3 overflow-hidden">
+                    {product.img ? (
+                      <img
+                        src={`${PATHS.ADMIN_DASHBOARD}storage/${product.img}`}
+                        alt={product.name}
+                        className="img-fluid"
+                        style={{ width: '336px', height: '420px', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <img
+                        className="img-fluid"
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkmw2SF6CxOmnd63-nmTYy2GPZFR-zKQCLLQ&s"
+                        alt="placeholder"
+                        style={{ width: '336px', height: '420px', objectFit: 'cover' }}
+                      />
+                    )}
+
+                    <div className="hover-actions top-0 end-0 mt-4 me-4 z-5">
+                      <button className="btn btn-wish">
+                        <span className="far fa-heart" data-fa-transform="down-1"></span>
+                      </button>
+                    </div>
+
+                    <div className="backdrop-faded backdrop-secondary-dark h-100 d-flex flex-column justify-content-end">
+                      <a
+                        className="stretched-link fs-7 text-white fw-bold"
+                        href={`${PATHS.PRODUCT_DETAIL_BY_SLUG}${product.slug}`}
+                      >
+                        {product.name}
+                      </a>
+                      <p className="mb-2 text-secondary-lighter">
+                        <span className="fa-solid fa-car-side me-2"></span>
+                        {product.categories?.length > 0
+                          ? product.categories.map((cat) => cat.name).join(', ')
+                          : 'N/A'}
+                      </p>
+                      <div className="d-flex align-items-center gap-3">
+                        <span className="badge badge-phoenix badge-phoenix-warning fs-8 fw-normal">
+                          <span className="fa-solid fa-star me-1 fs-9" data-fa-transform="up-1"></span>
+                          <span className="badge-label">3.8</span>
+                        </span>
+                        <h4 className="mb-0 text-white fw-bold text-nowrap">
+                          $33.48
+                          <span className="text-secondary-lighter fs-8 fw-normal">/ sản phẩm</span>
+                        </h4>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <div className="text-center w-100 py-5 text-muted">Không có sản phẩm thuộc danh mục</div>
+            )}
           </div>
         </div>
       </section>
