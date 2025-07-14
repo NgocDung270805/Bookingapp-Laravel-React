@@ -88,6 +88,8 @@
                                                         3 => 'Banner trang chủ',
                                                         4 => 'Ảnh slider',
                                                         5 => 'Banner sản phẩm',
+                                                        6 => 'Khách hàng đã mua',
+                                                        7 => 'Địa điểm đã giao xe',
                                                     ];
                                                 @endphp
                                                 {{ $bannerTypeMap[$banner->type] ?? 'Unknown' }}
@@ -173,6 +175,8 @@
                                 <option value="3">Homepage Banner</option>
                                 <option value="4">Slider Image</option>
                                 <option value="5">Product Banner</option>
+                                <option value="6">Khách hàng đã mua</option>
+                                <option value="7">Địa điểm đã giao xe</option>
                             </select>
                             <div class="text-danger" id="typeError"></div>
                         </div>
@@ -228,6 +232,8 @@
                         3: 'Banner trang chủ',
                         4: 'Ảnh slider',
                         5: 'Banner sản phẩm',
+                        6: 'Khách hàng đã mua',
+                        7: 'Địa điểm đã giao xe',
                     };
 
                     banners.forEach(banner => {
