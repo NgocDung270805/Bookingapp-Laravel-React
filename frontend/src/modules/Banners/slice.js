@@ -97,16 +97,29 @@ export const selectLogoBanner = createSelector(
   (banners) => banners.find(banner => banner.type === 1) // Lấy banner đầu tiên có type 1
 );
 
+// Selector để lấy banner nền Footer (type 2)
+export const selectFooterBackgroundBanner = createSelector(
+  [selectAllBanners],
+  (banners) => banners.find(banner => banner.type === 2) // Lấy banner đầu tiên có type 2
+);
+
 // Selector để lấy banner Slider (type 4)
 export const selectSliderBanners = createSelector(
   [selectAllBanners],
   (banners) => banners.filter(banner => banner.type === 4) // Lấy tất cả banners có type 4
 );
 
-// Selector để lấy banner nền Footer (type 2)
-export const selectFooterBackgroundBanner = createSelector(
+// Selector để lấy banner Slider (type 6)
+export const selectDaMuaBanners = createSelector(
   [selectAllBanners],
-  (banners) => banners.find(banner => banner.type === 2) // Lấy banner đầu tiên có type 2
+  (banners) => banners.filter(banner => banner.type === 6) // Lấy tất cả banners có type 6
 );
+
+// Selector để lấy banner Slider (type 7)
+export const selectDiaDiemDaQuaBanners = createSelector(
+  [selectAllBanners],
+  (banners) => banners.filter(banner => banner.type === 7) // Lấy tất cả banners có type 7
+);
+
 
 // Bạn có thể thêm các selectors khác cho các loại banner còn lại (type 3, 5)

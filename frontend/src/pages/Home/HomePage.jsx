@@ -1,45 +1,53 @@
 // src/pages/Home/HomePage.jsx
 
 import React, { use, useEffect, useRef, useState } from 'react';
+import dayjs from 'dayjs'
+import 'dayjs/locale/vi'
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth'; // Lấy thông tin user
 import { PATHS } from '../../common/constants';
 import { BASE_URL_ADMIN } from '../../common/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBanners, selectSliderBanners } from '../../modules/Banners/slice';
+import { fetchBanners, selectSliderBanners, selectDaMuaBanners, selectDiaDiemDaQuaBanners } from '../../modules/Banners/slice';
 import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../modules/Categories/slice'; // Phần import lấy all category
 
+dayjs.locale('vi')
 const HomePage = () => {
   const dispatch = useDispatch();
   const sliderBanners = useSelector(selectSliderBanners);
+  const diaDiemDaQuaBanners = useSelector(selectDiaDiemDaQuaBanners); // Đây sẽ là mảng sau khi sửa slice
+  const daMuaBanners = useSelector(selectDaMuaBanners);
   const bannersLoading = useSelector((state) => state.banners.loading);
+  const allBanners = useSelector((state) => state.banners.banners); // Lấy toàn bộ banners đã fetch
 
   // Lấy dữ liệu danh mục từ Redux store
   const categories = useSelector(selectAllCategories);
   const categoriesLoading = useSelector(selectCategoriesLoading);
   const categoriesError = useSelector(selectCategoriesError);
 
-  const firstSliderBanner = sliderBanners && sliderBanners.length > 0 ? sliderBanners[0] : null;
-  const allBanners = useSelector((state) => state.banners.banners); // Lấy toàn bộ banners đã fetch
+  // const firstSliderBanner = sliderBanners && sliderBanners.length > 0 ? sliderBanners[0] : null;
+  // const firstDiaDiemBanner = diaDiemDaQuaBanners && diaDiemDaQuaBanners.length > 0 ? diaDiemDaQuaBanners[0] : null;
+  // const allBanners = useSelector((state) => state.banners.banners); // Lấy toàn bộ banners đã fetch
+
   useEffect(() => {
     // Thay đổi tiêu đề trang khi component này được render
-    document.title = 'Home - BookingApp';
+    document.title = 'Home - Trang Chu';
   }, []);
 
   useEffect(() => {
-    // Điều kiện này để tránh fetch lại nếu đã có dữ liệu hoặc đang loading
-    // Cân nhắc xem bạn có muốn fetch lại mỗi khi vào trang không.
-    // Hiện tại là nếu banners rỗng VÀ không đang loading thì fetch.
     if (!bannersLoading && allBanners.length === 0) {
-      dispatch(fetchBanners(4)); // Chỉ fetch banner loại 4 (slider)
+      dispatch(fetchBanners(null)); // Fetch tất cả banners nếu bạn muốn lọc chúng bằng selectors
     }
+
   }, [dispatch, bannersLoading, allBanners.length]); // Thêm allBanners.length vào dependency để re-run khi banners thay đổi
+  // console.log(daMuaBanners);
 
   useEffect(() => {
     // Điều kiện này để tránh fetch lại categories nếu đã có dữ liệu hoặc đang loading
     if (!categoriesLoading && categories.length === 0 && !categoriesError) {
       dispatch(fetchCategories());
     }
+
   }, [dispatch, categoriesLoading, categories.length, categoriesError]);
 
   const { user } = useAuth(); // Lấy thông tin user
@@ -171,8 +179,8 @@ const HomePage = () => {
         <div
           className="bg-holder position-absolute top-0 start-0 w-100 h-100"
           style={{
-            backgroundImage: firstSliderBanner?.image_path
-              ? `url(${firstSliderBanner.image_path})`
+            backgroundImage: sliderBanners?.image_path
+              ? `url(${sliderBanners.image_path})`
               : 'url(../../assets/img/bg/slider.jpg)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -285,9 +293,12 @@ const HomePage = () => {
       <section className="py-0">
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-left-29.png)", backgroundSize: "auto", backgroundPosition: "-15%" }}></div>
         <div className="container-medium position-relative">
-          <h3 className="mb-2 text-body-emphasis text-center text-xl-start">The best of our hotel</h3>
+          <h3 className="mb-2 text-body-emphasis text-center text-xl-start">🔥 Xe nổi bật nhất tuần</h3>
           <div className="d-xl-flex justify-content-between mb-5 text-center">
-            <p className="mb-0 text-body-tertiary">This list will help you get insights into how much you’ll need to spend to afford accommodation.</p><button className="btn btn-link p-0 fs-8">View all<span className="fa-solid fa-chevron-right ms-2" data-fa-transform="shrink-3"></span></button>
+            <p className="mb-0 text-body-tertiary">Đây là mẫu xe đang gây “sốt” với lượt xem kỷ lục từ khách hàng trên toàn quốc. Xem chi tiết ngay!</p>
+            <Link to={PATHS.PRODUCTS} className="btn btn-link p-0 fs-8">Xem tất cả
+              <span className="fa-solid fa-chevron-right ms-2" data-fa-transform="shrink-3"></span>
+            </Link>
           </div>
           <div className="row g-0 justify-content-center">
             <div className="col-sm-11 col-md-8 col-lg-6 col-xl-12">
@@ -455,52 +466,27 @@ const HomePage = () => {
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-right-31.png)', backgroundSize: '15%', backgroundPosition: 'right bottom', zIndex: 1 }}></div>
         <div className="bg-latest-posts"></div>
         <div className="container-medium text-center position-relative z-2">
-          <h3 className="mb-2 text-body-emphasis">Our Latest Posts For Travellers</h3>
-          <p className="mb-0 text-body-tertiary mb-13">Find the best travel memories from our past tours and get a clear idea of what we do.</p>
+          <h3 className="mb-2 text-body-emphasis">😊 Gương mặt rạng rỡ của khách hàng thân yêu</h3>
+          <p className="mb-0 text-body-tertiary mb-13">Mỗi nụ cười là một sự hài lòng. Cảm ơn quý khách đã lựa chọn chúng tôi để cùng khởi đầu những hành trình mới.</p>
         </div>
         <div className="swiper-theme-container swiper-zooming-slider">
-          <div className="swiper-container theme-slider" data-swiper='{"loop":true,"slidesPerView":1.3,"spaceBetween":32,"speed":2000,"autoplay":true,"centeredSlides":true,"simulateTouch":false,"breakpoints":{"540":{"slidesPerView":1.5},"768":{"slidesPerView":1.8},"1200":{"slidesPerView":2},"1530":{"slidesPerView":2.8}}}' ref={swiperRef2}>
+          <div className="swiper-container theme-slider" data-swiper='{"loop":false,"slidesPerView":1.3,"spaceBetween":32,"speed":2000,"autoplay":true,"centeredSlides":true,"simulateTouch":false,"breakpoints":{"540":{"slidesPerView":1.5},"768":{"slidesPerView":1.8},"1200":{"slidesPerView":2},"1530":{"slidesPerView":2.8}}}' ref={swiperRef2}>
             <div className="swiper-wrapper">
-              <div className="swiper-slide rounded-3 overflow-hidden">
-                <div className="position-relative w-100 h-100"><img className="w-100 h-100 object-fit-cover" src="../../assets/img/gallery/48.png" alt="" />
-                  <div className="backdrop-faded p-4 p-md-6">
-                    <div className="d-flex align-items-center mb-2"><span className="text-secondary-lighter me-2" data-feather="calendar"></span>
-                      <h6 className="mb-0 fw-semibold text-secondary-lighter pe-3 me-3 border-end">Monday, Nov 07, 2022</h6><span className="fa-solid fa-star text-warning fs-9 me-2"></span>
-                      <h6 className="mb-0 text-secondary-lighter fw-semibold">4.8</h6>
-                    </div><a className="text-white fw-bold fs-7" href="#!">Beautiful Frence, Let's Travelling!</a>
+              {daMuaBanners.map((banner) => ( 
+                <div className="swiper-slide rounded-3 overflow-hidden">
+                  <div className="position-relative w-100 h-100">
+                    <img className="w-100 h-100 object-fit-cover" src={banner.image_path} alt={banner.title}/>
+                    <div className="backdrop-faded p-4 p-md-6">
+                      <div className="d-flex align-items-center mb-2"><span className="text-secondary-lighter me-2" data-feather="calendar"></span>
+                        <h6 className="mb-0 fw-semibold text-secondary-lighter pe-3 me-3 border-end">{dayjs(banner.created_at).format('dddd, DD MMMM YYYY')}</h6>
+                        <span className="fa-solid fa-star text-warning fs-9 me-2"></span>
+                        <h6 className="mb-0 text-secondary-lighter fw-semibold">5</h6>
+                      </div>
+                      <a className="text-white fw-bold fs-7" href={banner.link || '#!'}>{banner.title}</a>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="swiper-slide rounded-3 overflow-hidden">
-                <div className="position-relative w-100 h-100"><img className="w-100 h-100 object-fit-cover" src="../../assets/img/gallery/49.png" alt="" />
-                  <div className="backdrop-faded p-4 p-md-6">
-                    <div className="d-flex align-items-center mb-2"><span className="text-secondary-lighter me-2" data-feather="calendar"></span>
-                      <h6 className="mb-0 fw-semibold text-secondary-lighter pe-3 me-3 border-end">Monday, Nov 06, 2022</h6><span className="fa-solid fa-star text-warning fs-9 me-2"></span>
-                      <h6 className="mb-0 text-secondary-lighter fw-semibold">4.5</h6>
-                    </div><a className="text-white fw-bold fs-7" href="#!">Man Standing on Watching Mountain</a>
-                  </div>
-                </div>
-              </div>
-              <div className="swiper-slide rounded-3 overflow-hidden">
-                <div className="position-relative w-100 h-100"><img className="w-100 h-100 object-fit-cover" src="../../assets/img/gallery/50.png" alt="" />
-                  <div className="backdrop-faded p-4 p-md-6">
-                    <div className="d-flex align-items-center mb-2"><span className="text-secondary-lighter me-2" data-feather="calendar"></span>
-                      <h6 className="mb-0 fw-semibold text-secondary-lighter pe-3 me-3 border-end">Monday, Nov 05, 2022</h6><span className="fa-solid fa-star text-warning fs-9 me-2"></span>
-                      <h6 className="mb-0 text-secondary-lighter fw-semibold">4.2</h6>
-                    </div><a className="text-white fw-bold fs-7" href="#!">Beautiful Bali Indonesia, Let's Travelling!</a>
-                  </div>
-                </div>
-              </div>
-              <div className="swiper-slide rounded-3 overflow-hidden">
-                <div className="position-relative w-100 h-100"><img className="w-100 h-100 object-fit-cover" src="../../assets/img/gallery/64.png" alt="" />
-                  <div className="backdrop-faded p-4 p-md-6">
-                    <div className="d-flex align-items-center mb-2"><span className="text-secondary-lighter me-2" data-feather="calendar"></span>
-                      <h6 className="mb-0 fw-semibold text-secondary-lighter pe-3 me-3 border-end">Monday, Nov 04, 2022</h6><span className="fa-solid fa-star text-warning fs-9 me-2"></span>
-                      <h6 className="mb-0 text-secondary-lighter fw-semibold">4.5</h6>
-                    </div><a className="text-white fw-bold fs-7" href="#!">Chasing sunsets, making memories worldwide.</a>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
           <div className="swiper-nav">
@@ -508,7 +494,7 @@ const HomePage = () => {
             <div className="swiper-button-prev"><span className="fas fa-chevron-left text-primary" data-fa-transform="shrink-3"></span></div>
           </div>
         </div>
-        <div className="text-center mt-12 position-relative z-2"><button className="btn btn-link p-0 fs-8">View all<span className="fa-solid fa-chevron-right ms-2" data-fa-transform="shrink-1"></span></button></div>
+        <div className="text-center mt-12 position-relative z-2"><button className="btn btn-link p-0 fs-8">Xem thêm<span className="fa-solid fa-chevron-right ms-2" data-fa-transform="shrink-1"></span></button></div>
       </section>
       <section className="pb-10 pt-3">
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-left-32.png)', backgroundSize: '26%', backgroundPosition: 'left 115px' }}></div>
@@ -518,9 +504,14 @@ const HomePage = () => {
             <div className="col-lg-10 col-xl-7">
               <div className="d-md-flex align-items-center gap-7 text-center text-md-start"><img className="mb-4 mb-md-0 d-dark-none" src="../../assets/img/spot-illustrations/40.png" width="260" alt="" /><img className="mb-4 mb-md-0 d-light-none" src="../../assets/img/spot-illustrations/dark_40.png" width="260" alt="" />
                 <div className="flex-1">
-                  <h3 className="mb-0">Get Updates & More</h3>
-                  <p className="mb-4 text-body-tertiary">Subscribe to our newsletter to stay updated.</p>
-                  <form className="d-flex justify-content-center"><input className="form-control me-3" id="ctaEmail1" type="email" placeholder="Email" aria-describedby="ctaEmail1" /><button className="btn btn-primary d-flex align-items-center" type="submit"> Subscribe<span className="fa-solid fa-chevron-right ms-2 fs-9"></span></button></form>
+                  <h3 className="mb-0">Để lại Email</h3>
+                  <p className="mb-4 text-body-tertiary">Để lại email chúng tôi sẽ gửi thông tin sản phẩm mới cho bạn.</p>
+                  <form className="d-flex justify-content-center">
+                    <input className="form-control me-3" id="ctaEmail1" type="email" placeholder="Email" aria-describedby="ctaEmail1" />
+                    <button className="btn btn-primary d-flex align-items-center" type="submit"> Gửi
+                      <span className="fa-solid fa-chevron-right ms-2 fs-9"></span>
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -531,46 +522,40 @@ const HomePage = () => {
       <section className="pb-7 pt-0">
         <div className="container-medium">
           <div className="text-center mb-5">
-            <h3 className="mb-2 text-body-emphasis">Latest photos from tourists</h3>
-            <p className="mb-0 text-body-tertiary">See how our tourists enjoyed their trip from images captured by them with Team Phoenix!</p>
+            <h3 className="mb-2 text-body-emphasis">🚗 Những nơi khách hàng đã tin tưởng lựa chọn</h3>
+            <p className="mb-0 text-body-tertiary">Cảm ơn quý khách hàng đã đồng hành cùng chúng tôi! Dưới đây là một số địa điểm mà chúng tôi đã giao xe thành công.</p>
           </div>
           <div className="row g-3">
-            <div className="col-md-6 col-xl-4">
-              <div className="img-zoom-hover rounded-3 overflow-hidden position-relative"><a href="#!"><img className="latest-img w-100 object-fit-cover" src="../../assets/img/gallery/51.png" alt="" /></a>
-                <div className="backdrop-faded"><a className="fw-semibold mb-0 text-secondary-lighter stretched-link" href="#!"><span className="fa-solid fa-location-dot text-secondary-lighter me-2"></span>Bali Indonesia</a></div>
-              </div>
-            </div>
-            <div className="col-md-6 col-xl-4">
-              <div className="img-zoom-hover rounded-3 overflow-hidden position-relative"><a href="#!"><img className="latest-img w-100 object-fit-cover" src="../../assets/img/gallery/52.png" alt="" /></a>
-                <div className="backdrop-faded"><a className="fw-semibold mb-0 text-secondary-lighter stretched-link" href="#!"><span className="fa-solid fa-location-dot text-secondary-lighter me-2"></span>Barcelona</a></div>
-              </div>
-            </div>
-            <div className="col-md-6 col-xl-4">
-              <div className="img-zoom-hover rounded-3 overflow-hidden position-relative"><a href="#!"><img className="latest-img w-100 object-fit-cover" src="../../assets/img/gallery/53.png" alt="" /></a>
-                <div className="backdrop-faded"><a className="fw-semibold mb-0 text-secondary-lighter stretched-link" href="#!"><span className="fa-solid fa-location-dot text-secondary-lighter me-2"></span>Bali Indonesia</a></div>
-              </div>
-            </div>
-            <div className="col-md-6 col-xl-4">
-              <div className="img-zoom-hover rounded-3 overflow-hidden position-relative"><a href="#!"><img className="latest-img w-100 object-fit-cover" src="../../assets/img/gallery/54.png" alt="" /></a>
-                <div className="backdrop-faded"><a className="fw-semibold mb-0 text-secondary-lighter stretched-link" href="#!"><span className="fa-solid fa-location-dot text-secondary-lighter me-2"></span>Sydney</a></div>
-              </div>
-            </div>
-            <div className="col-md-6 col-xl-4">
-              <div className="img-zoom-hover rounded-3 overflow-hidden position-relative"><a href="#!"><img className="latest-img w-100 object-fit-cover" src="../../assets/img/gallery/55.png" alt="" /></a>
-                <div className="backdrop-faded"><a className="fw-semibold mb-0 text-secondary-lighter stretched-link" href="#!"><span className="fa-solid fa-location-dot text-secondary-lighter me-2"></span>Great Barrier Reef</a></div>
-              </div>
-            </div>
-            <div className="col-md-6 col-xl-4">
-              <div className="img-zoom-hover rounded-3 overflow-hidden position-relative"><a href="#!"><img className="latest-img w-100 object-fit-cover" src="../../assets/img/gallery/56.png" alt="" /></a>
+            {/*  */}
+            {/* <div className="col-md-6 col-xl-4">
+              <div className="img-zoom-hover rounded-3 overflow-hidden position-relative">
+                <a href="#!">
+                  <img className="latest-img w-100 object-fit-cover" src={firstDiaDiemBanner.image_path} alt="" />
+                </a>
                 <div className="backdrop-faded"><a className="fw-semibold mb-0 text-secondary-lighter stretched-link" href="#!"><span className="fa-solid fa-location-dot text-secondary-lighter me-2"></span>Grand Canyon</a></div>
               </div>
-            </div>
+            </div> */}
+            {diaDiemDaQuaBanners.map((banner) => (
+              <div className="col-md-6 col-xl-4" key={banner.id}>
+                <div className="img-zoom-hover rounded-3 overflow-hidden position-relative">
+                  <a href={banner.link || '#!'}>
+                    <img className="latest-img w-100 object-fit-cover" src={banner.image_path} alt={banner.title} />
+                  </a>
+                  <div className="backdrop-faded">
+                    <a className="fw-semibold mb-0 text-secondary-lighter stretched-link" href={banner.link || '#!'}>
+                      <span className="fa-solid fa-location-dot text-secondary-lighter me-2"></span>
+                      {banner.title}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Phần tải app */}
-      <section className="pt-9 pb-10">
+      {/* <section className="pt-9 pb-10">
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-left-33.png)', backgroundSize: 'auto', backgroundPosition: '-8% 38px' }}></div>
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-right-33.png)', backgroundSize: '18%', backgroundPosition: 'right' }}></div>
         <div className="bg-get-app"></div>
@@ -588,7 +573,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   );
 };
