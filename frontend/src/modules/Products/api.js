@@ -38,6 +38,18 @@ export const fetchTopViewedProductsApi = async (limit = 3) => {
   return response.data; // Giả sử API trả về { products: [...] }
 };
 
+// Lấy 4 sản phẩm mới nhất theo created_at
+export const fetchNewestProductsApi = async (limit = 4) => {
+  const response = await api.get('/products', {
+    params : {
+      sortBy: 'created_at',
+      order: 'desc',
+      limit: limit
+    }
+  });
+  return response.data;
+};
+
 // Lấy chi tiết một sản phẩm theo ID
 export const fetchProductByIdApi = async (id) => {
   const response = await api.get(`/products/${id}`);

@@ -13,9 +13,11 @@ import {
   addCommentApi,     // Import mới
   getGeminiChatResponse, // Import mới
   fetchTopViewedProductsApi,
+  fetchNewestProductsApi,
 } from './api';
 
 const initialState = {
+  newestProducts: [],
   topViewedProducts: [],
   products: [],
   selectedProduct: null,
@@ -34,6 +36,18 @@ export const fetchTopViewedProducts = createAsyncThunk(
       return response.products; // Giả sử API trả về object có thuộc tính 'products'
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Không thể tải sản phẩm xem nhiều nhất.');
+    }
+  }
+);
+
+export const fetchNewestProducts = createAsyncThunk(
+  'products/fetchNewestProducts',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetchNewestProductsApi();
+      return response.products;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Không thể tải sản phẩm mới nhất.');
     }
   }
 );
@@ -197,6 +211,19 @@ const productsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Xử lý lấy 4 sản phẩm mới nhất theo created_at
+      .addCase(fetchNewestProducts.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchNewestProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.newestProducts = action.payload; // bạn cần tạo state `newestProducts` trong initialState
+      })
+      .addCase(fetchNewestProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       // Xử lý khi fetchTopViewedProducts đang pending
       .addCase(fetchTopViewedProducts.pending, (state) => {
         state.loading = true;
@@ -370,6 +397,7 @@ const productsSlice = createSlice({
 export const { clearSelectedProduct, setProductsError } = productsSlice.actions;
 export const selectAllProducts = (state) => state.products?.products?.data || [];
 export const selectTopViewedProducts = (state) => state.products.topViewedProducts;
+export const selectNewestProducts = (state) => state.products.newestProducts;
 export const selectProductsLoading = (state) => state.products.loading;
 export const selectProductsError = (state) => state.products.error;
 export default productsSlice.reducer;

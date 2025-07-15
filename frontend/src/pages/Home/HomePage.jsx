@@ -5,12 +5,11 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth'; // Lấy thông tin user
-import { PATHS } from '../../common/constants';
-import { BASE_URL_ADMIN } from '../../common/constants';
+import { PATHS, BASE_URL_ADMIN } from '../../common/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBanners, selectSliderBanners, selectDaMuaBanners, selectDiaDiemDaQuaBanners } from '../../modules/Banners/slice';
 import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../modules/Categories/slice'; // Phần import lấy all category
-import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError } from '../../modules/Products/slice';
+import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError, selectNewestProducts, fetchNewestProducts } from '../../modules/Products/slice';
 
 dayjs.locale('vi')
 const HomePage = () => {
@@ -38,6 +37,8 @@ const HomePage = () => {
   const topViewedProducts = useSelector(selectTopViewedProducts);
   const productsLoading = useSelector(selectProductsLoading);
   const productsError = useSelector(selectProductsError);
+  // Lấy sản phẩm mới nhất theo created_at
+  const newestProducts = useSelector(selectNewestProducts);
 
   // ===============================================
   // useEffect để fetch dữ liệu khi component mount
@@ -66,7 +67,10 @@ const HomePage = () => {
       console.log("Dispatching fetchTopViewedProducts()...");
       dispatch(fetchTopViewedProducts());
     }
-
+    //
+    if (!productsLoading && newestProducts.length === 0) {
+      dispatch(fetchNewestProducts());
+    }
   }, [dispatch, categoriesLoading, categories.length, categoriesError]);
 
   const { user } = useAuth(); // Lấy thông tin user
@@ -226,26 +230,38 @@ const HomePage = () => {
                   <h4 className="fw-semibold mb-3">Xe mới</h4>
                   <h2 className="fs-4 fw-semibold mb-3 mb-md-4">Cảm xúc mới - <span className="text-primary-light fw-bold">Đặt lịch lái thử ngay</span></h2>
                   <p className="mb-3 mb-md-0 text-body-tertiary">Đây là nơi lý tưởng để bạn khám phá các dòng xe mới nhất và đặt lịch lái thử trực tiếp. Với hệ thống đặt lịch thông minh, bạn dễ dàng lựa chọn thời gian, địa điểm và mẫu xe phù hợp với nhu cầu của mình.
-Hãy bắt đầu hành trình trải nghiệm xe theo cách riêng của bạn!<span className="d-none d-lg-inline-block d-xl-none">... </span><span className="d-lg-none d-xl-inline">This will help you with the pricing that you’ll need, the accommodation facilities, food and beverages, and water rides.</span></p>
+                    Hãy bắt đầu hành trình trải nghiệm xe theo cách riêng của bạn!<span className="d-none d-lg-inline-block d-xl-none">... </span><span className="d-lg-none d-xl-inline">This will help you with the pricing that you’ll need, the accommodation facilities, food and beverages, and water rides.</span></p>
                 </div>
                 <div className="col-6 col-md-5">
-                  <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden"><a href="#!"><img className="w-100 h-100 object-fit-cover" src="../../assets/img/gallery/35.png" alt="" /></a>
-                    <div className="backdrop-faded"><a className="fw-bold fs-7 text-white stretched-link" href="#!">New Zealand</a>
-                      <p className="mb-0 text-white fs-9">17 Hotels</p>
+                  <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden">
+                    <Link to={`/products/${newestProducts[0]?.slug}`}>
+                      <img className="w-100 h-100 object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${newestProducts[0]?.img}`} alt="" />
+                    </Link>
+                    <div className="backdrop-faded">
+                      <Link to={`/products/${newestProducts[0]?.slug}`} className="fw-bold fs-7 text-white stretched-link">{newestProducts[0]?.name}</Link>
+                      <p className="mb-0 text-white fs-9">{newestProducts.categories?.[0]?.name || ''}</p>
                     </div>
                   </div>
                 </div>
                 <div className="col-6 col-md-5">
-                  <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden"><a href="#!"> <img className="w-100 h-100 object-fit-cover" src="../../assets/img/gallery/36.png" alt="" /></a>
-                    <div className="backdrop-faded"><a className="fw-bold fs-7 text-white" href="#!">London</a>
-                      <p className="mb-0 text-white fs-9">17 Hotels</p>
+                  <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden">
+                    <Link to={`/products/${newestProducts[1]?.slug}`}>
+                      <img className="w-100 h-100 object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${newestProducts[1]?.img}`} alt="" />
+                    </Link>
+                    <div className="backdrop-faded">
+                      <Link to={`/products/${newestProducts[1]?.slug}`} className="fw-bold fs-7 text-white">{newestProducts[1]?.name}</Link>
+                      <p className="mb-0 text-white fs-9">{newestProducts.categories?.[0]?.name || ''}</p>
                     </div>
                   </div>
                 </div>
                 <div className="col-md-7">
-                  <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden"><a href="#!"> <img className="w-100 h-md-100 object-fit-cover" src="../../assets/img/gallery/37.png" alt="" height="220" /></a>
-                    <div className="backdrop-faded"><a className="fw-bold fs-7 text-white" href="#!">Maui</a>
-                      <p className="mb-0 text-white fs-9">14 Hotels</p>
+                  <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden">
+                    <Link to={`/products/${newestProducts[2]?.slug}`}>
+                      <img className="w-100 h-md-100 object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${newestProducts[2]?.img}`} alt="" height="220" />
+                    </Link>
+                    <div className="backdrop-faded">
+                      <Link to={`/products/${newestProducts[2]?.slug}`} className="fw-bold fs-7 text-white">{newestProducts[2]?.name}</Link>
+                      <p className="mb-0 text-white fs-9">{newestProducts.categories?.[2]?.name || ''}</p>
                     </div>
                   </div>
                 </div>
@@ -254,11 +270,17 @@ Hãy bắt đầu hành trình trải nghiệm xe theo cách riêng của bạn!
             <div className="col-lg-6">
               <div className="d-flex flex-column gap-3 h-100">
                 <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden">
-                  <a href="#!"><img className="w-100 h-lg-100 object-fit-cover" src="../../assets/img/gallery/38.png" alt="" height="220" /></a>
-                  <div className="backdrop-faded"><a className="fw-bold fs-7 text-white" href="#!">Bali, Indonesia</a>
-                    <p className="mb-0 text-white fs-9">51 Hotels</p>
+                  <Link to={`/products/${newestProducts[3]?.slug}`}>
+                    <img className="w-100 h-lg-100 object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${newestProducts[3]?.img}`} alt="" height="220" />
+                  </Link>
+                  <div className="backdrop-faded">
+                    <Link to={`/products/${newestProducts[3]?.slug}`} className="fw-bold fs-7 text-white">{newestProducts[3]?.name}</Link>
+                    <p className="mb-0 text-white fs-9">{newestProducts.categories?.[0]?.name || ''}</p>
                   </div>
-                </div><button className="btn btn-primary w-100 py-3 fs-8">Explore more<span className="fa-solid fa-chevron-right ms-2" data-fa-transform="down-2"></span></button>
+                </div>
+                <Link to={PATHS.PRODUCTS} className="btn btn-primary w-100 py-3 fs-8">Xem thêm
+                  <span className="fa-solid fa-chevron-right ms-2" data-fa-transform="down-2"></span>
+                </Link>
               </div>
             </div>
           </div>
@@ -269,8 +291,8 @@ Hãy bắt đầu hành trình trải nghiệm xe theo cách riêng của bạn!
         <div className="bg-holder d-none d-md-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-left-28.png)", backgroundSize: "7%", backgroundPosition: "left 27%" }}></div>
         <div className="bg-holder d-none d-md-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-right-28.png)", backgroundSize: "16%", backgroundPosition: "right -25px" }}></div>
         <div className="container-medium text-center mb-11 position-relative">
-          <h3 className="mb-2 text-body-emphasis">Travel more, spend less</h3>
-          <p className="text-body-tertiary mb-0">Working with Phoenix means you’ll have all the plans and the perfect price list to help you plan.</p>
+          <h3 className="mb-2 text-body-emphasis">Khám phá các hãng xe hàng đầu</h3>
+          <p className="text-body-tertiary mb-0">Chúng tôi mang đến cho bạn những lựa chọn phong phú từ các thương hiệu xe uy tín. Tất cả đều được tuyển chọn kỹ lưỡng với chất lượng đảm bảo, phù hợp với nhu cầu và ngân sách của bạn.</p>
         </div>
         <div className="container-fluid px-sm-0">
           <div className="swiper-theme-container swiper-slide-nav-top">
