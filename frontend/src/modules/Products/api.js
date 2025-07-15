@@ -26,6 +26,18 @@ export const fetchProductsApi = async (param = '') => {
   return response.data;
 };
 
+// Lấy 3 sản phẩm có View cao nhất
+export const fetchTopViewedProductsApi = async (limit = 3) => {
+  const response = await api.get('/products', {
+    params: {
+      sortBy: 'views', // Trường sắp xếp theo lượt xem
+      order: 'desc',   // Sắp xếp giảm dần (cao nhất đến thấp nhất)
+      limit: limit     // Giới hạn số lượng sản phẩm trả về
+    }
+  });
+  return response.data; // Giả sử API trả về { products: [...] }
+};
+
 // Lấy chi tiết một sản phẩm theo ID
 export const fetchProductByIdApi = async (id) => {
   const response = await api.get(`/products/${id}`);

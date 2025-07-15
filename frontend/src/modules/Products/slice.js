@@ -1,6 +1,6 @@
 // src/modules/Products/slice.js
 
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import {
   fetchProductsApi,
   fetchProductByIdApi,
@@ -12,9 +12,11 @@ import {
   createBookingApi,  // Import mới
   addCommentApi,     // Import mới
   getGeminiChatResponse, // Import mới
+  fetchTopViewedProductsApi,
 } from './api';
 
 const initialState = {
+  topViewedProducts: [],
   products: [],
   selectedProduct: null,
   loading: false,
@@ -22,6 +24,19 @@ const initialState = {
   // Thêm trạng thái riêng cho các hành động nếu cần quản lý chi tiết
   // Ví dụ: favoritingStatus: 'idle', bookingStatus: 'idle', commentingStatus: 'idle',
 };
+
+// Async Thunk để lấy 3 sản phẩm có lượt xem cao nhất
+export const fetchTopViewedProducts = createAsyncThunk(
+  'products/fetchTopViewedProducts',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetchTopViewedProductsApi(); // Gọi API
+      return response.products; // Giả sử API trả về object có thuộc tính 'products'
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Không thể tải sản phẩm xem nhiều nhất.');
+    }
+  }
+);
 
 // Async Thunks cho Products (đã có)
 export const fetchProducts = createAsyncThunk(
@@ -182,6 +197,22 @@ const productsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Xử lý khi fetchTopViewedProducts đang pending
+      .addCase(fetchTopViewedProducts.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      // Xử lý khi fetchTopViewedProducts thành công
+      .addCase(fetchTopViewedProducts.fulfilled, (state, action) => {
+        state.loading = false;
+        state.topViewedProducts = action.payload; // Lưu dữ liệu vào topViewedProducts
+      })
+      // Xử lý khi fetchTopViewedProducts thất bại
+      .addCase(fetchTopViewedProducts.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       // Xử lý fetchProducts
       .addCase(fetchProducts.pending, (state) => {
         state.loading = true;
@@ -338,6 +369,7 @@ const productsSlice = createSlice({
 
 export const { clearSelectedProduct, setProductsError } = productsSlice.actions;
 export const selectAllProducts = (state) => state.products?.products?.data || [];
+export const selectTopViewedProducts = (state) => state.products.topViewedProducts;
 export const selectProductsLoading = (state) => state.products.loading;
 export const selectProductsError = (state) => state.products.error;
 export default productsSlice.reducer;

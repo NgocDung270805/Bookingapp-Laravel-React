@@ -10,25 +10,38 @@ import { BASE_URL_ADMIN } from '../../common/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBanners, selectSliderBanners, selectDaMuaBanners, selectDiaDiemDaQuaBanners } from '../../modules/Banners/slice';
 import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../modules/Categories/slice'; // Phần import lấy all category
+import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError } from '../../modules/Products/slice';
 
 dayjs.locale('vi')
 const HomePage = () => {
   const dispatch = useDispatch();
+
+  // ===============================================
+  // Lấy dữ liệu Banners từ Redux store
+  // ===============================================
   const sliderBanners = useSelector(selectSliderBanners);
   const diaDiemDaQuaBanners = useSelector(selectDiaDiemDaQuaBanners); // Đây sẽ là mảng sau khi sửa slice
   const daMuaBanners = useSelector(selectDaMuaBanners);
   const bannersLoading = useSelector((state) => state.banners.loading);
   const allBanners = useSelector((state) => state.banners.banners); // Lấy toàn bộ banners đã fetch
 
-  // Lấy dữ liệu danh mục từ Redux store
+  // ===============================================
+  // Lấy dữ liệu Categories từ Redux store
+  // ===============================================
   const categories = useSelector(selectAllCategories);
   const categoriesLoading = useSelector(selectCategoriesLoading);
   const categoriesError = useSelector(selectCategoriesError);
 
-  // const firstSliderBanner = sliderBanners && sliderBanners.length > 0 ? sliderBanners[0] : null;
-  // const firstDiaDiemBanner = diaDiemDaQuaBanners && diaDiemDaQuaBanners.length > 0 ? diaDiemDaQuaBanners[0] : null;
-  // const allBanners = useSelector((state) => state.banners.banners); // Lấy toàn bộ banners đã fetch
+  // ===============================================
+  // Lấy dữ liệu Products xem nhiều nhất từ Redux store
+  // ===============================================
+  const topViewedProducts = useSelector(selectTopViewedProducts);
+  const productsLoading = useSelector(selectProductsLoading);
+  const productsError = useSelector(selectProductsError);
 
+  // ===============================================
+  // useEffect để fetch dữ liệu khi component mount
+  // ===============================================
   useEffect(() => {
     // Thay đổi tiêu đề trang khi component này được render
     document.title = 'Home - Trang Chu';
@@ -46,6 +59,12 @@ const HomePage = () => {
     // Điều kiện này để tránh fetch lại categories nếu đã có dữ liệu hoặc đang loading
     if (!categoriesLoading && categories.length === 0 && !categoriesError) {
       dispatch(fetchCategories());
+    }
+
+    // Fetch Top Viewed Products (nếu chưa có hoặc đang không tải)
+    if (!productsLoading && topViewedProducts.length === 0) {
+      console.log("Dispatching fetchTopViewedProducts()...");
+      dispatch(fetchTopViewedProducts());
     }
 
   }, [dispatch, categoriesLoading, categories.length, categoriesError]);
@@ -204,9 +223,10 @@ const HomePage = () => {
             <div className="col-lg-6">
               <div className="row g-3">
                 <div className="col-md-7">
-                  <h4 className="fw-semibold mb-3">Season of</h4>
-                  <h2 className="fs-4 fw-semibold mb-3 mb-md-4">Tour & <span className="text-primary-light fw-bold">Travel</span></h2>
-                  <p className="mb-3 mb-md-0 text-body-tertiary">This is the perfect season for tours and travels. At Phoenix, you can easily select the best travel option for your next vacation<span className="d-none d-lg-inline-block d-xl-none">... </span><span className="d-lg-none d-xl-inline">This will help you with the pricing that you’ll need, the accommodation facilities, food and beverages, and water rides.</span></p>
+                  <h4 className="fw-semibold mb-3">Xe mới</h4>
+                  <h2 className="fs-4 fw-semibold mb-3 mb-md-4">Cảm xúc mới - <span className="text-primary-light fw-bold">Đặt lịch lái thử ngay</span></h2>
+                  <p className="mb-3 mb-md-0 text-body-tertiary">Đây là nơi lý tưởng để bạn khám phá các dòng xe mới nhất và đặt lịch lái thử trực tiếp. Với hệ thống đặt lịch thông minh, bạn dễ dàng lựa chọn thời gian, địa điểm và mẫu xe phù hợp với nhu cầu của mình.
+Hãy bắt đầu hành trình trải nghiệm xe theo cách riêng của bạn!<span className="d-none d-lg-inline-block d-xl-none">... </span><span className="d-lg-none d-xl-inline">This will help you with the pricing that you’ll need, the accommodation facilities, food and beverages, and water rides.</span></p>
                 </div>
                 <div className="col-6 col-md-5">
                   <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden"><a href="#!"><img className="w-100 h-100 object-fit-cover" src="../../assets/img/gallery/35.png" alt="" /></a>
@@ -303,48 +323,46 @@ const HomePage = () => {
           <div className="row g-0 justify-content-center">
             <div className="col-sm-11 col-md-8 col-lg-6 col-xl-12">
               <div className="row gy-5 gx-xl-7 justify-content-between pe-4">
-                <div className="col-xl-4">
-                  <div className="card card-img-shift border-0 mx-auto">
-                    <div className="rounded-3 overflow-hidden w-100 position-relative z-5"><img className="w-100" src="../../assets/img/gallery/45.png" alt="" height="250" /><button className="btn btn-wish position-absolute top-0 end-0 mt-3 me-3"><span className="far fa-heart"></span></button></div>
-                    <div className="card-body p-0">
-                      <div className="card-content">
-                        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
-                          <div><span className="badge badge-phoenix px-1 me-2 badge-phoenix-warning">promoted</span><span className="badge badge-phoenix px-1 badge-phoenix-info">Couple package</span></div>
-                          <h6><span className="fa-solid fa-star text-warning me-1"></span>4.8 (1.4k stay)</h6>
-                        </div><a className="fw-bold fs-7 text-body-emphasis mb-2 text-primary-hover" href="#!">Royal Mansour Marrakech</a><a className="fw-semibold text-body-tertiary mb-3 d-block" href="#!"><span className="me-1" data-feather="map-pin"></span>Morocco</a>
-                        <h6 className="fe-semibold text-body-tertiary d-flex align-items-center gap-1 mb-4">From <span className="fw-bolder fs-7 text-body-highlight">$60.00</span>/ per night</h6><button className="btn btn-primary px-5">Book Now</button>
+                {!productsLoading && topViewedProducts.length > 0 && (
+                  topViewedProducts.map((product) => (
+                    <div className="col-xl-4">
+                      <div className="card card-img-shift border-0 mx-auto">
+                        <div className="rounded-3 overflow-hidden w-100 position-relative z-5">
+                          <img className="w-100" src={`${PATHS.ADMIN_DASHBOARD}storage/${product.img}`} alt="" height="250" />
+                          <button className="btn btn-wish position-absolute top-0 end-0 mt-3 me-3">
+                            <span className="far fa-heart"></span>
+                          </button>
+                        </div>
+                        <div className="card-body p-0">
+                          <div className="card-content">
+                            <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+                              <div>
+                                {/* <span className="badge badge-phoenix px-1 me-2 badge-phoenix-warning">promoted</span> */}
+                                <span className="badge badge-phoenix px-1 badge-phoenix-info">{product.tags?.map((cat) => cat.name).join(', ') || ''}</span>
+                              </div>
+                              <h6>
+                                <i className="fas fa-eye me-1"></i>
+                                {product.views || 0}
+                              </h6>
+                            </div>
+                            <Link to={`/products/${product.slug}`} className="fw-bold fs-7 text-body-emphasis mb-2 text-primary-hover">
+                              {product.name}
+                            </Link>
+                            <a className="fw-semibold text-body-tertiary mb-3 d-block" href="#!">
+                              <span className="fa-solid fa-car-side me-2"></span>{product.categories?.map((cat) => cat.name).join(', ') || 'N/A'}
+                            </a>
+                            <h6 className="fe-semibold text-body-tertiary d-flex align-items-center gap-1 mb-4">Giá
+                              <span className="fw-bolder fs-7 text-body-highlight">{product.price ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price) : 'Liên hệ'}</span>
+                            </h6>
+                            <Link to={`/products/${product.slug}`} className="btn btn-primary px-5">
+                              Xem Chi Tiết
+                            </Link>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div className="col-xl-4">
-                  <div className="card card-img-shift border-0 mx-auto">
-                    <div className="rounded-3 overflow-hidden w-100 position-relative z-5"><img className="w-100" src="../../assets/img/gallery/46.png" alt="" height="250" /><button className="btn btn-wish position-absolute top-0 end-0 mt-3 me-3"><span className="far fa-heart"></span></button></div>
-                    <div className="card-body p-0">
-                      <div className="card-content">
-                        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
-                          <div><span className="badge badge-phoenix px-1 me-2 badge-phoenix-warning">promoted</span><span className="badge badge-phoenix px-1 badge-phoenix-info">Couple package</span></div>
-                          <h6><span className="fa-solid fa-star text-warning me-1"></span>4.8 (1.4k stay)</h6>
-                        </div><a className="fw-bold fs-7 text-body-emphasis mb-2 text-primary-hover" href="#!">Mandarin Oriental Jumeira</a><a className="fw-semibold text-body-tertiary mb-3 d-block" href="#!"><span className="me-1" data-feather="map-pin"></span>Abu dhabi</a>
-                        <h6 className="fe-semibold text-body-tertiary d-flex align-items-center gap-1 mb-4">From <span className="fw-bolder fs-7 text-body-highlight">$90.00</span>/ per night</h6><button className="btn btn-primary px-5">Book Now</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-xl-4">
-                  <div className="card card-img-shift border-0 mx-auto">
-                    <div className="rounded-3 overflow-hidden w-100 position-relative z-5"><img className="w-100" src="../../assets/img/gallery/47.png" alt="" height="250" /><button className="btn btn-wish position-absolute top-0 end-0 mt-3 me-3"><span className="far fa-heart"></span></button></div>
-                    <div className="card-body p-0">
-                      <div className="card-content">
-                        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
-                          <div><span className="badge badge-phoenix px-1 me-2 badge-phoenix-warning">promoted</span><span className="badge badge-phoenix px-1 badge-phoenix-info">Couple package</span></div>
-                          <h6><span className="fa-solid fa-star text-warning me-1"></span>4.8 (1.4k stay)</h6>
-                        </div><a className="fw-bold fs-7 text-body-emphasis mb-2 text-primary-hover" href="#!">Swissotel Bangkok</a><a className="fw-semibold text-body-tertiary mb-3 d-block" href="#!"><span className="me-1" data-feather="map-pin"></span>Bangkok</a>
-                        <h6 className="fe-semibold text-body-tertiary d-flex align-items-center gap-1 mb-4">From <span className="fw-bolder fs-7 text-body-highlight">$70.00</span>/ per night</h6><button className="btn btn-primary px-5">Book Now</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -472,10 +490,10 @@ const HomePage = () => {
         <div className="swiper-theme-container swiper-zooming-slider">
           <div className="swiper-container theme-slider" data-swiper='{"loop":false,"slidesPerView":1.3,"spaceBetween":32,"speed":2000,"autoplay":true,"centeredSlides":true,"simulateTouch":false,"breakpoints":{"540":{"slidesPerView":1.5},"768":{"slidesPerView":1.8},"1200":{"slidesPerView":2},"1530":{"slidesPerView":2.8}}}' ref={swiperRef2}>
             <div className="swiper-wrapper">
-              {daMuaBanners.map((banner) => ( 
+              {daMuaBanners.map((banner) => (
                 <div className="swiper-slide rounded-3 overflow-hidden">
                   <div className="position-relative w-100 h-100">
-                    <img className="w-100 h-100 object-fit-cover" src={banner.image_path} alt={banner.title}/>
+                    <img className="w-100 h-100 object-fit-cover" src={banner.image_path} alt={banner.title} />
                     <div className="backdrop-faded p-4 p-md-6">
                       <div className="d-flex align-items-center mb-2"><span className="text-secondary-lighter me-2" data-feather="calendar"></span>
                         <h6 className="mb-0 fw-semibold text-secondary-lighter pe-3 me-3 border-end">{dayjs(banner.created_at).format('dddd, DD MMMM YYYY')}</h6>
