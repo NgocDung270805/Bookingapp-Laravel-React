@@ -20,5 +20,8 @@ RUN composer install --no-dev --no-scripts --no-interaction --prefer-dist
 # Copy toàn bộ source code
 COPY . .
 
+# ✅ Thêm dòng này
+EXPOSE 8000
+
 # Laravel sẽ chạy bằng built-in server trong container
 CMD php artisan serve --host=0.0.0.0 --port=8000
