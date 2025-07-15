@@ -2,14 +2,14 @@
 
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link, Links, useParams } from 'react-router-dom';
 import {
   fetchProducts,
   selectAllProducts,
   selectProductsLoading,
   selectProductsError,
 } from '../slice';
-import { BASE_URL_ADMIN, PATHS } from '../../../common/constants';
+import { PATHS } from '../../../common/constants';
 
 const ProductsByCategoriesPage = () => {
   const dispatch = useDispatch();
@@ -104,15 +104,15 @@ const ProductsByCategoriesPage = () => {
       <div className="navbar-responsive-navitems navbar-expand border-y bg-body-emphasis border-translucent py-2">
         <div className="container-medium d-flex flex-between-center" data-navbar="data-navbar">
           <ul className="navbar-nav justify-content-end align-items-center">
-            <li className="nav-item" data-nav-item="data-nav-item"><a className="nav-link px-3 ps-0 text-primary" href="../../../../apps/travel-agency/hotel/customer/homepage.html">Homepage</a></li>
-            <li className="nav-item" data-nav-item="data-nav-item"><a className="nav-link px-3  " href="../../../../apps/travel-agency/hotel/customer/hotel-details.html">Hotel Details</a></li>
-            <li className="nav-item" data-nav-item="data-nav-item"><a className="nav-link px-3  " href="../../../../apps/travel-agency/hotel/customer/hotel-compare.html">Hotel Compare</a></li>
-            <li className="nav-item" data-nav-item="data-nav-item"><a className="nav-link px-3  " href="../../../../apps/travel-agency/hotel/customer/checkout.html">Check out</a></li>
-            <li className="nav-item" data-nav-item="data-nav-item"><a className="nav-link px-3  " href="../../../../apps/travel-agency/hotel/customer/payment.html">Payment</a></li>
-            <li className="nav-item" data-nav-item="data-nav-item"><a className="nav-link px-3  " href="../../../../apps/travel-agency/hotel/customer/gallery.html">Gallery</a></li>
-            <li className="nav-item dropdown" data-nav-item="data-nav-item" data-more-item="data-more-item"><a className="nav-link dropdown-toggle dropdown-caret-none fw-bold pe-0 ps-3" href="javascript: void(0)" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-boundary="window" data-bs-reference="parent"> More<span className="fas fa-angle-down ms-2"></span></a>
+            <li className="nav-item" data-nav-item="data-nav-item"><Link className="nav-link px-3 ps-0 text-primary" to={PATHS.HOME}>Home</Link></li>
+            {/* <li className="nav-item" data-nav-item="data-nav-item"><Link className="nav-link px-3  " href="#!">Chi tiết sản phẩm</Link></li> */}
+            {/* <li className="nav-item" data-nav-item="data-nav-item"><Link className="nav-link px-3  " href="#!">Hotel Compare</Link></li> */}
+            {/* <li className="nav-item" data-nav-item="data-nav-item"><Link className="nav-link px-3  " href="#!">Check out</Link></li> */}
+            {/* <li className="nav-item" data-nav-item="data-nav-item"><Link className="nav-link px-3  " href="#!">Payment</Link></li> */}
+            {/* <li className="nav-item" data-nav-item="data-nav-item"><Link className="nav-link px-3  " href="#!">Gallery</Link></li> */}
+            {/* <li className="nav-item dropdown" data-nav-item="data-nav-item" data-more-item="data-more-item"><a className="nav-link dropdown-toggle dropdown-caret-none fw-bold pe-0 ps-3" href="javascript: void(0)" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-boundary="window" data-bs-reference="parent"> More<span className="fas fa-angle-down ms-2"></span></a>
               <div className="dropdown-menu dropdown-menu-end category-list" aria-labelledby="navbarDropdown" data-category-list="data-category-list"></div>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>
@@ -122,9 +122,9 @@ const ProductsByCategoriesPage = () => {
         <div className="container-small">
           <nav className="navbar navbar-landing navbar-home navbar-expand py-4 px-0">
             <ul className="navbar-nav mx-auto mt-3 mt-lg-0 gap-2">
-              <li className="nav-item"><a className="nav-link fw-bold rounded-3 active" aria-current="page" href="../../../../apps/travel-agency/hotel/customer/homepage.html"> <span className="me-2 fa-solid fa-hotel"></span></a></li>
-              <li className="nav-item"><a className="nav-link fw-bold rounded-3" aria-current="page" href="../../../../apps/travel-agency/flight/homepage.html"> <span className="me-2 fa-solid fa-plane"></span>Flight</a></li>
-              <li className="nav-item"><a className="nav-link fw-bold rounded-3" aria-current="page" href="../../../../apps/travel-agency/trip/homepage.html"> <span className="me-2 fa-solid fa-suitcase-rolling"></span>Trip</a></li>
+              <li className="nav-item"><a className="nav-link fw-bold rounded-3 active" aria-current="page" href="#!"> <span className="me-2 fa-solid fa-car"></span>Xe Theo Thương Hiệu</a></li>
+              <li className="nav-item"><a className="nav-link fw-bold rounded-3" aria-current="page" href="#!"> <span className="fa-solid fa-eye"></span>Xem Chi Tiết</a></li>
+              <li className="nav-item"><a className="nav-link fw-bold rounded-3" aria-current="page" href="#!"> <span className="fa-solid fa-calendar-check me-2"></span>Đặt Lịch</a></li>
             </ul>
           </nav>
         </div>
@@ -135,12 +135,16 @@ const ProductsByCategoriesPage = () => {
           <div className="bg-holder rounded-md-2" style={{ backgroundImage: 'url(../../../../assets/img/bg/42.png)', backgroundPosition: 'center', backgroundSize: 'cover' }}></div>
           <div className="row gx-0 gy-3 gy-md-0 align-items-center mx-auto p-3 bg-body-emphasis rounded-5 rounded-md-pill position-relative border w-lg-75">
             <div className="col-12 col-md">
-              <div className="form-icon-container border-bottom border-bottom-md-0 border-translucent pb-3 pb-md-0"><input className="form-control form-icon-input border-0 py-0 shadow-none fs-8" type="text" placeholder="Pick a place" /><span className="fa-solid fa-map-marker-alt form-icon text-body-tertiary top-0" data-fa-transform="down-2"></span></div>
+              <div className="form-icon-container border-bottom border-bottom-md-0 border-translucent pb-3 pb-md-0">
+                <input className="form-control form-icon-input border-0 py-0 shadow-none fs-8" type="text" placeholder="Tên Xe" />
+                <span className="fa-solid fa-car form-icon text-body-tertiary top-0" data-fa-transform="down-2"></span></div>
             </div>
             <div className="col-6 col-md">
-              <div className="form-icon-container flatpickr-input-container"><input className="form-control datetimepicker form-icon-input border-y-0 border-start-0 border-start-md py-0 shadow-none border-translucent fs-8 rounded-0" type="text" placeholder="Pick a date" data-options='{"mode":"range","dateFormat":"d/m/y","disableMobile":true}' /><span className="fa-solid fa-calendar form-icon top-0 text-body-tertiary" data-fa-transform="down-2"></span></div>
+              <div className="form-icon-container flatpickr-input-container">
+                <input className="form-control datetimepicker form-icon-input border-y-0 border-start-0 border-start-md py-0 shadow-none border-translucent fs-8 rounded-0" type="text" placeholder="Thương hiệu xe" data-options='{"mode":"range","dateFormat":"d/m/y","disableMobile":true}' />
+                <span className="fa-solid fa-car form-icon top-0 text-body-tertiary" data-fa-transform="down-2"></span></div>
             </div>
-            <div className="col-6 col-md"><button className="btn px-3 fs-8 fw-semibold text-body-tertiary" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span className="fa-solid fa-user me-2"></span>1 adult</button>
+            {/* <div className="col-6 col-md"><button className="btn px-3 fs-8 fw-semibold text-body-tertiary" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-auto-close="outside"><span className="fa-solid fa-user me-2"></span>1 adult</button>
               <div className="dropdown-menu dropdown-menu-start p-4" style={{ maxWidth: "320px" }}>
                 <div className="row align-items-center g-0 pb-3 border-bottom border-translucent">
                   <div className="col-5">
@@ -148,7 +152,7 @@ const ProductsByCategoriesPage = () => {
                   </div>
                   <div className="col-7">
                     <div className="input-group gap-2" data-quantity="data-quantity"><button className="btn btn-phoenix-primary px-2 rounded" data-type="minus"><span className="fa-solid fa-minus px-1"></span></button>
-                      {/* <input className="form-control border-translucent input-spin-none text-center rounded" id="adults" type="number" value="2" /> */}
+                      <input className="form-control border-translucent input-spin-none text-center rounded" id="adults" type="number" value="2" />
                       <button className="btn btn-phoenix-primary px-2 rounded" data-type="plus"><span className="fa-solid fa-plus px-1"></span></button></div>
                   </div>
                 </div>
@@ -157,7 +161,7 @@ const ProductsByCategoriesPage = () => {
                     <h5 className="mb-0 text-body">Infants</h5>
                   </div>
                   <div className="col-7">
-                    {/* <div className="input-group gap-2" data-quantity="data-quantity"><button className="btn btn-phoenix-primary px-2 rounded" data-type="minus"><span className="fa-solid fa-minus px-1"></span></button><input className="form-control border-translucent input-spin-none text-center rounded" id="infants" type="number" value="2" /><button className="btn btn-phoenix-primary px-2 rounded" data-type="plus"><span className="fa-solid fa-plus px-1"></span></button></div> */}
+                    <div className="input-group gap-2" data-quantity="data-quantity"><button className="btn btn-phoenix-primary px-2 rounded" data-type="minus"><span className="fa-solid fa-minus px-1"></span></button><input className="form-control border-translucent input-spin-none text-center rounded" id="infants" type="number" value="2" /><button className="btn btn-phoenix-primary px-2 rounded" data-type="plus"><span className="fa-solid fa-plus px-1"></span></button></div>
                   </div>
                 </div>
                 <div className="row align-items-center g-0 pt-3">
@@ -165,11 +169,11 @@ const ProductsByCategoriesPage = () => {
                     <h5 className="mb-0 text-body">Children</h5>
                   </div>
                   <div className="col-7">
-                    {/* <div className="input-group gap-2" data-quantity="data-quantity"><button className="btn btn-phoenix-primary px-2 rounded" data-type="minus"><span className="fa-solid fa-minus px-1"></span></button><input className="form-control border-translucent input-spin-none text-center rounded" id="children" type="number" value="2" /><button className="btn btn-phoenix-primary px-2 rounded" data-type="plus"><span className="fa-solid fa-plus px-1"></span></button></div> */}
+                    <div className="input-group gap-2" data-quantity="data-quantity"><button className="btn btn-phoenix-primary px-2 rounded" data-type="minus"><span className="fa-solid fa-minus px-1"></span></button><input className="form-control border-translucent input-spin-none text-center rounded" id="children" type="number" value="2" /><button className="btn btn-phoenix-primary px-2 rounded" data-type="plus"><span className="fa-solid fa-plus px-1"></span></button></div>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="col-12 col-md-auto"><button className="btn btn-lg btn-phoenix-primary rounded-pill w-100"><span className="fa-solid fa-search me-2"></span>Search</button></div>
           </div>
         </div>
@@ -179,11 +183,20 @@ const ProductsByCategoriesPage = () => {
         <div className="container-medium">
           <div className="py-6">
             <div className="d-flex"><select className="form-select w-sm-auto me-4" id="hotelSort" name="Hotel sort">
-              <option>Sort by</option>
-              <option>Best reviewed and lowest price</option>
-              <option>Option 1</option>
-              <option>Option 2</option>
-            </select><button className="btn btn-phoenix-secondary text-nowrap px-3 px-md-4 ms-auto me-2"><span className="fa-solid fa-map me-md-2"></span><span className="d-none d-md-inline-block">Show in map</span></button><button className="btn btn-phoenix-secondary text-nowrap px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#hotelFilterOffcanvas" aria-controls="hotelFilterOffcanvas"><span className="fa-solid fa-filter me-md-2"></span><span className="d-none d-md-inline-block">Filters</span></button></div>
+              <option>Giá giảm</option>
+              <option>Giá tăng</option>
+              <option>Lượt xem cao nhất</option>
+              <option>Lượt xem thấp nhất</option>
+            </select>
+              {/* <button className="btn btn-phoenix-secondary text-nowrap px-3 px-md-4 ms-auto me-2"> */}
+                {/* <span className="fa-solid fa-map me-md-2"></span>
+                <span className="d-none d-md-inline-block">Show in map</span> */}
+              {/* </button> */}
+              <button className="btn btn-phoenix-secondary text-nowrap px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#hotelFilterOffcanvas" aria-controls="hotelFilterOffcanvas">
+                <span className="fa-solid fa-filter me-md-2"></span>
+                <span className="d-none d-md-inline-block">Lọc</span>
+              </button>
+            </div>
           </div>
           <div className="row g-3 mb-6">
             {products.length > 0 ? (
@@ -215,7 +228,7 @@ const ProductsByCategoriesPage = () => {
                     <div className="backdrop-faded backdrop-secondary-dark h-100 d-flex flex-column justify-content-end">
                       <a
                         className="stretched-link fs-7 text-white fw-bold"
-                        href={`${PATHS.PRODUCT_DETAIL_BY_SLUG}${product.slug}`}
+                        href={`/products/${product.slug}`}
                       >
                         {product.name}
                       </a>
@@ -333,34 +346,34 @@ const ProductsByCategoriesPage = () => {
             <div className="bg-holder bg-holder overlay bg-opacity-85" style={{ backgroundImage: "url(../../../../assets/img/bg/43.png)", backgroundPosition: "center", backgroundSize: "cover" }}></div>
             <div className="row g-5 position-relative justify-content-between">
               <div className="col-md-6 col-lg-3">
-                <h5 className="text-white mb-3">Discover</h5>
+                <h5 className="text-white mb-3"></h5>
                 <div className="row g-3">
                   <div className="col">
                     <ul className="list-unstyled mb-0">
                       <li className="mb-1"><a className="text-secondary-lighter" href="#!">Home</a></li>
-                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Terms</a></li>
-                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Talent &amp; culture</a></li>
-                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Destination</a></li>
-                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Sitemap</a></li>
+                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Điều khoản</a></li>
+                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Tài năng  &amp; văn hóa</a></li>
+                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Điểm đến</a></li>
+                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Sơ đồ trang web</a></li>
                     </ul>
                   </div>
                   <div className="col">
                     <ul className="list-unstyled mb-0">
-                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Refund policy</a></li>
-                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">EMI Policy</a></li>
-                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Privacy Policy</a></li>
+                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Chính sách hoàn tiền</a></li>
+                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Chính sách EMI</a></li>
+                      <li className="mb-1"><a className="text-secondary-lighter" href="#!">Chính sách bảo mật</a></li>
                     </ul>
                   </div>
                 </div>
               </div>
               <div className="col-md-6 col-lg-3">
-                <h5 className="text-white mb-3">Contact</h5><a className="d-block text-secondary-lighter mb-1 text-nowrap" href="mailto:info@phoenixtravels.com"><span className="fa-solid fa-envelope me-2 me-lg-1 me-xl-2"></span>info@phoenixtravels.com</a><a className="d-block text-secondary-lighter mb-1" href="tel:+13134048290"><span className="fa-solid fa-phone me-2 me-lg-1 me-xl-2"> </span>+13134048290</a>
+                <h5 className="text-white mb-3">Liên hệ</h5><a className="d-block text-secondary-lighter mb-1 text-nowrap" href="mailto:phungdung2708@gmail.com"><span className="fa-solid fa-envelope me-2 me-lg-1 me-xl-2"></span>Phungdung2708@gmail.com</a><a className="d-block text-secondary-lighter mb-1" href="tel:+84 965336741"><span className="fa-solid fa-phone me-2 me-lg-1 me-xl-2"> </span>+84 965.336.741</a>
               </div>
               <div className="col-lg-5">
-                <h2 className="text-white mb-2 fw-semibold">Enjoy your trip to the fullest</h2>
-                <p className="mb-5 text-secondary-lighter">Sign up and get notified<br />about best deals immediately </p>
+                <h2 className="text-white mb-2 fw-semibold">Trải nghiệm một cách chọn vẹn nhất</h2>
+                <p className="mb-5 text-secondary-lighter">Đăng ký để nhận thông báo<br />về các ưu đãi ngay lập tức </p>
                 <div className="d-flex gap-2">
-                  <div className="form-icon-container flex-1"><input className="form-control form-icon-input" type="text" placeholder="Your email address" /><span className="fa-solid fa-envelope form-icon text-body fs-9" data-fa-transform="up-2"></span></div><button className="btn btn-primary rounded">Sign up</button>
+                  <div className="form-icon-container flex-1"><input className="form-control form-icon-input" type="text" placeholder="Email của bạn " /><span className="fa-solid fa-envelope form-icon text-body fs-9" data-fa-transform="up-2"></span></div><button className="btn btn-primary rounded">Gửi</button>
                 </div>
               </div>
             </div>
