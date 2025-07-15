@@ -89,7 +89,7 @@ const SupportChatWidget = () => {
                                 <a href={`/products/${p.slug}`} target="_blank" rel="noopener noreferrer" style={{ fontWeight: 'bold', color: '#007bff', textDecoration: 'none' }}>
                                     {p.name}
                                 </a>
-                                <p style={{ margin: 0, fontSize: '0.8em', color: '#555' }}>Lượt xem: {p.views || 0}</p> 
+                                <p style={{ margin: 0, fontSize: '0.8em', color: '#555' }}>Lượt xem: {p.views || 0}</p>
                             </div>
                         </div>
                     ));
@@ -201,6 +201,12 @@ const SupportChatWidget = () => {
                     <div className="card-body chat p-0">
                         {/* KHUNG TIN NHẮN ĐƯỢC QUẢN LÝ BẰNG SimpleBar */}
                         <SimpleBar className="d-flex flex-column-reverse scrollbar h-100 p-3" ref={simplebarReactRef}>
+                            <div class="text-center mt-auto">
+                                <div class="avatar avatar-3xl status-online">
+                                    <img class="rounded-circle border border-3 border-light-subtle" src="https://cdn-icons-png.flaticon.com/512/13330/13330989.png" alt="" /></div>
+                                <h5 class="mt-2 mb-3">CSKH</h5>
+                                <p class="text-center text-body-emphasis mb-0">"Tôi là trợ lý của bạn – online 24/24, trả lời mọi câu hỏi!"</p>
+                            </div>
                             {messages.map((msg, index) => (
                                 <div key={index} style={{
                                     alignSelf: msg.type === 'user' ? 'flex-end' : 'flex-start',
@@ -235,7 +241,7 @@ const SupportChatWidget = () => {
                                 <input
                                     className="form-control outline-none border-0 flex-1 fs-9 px-0"
                                     type="text"
-                                    placeholder="Write message"
+                                    placeholder="Nhập tại đây......"
                                     value={inputValue}
                                     onChange={(e) => setInputValue(e.target.value)}
                                 />
@@ -257,7 +263,7 @@ const SupportChatWidget = () => {
             </div>
             {/* Nút "Chat Với AI" - GẮN ONCLICK */}
             <button className={`btn btn-support-chat p-0 border border-translucent ${showChat ? 'btn-chat-close' : ''}`} onClick={handleChatToggle}>
-                <span className="fs-8 btn-text text-primary text-nowrap">Chat Với AI</span>
+                <span className="fs-8 btn-text text-primary text-nowrap">Chat Bot</span>
                 <span className="ping-icon-wrapper mt-n4 ms-n6 mt-sm-0 ms-sm-2 position-absolute position-sm-relative">
                     <span className="ping-icon-bg"></span>
                     <span className="fa-solid fa-circle ping-icon"></span>
