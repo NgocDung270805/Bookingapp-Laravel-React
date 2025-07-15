@@ -84,4 +84,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    // Mối quan hệ một-một với UsersProfile
+    public function userProfile()
+    {
+        return $this->hasOne(Users_profiles::class);
+    }
+
+    // Mối quan hệ một-một với UserDetails
+    public function userDetail()
+    {
+        return $this->hasOne(User_details::class);
+    }
 }

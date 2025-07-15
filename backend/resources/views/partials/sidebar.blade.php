@@ -83,7 +83,7 @@
                         </a>
                         <div class="parent-wrapper label-1">
                             <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse" id="nv-acc">
-                                <li class="nav-item">
+                                {{-- <li class="nav-item">
                                     <a class="nav-link dropdown-indicator" href="#nv-admin-acc"
                                         data-bs-toggle="collapse" aria-expanded="true" aria-controls="nv-admin-acc">
 
@@ -166,6 +166,11 @@
 
                                         </ul>
                                     </div>
+                                </li> --}}
+                                <li class="nav-item"><a class="nav-link" href="{{ route('admin.index') }}">
+                                        <div class="d-flex align-items-center"><span
+                                                class="nav-link-text">Tài khoản</span></div>
+                                    </a><!-- more inner pages-->
                                 </li>
                             </ul>
                         </div>

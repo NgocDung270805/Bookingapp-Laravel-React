@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\Web\BannerController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Web\Accounts\AdminController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
 use App\Http\Controllers\Web\ProductAttributeValueController;
@@ -22,6 +23,13 @@ Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('hom
 Route::get('/pJM', [HomeController::class, 'pJM'])->middleware('auth')->name('pJM');
 Route::get('/product', [HomeController::class, 'product'])->middleware('auth')->name('product');
 Route::get('/add-product', [HomeController::class, 'addProduct'])->middleware('auth')->name('addProduct');
+
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');// Admin
+Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->name('admin.edit');
+Route::post('/admin/update/{id}', [AdminController::class, 'update'])->name('admin.update');
+// Route riêng để phân quyền (nếu bạn muốn modal hoặc chức năng riêng biệt cho phân quyền)
+// Nếu bạn tích hợp vào modal chỉnh sửa chính, route này không cần thiết.
+Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->name('admin.assign_roles');// Phân quyền roles
 
 // Route cho Category CRUD
 Route::prefix('category')->name('category.')->middleware('auth')->group(function () {
