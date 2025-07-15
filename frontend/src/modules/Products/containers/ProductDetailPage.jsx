@@ -865,39 +865,37 @@ const ProductDetailPage = () => {
             <section className="py-0 mb-9">
                 <div className="container-medium-md px-0 px-md-3">
                     <div className="p-5 p-sm-7 py-xl-12 px-xl-15 rounded-md-2 overflow-hidden position-relative">
-                        <div className="bg-holder bg-holder overlay bg-opacity-85"
-                        // style={{ backgroundImage:'url(../../../../assets/img/bg/43.png');background-position: center; background-size: cover}}
-                        ></div>
+                        <div className="bg-holder bg-holder overlay bg-opacity-85" style={{ backgroundImage: "url(../../../../assets/img/bg/43.png)", backgroundPosition: "center", backgroundSize: "cover" }}></div>
                         <div className="row g-5 position-relative justify-content-between">
                             <div className="col-md-6 col-lg-3">
-                                <h5 className="text-white mb-3">Discover</h5>
+                                <h5 className="text-white mb-3"></h5>
                                 <div className="row g-3">
                                     <div className="col">
                                         <ul className="list-unstyled mb-0">
                                             <li className="mb-1"><a className="text-secondary-lighter" href="#!">Home</a></li>
-                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Terms</a></li>
-                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Talent &amp; culture</a></li>
-                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Destination</a></li>
-                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Sitemap</a></li>
+                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Điều khoản</a></li>
+                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Tài năng  &amp; văn hóa</a></li>
+                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Điểm đến</a></li>
+                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Sơ đồ trang web</a></li>
                                         </ul>
                                     </div>
                                     <div className="col">
                                         <ul className="list-unstyled mb-0">
-                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Refund policy</a></li>
-                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">EMI Policy</a></li>
-                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Privacy Policy</a></li>
+                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Chính sách hoàn tiền</a></li>
+                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Chính sách EMI</a></li>
+                                            <li className="mb-1"><a className="text-secondary-lighter" href="#!">Chính sách bảo mật</a></li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                             <div className="col-md-6 col-lg-3">
-                                <h5 className="text-white mb-3">Contact</h5><a className="d-block text-secondary-lighter mb-1 text-nowrap" href="mailto:info@phoenixtravels.com"><span className="fa-solid fa-envelope me-2 me-lg-1 me-xl-2"></span>info@phoenixtravels.com</a><a className="d-block text-secondary-lighter mb-1" href="tel:+13134048290"><span className="fa-solid fa-phone me-2 me-lg-1 me-xl-2"> </span>+13134048290</a>
+                                <h5 className="text-white mb-3">Liên hệ</h5><a className="d-block text-secondary-lighter mb-1 text-nowrap" href="mailto:phungdung2708@gmail.com"><span className="fa-solid fa-envelope me-2 me-lg-1 me-xl-2"></span>Phungdung2708@gmail.com</a><a className="d-block text-secondary-lighter mb-1" href="tel:+84 965336741"><span className="fa-solid fa-phone me-2 me-lg-1 me-xl-2"> </span>+84 965.336.741</a>
                             </div>
                             <div className="col-lg-5">
-                                <h2 className="text-white mb-2 fw-semibold">Enjoy your trip to the fullest</h2>
-                                <p className="mb-5 text-secondary-lighter">Sign up and get notified<br />about best deals immediately </p>
+                                <h2 className="text-white mb-2 fw-semibold">Trải nghiệm một cách chọn vẹn nhất</h2>
+                                <p className="mb-5 text-secondary-lighter">Đăng ký để nhận thông báo<br />về các ưu đãi ngay lập tức </p>
                                 <div className="d-flex gap-2">
-                                    <div className="form-icon-container flex-1"><input className="form-control form-icon-input" type="text" placeholder="Your email address" /><span className="fa-solid fa-envelope form-icon text-body fs-9" data-fa-transform="up-2"></span></div><button className="btn btn-primary rounded">Sign up</button>
+                                    <div className="form-icon-container flex-1"><input className="form-control form-icon-input" type="text" placeholder="Email của bạn " /><span className="fa-solid fa-envelope form-icon text-body fs-9" data-fa-transform="up-2"></span></div><button className="btn btn-primary rounded">Gửi</button>
                                 </div>
                             </div>
                         </div>
