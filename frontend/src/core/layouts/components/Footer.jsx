@@ -41,7 +41,7 @@ const Footer = () => {
                     </div>
                     <div className="col-auto">
                         <ul className="mb-0 list-unstyled d-flex flex-wrap">
-                            <li className="me-3 me-sm-5"><a className="fs-8 fw-bold text-white" href="#!">Home</a></li>
+                            <li className="me-3 me-sm-5"><a className="fs-8 fw-bold text-white" href={PATHS.HOME}>Home</a></li>
                             <li className="me-3 me-sm-5"><a className="fs-8 fw-bold text-white" href="#!">About</a></li>
                             <li className="me-3 me-sm-5"><a className="fs-8 fw-bold text-white" href="#!">Contact</a></li>
                             <li className="me-3 me-sm-5"><a className="fs-8 fw-bold text-white" href="#!">FAQ</a></li>
@@ -52,8 +52,8 @@ const Footer = () => {
                 <hr className="my-4" />
                 <div className="row gy-3 justify-content-between">
                     <div className="col-auto">
-                        <a className="text-white me-4" href="#!">
-                            <span className="fa-brands fa-facebook-f"> </span>
+                        <a className="text-white me-4" href="https://www.facebook.com/cao.van.ai.254579">
+                            <span className="fa-brands fa-facebook-f"></span>
                         </a>
                         <a className="text-white me-4" href="#!">
                             <span className="fa-brands fa-twitter"></span>
