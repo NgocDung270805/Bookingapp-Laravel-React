@@ -240,12 +240,12 @@ const ProductsByCategoriesPage = () => {
                       </p>
                       <div className="d-flex align-items-center gap-3">
                         <span className="badge badge-phoenix badge-phoenix-warning fs-8 fw-normal">
-                          <span className="fa-solid fa-star me-1 fs-9" data-fa-transform="up-1"></span>
-                          <span className="badge-label">3.8</span>
+                          <span className="fa-solid fa-eye me-1 fs-9" data-fa-transform="up-1"></span>
+                          <span className="badge-label">{product.views || 0}</span>
                         </span>
                         <h4 className="mb-0 text-white fw-bold text-nowrap">
-                          $33.48
-                          <span className="text-secondary-lighter fs-8 fw-normal">/ sản phẩm</span>
+                          {product.price ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price) : 'Liên hệ'}
+                          <span className="text-secondary-lighter fs-8 fw-normal"></span>
                         </h4>
                       </div>
                     </div>
