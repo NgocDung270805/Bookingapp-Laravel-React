@@ -210,89 +210,72 @@ Directory structure:
     │   ├── storage/
     │   └── .github/
     └── frontend/
-        ├── README.md                 # File README của dự án frontend (hướng dẫn cài đặt, chạy, deploy)
-        ├── Dockerfile                # Cấu hình Docker cho ứng dụng frontend
-        ├── eslint.config.js          # Cấu hình ESLint để kiểm tra và định dạng code
-        ├── index.html                # File HTML gốc duy nhất mà ứng dụng React sẽ được gắn (mount) vào.
-                                      # Chứa các thẻ <link> và <script> cho tài nguyên global/CDN/legacy JS/CSS.
-        ├── nginx.conf                # Cấu hình Nginx (thường dùng trong môi trường production/Docker) để phục vụ React app
-        ├── package-lock.json         # Ghi lại phiên bản chính xác của các dependencies đã cài đặt
-        ├── package.json              # Chứa thông tin dự án, scripts, và danh sách các dependencies
-        ├── vite.config.js            # Cấu hình Vite (công cụ build) cho dự án React
-        ├── .gitignore                # Danh sách các file/thư mục bị bỏ qua bởi Git (ví dụ: node_modules, build output)
-        
-        ├── public/                   # Thư mục chứa các tài nguyên tĩnh được phục vụ trực tiếp (không qua xử lý của bundler)
-        │   ├── assets/               # Các tài nguyên tĩnh nội bộ (ảnh, font) được nhúng trực tiếp trong index.html
-        │   │   ├── img/              # Hình ảnh (gallery, background, icons)
-        │   │   └── js/               # Các file JS nội bộ template không phải ES Module (ví dụ: config.js, phoenix.js)
-        │   └── vendors/              # Các thư viện bên thứ ba (vendor) không phải ES Module
-        │       ├── simplebar/        # Ví dụ: Thư viện cuộn tùy chỉnh
-        │       ├── bootstrap/        # Ví dụ: CSS/JS của Bootstrap
-        │       ├── fontawesome/      # Ví dụ: CSS/JS của Font Awesome
-        │       ├── swiper/           # Ví dụ: CSS/JS của Swiper
-        │       └── ...               # Các thư viện vendor khác
-        
-        └── src/                      # Toàn bộ mã nguồn chính của ứng dụng React
-            ├── App.css               # File CSS toàn cục cho App (nếu có)
-            ├── App.jsx               # Component gốc của ứng dụng, nơi cấu hình React Router và Provider của Redux
-            ├── index.css             # File CSS chính để import các style toàn cục hoặc reset CSS
-            ├── index.jsx             # Điểm khởi tạo ứng dụng React (React DOM mount), nơi import CSS toàn cục từ assets
-            ├── main.jsx              # (Có thể trùng lặp với index.jsx nếu dùng Vite mặc định) Điểm khởi tạo chính của Vite
-                                    # Nếu index.jsx là file chính, main.jsx có thể được bỏ qua hoặc là alias
-            
-            ├── appRedux/             # Cấu hình Redux Toolkit và các custom hooks cho Redux
-            │   ├── hooks.js          # Custom hooks (useAppDispatch, useAppSelector) để tương tác với Redux store
-            │   ├── index.js          # File tổng hợp export hooks và store
-            │   └── store.js          # Nơi cấu hình Redux store và kết hợp các reducers
-            
-            ├── common/               # Các hàm tiện ích, hằng số, và cấu hình dùng chung toàn ứng dụng
-            │   ├── API.js            # Cấu hình Axios instance, interceptors (thêm token, xử lý lỗi 401)
-            │   └── constants.js      # Các hằng số (API base URL, keys local storage, PATHS frontend, enum)
-            
-            ├── core/                 # Chứa các thành phần cốt lõi, nền tảng của ứng dụng
-            │   └── layouts/          # Các component bố cục tổng thể cho các nhóm trang
-            │       ├── AuthLayout/   # Bố cục cho các trang xác thực (Login, Register)
+        ├── README.md
+        ├── Dockerfile
+        ├── eslint.config.js
+        ├── index.html
+        ├── nginx.conf
+        ├── package-lock.json
+        ├── package.json
+        ├── vite.config.js
+        ├── .gitignore
+        ├── public/
+        └── src/
+            ├── App.css
+            ├── App.jsx
+            ├── index.css
+            ├── index.jsx
+            ├── main.jsx
+            ├── appRedux/
+            │   ├── hooks.js
+            │   ├── index.js
+            │   └── store.js
+            ├── common/
+            │   ├── API.js
+            │   └── constants.js
+            ├── core/
+            │   └── layouts/
+            │       ├── AuthLayout/
             │       │   └── AuthLayout.jsx
-            │       ├── components/   # Các component UI nhỏ dùng chung trong các layouts
+            │       ├── components/
             │       │   ├── Footer.jsx
-            │       │   └── Header.jsx
-            │       └── MainLayout/   # Bố cục chính cho các trang nội dung (có Header, Sidebar, Footer)
+            │       │   ├── Header.jsx
+            │       │   └── SupportChatWidget.jsx
+            │       └── MainLayout/
             │           └── MainLayout.jsx
-            
-            ├── hoc/                  # Higher-Order Components (HOCs) cho các logic xuyên suốt (cross-cutting concerns)
-            │   └── withAuth.jsx      # HOC để bảo vệ các route/component cần xác thực (kiểm tra token)
-            
-            ├── hooks/                # Các custom React Hooks để tái sử dụng logic có stateful
-            │   └── useAuth.js        # Hook để quản lý trạng thái xác thực và hàm logout
-            
-            ├── modules/              # Các module/tính năng độc lập của ứng dụng (được phân chia theo tính năng)
-            │   ├── Auth/             # Module cho các chức năng xác thực
-            │   │   ├── api.js        # Các hàm gọi API liên quan đến xác thực (login, register, logout)
-            │   │   ├── index.js      # File tổng hợp export api và slice của Auth
-            │   │   ├── slice.js      # Redux slice quản lý trạng thái xác thực (token, user info)
-            │   │   └── containers/   # Smart components (pages) của module Auth
+            ├── hoc/
+            │   └── withAuth.jsx
+            ├── hooks/
+            │   └── useAuth.js
+            ├── modules/
+            │   ├── Auth/
+            │   │   ├── api.js
+            │   │   ├── index.js
+            │   │   ├── slice.js
+            │   │   └── containers/
             │   │       ├── LoginPage.jsx
             │   │       └── RegisterPage.jsx
-            │   |
-            │   ├── Products/         # Module cho các chức năng quản lý sản phẩm
-            │   │   ├── api.js        # Các hàm gọi API liên quan đến sản phẩm (CRUD, yêu thích, đặt lịch, bình luận)
-            │   │   ├── slice.js      # Redux slice quản lý trạng thái sản phẩm (danh sách, sản phẩm chọn)
-            │   │   ├── components/   # Các component UI nhỏ dùng trong module Products
+            │   ├── Banners/
+            │   │   ├── api.js
+            │   │   └── slice.js
+            │   ├── Categories/
+            │   │   ├── api.js
+            │   │   └── slice.js
+            │   ├── Products/
+            │   │   ├── api.js
+            │   │   ├── slice.js
+            │   │   ├── components/
             │   │   │   ├── BookingFormModal.jsx
             │   │   │   └── CommentFormModal.jsx
-            │   │   └── containers/   # Smart components (pages) của module Products
+            │   │   └── containers/
+            │   │       ├── ProductDetailPage.jsx
+            │   │       ├── ProductsByCategoriesPage.jsx
             │   │       └── ProductsPage.jsx
-            │   |
-            │   └── profile/          # Module cho chức năng quản lý hồ sơ người dùng
-            │       ├── api.js        # Các hàm gọi API liên quan đến hồ sơ (fetch, update profile)
-            │       ├── slice.js      # Redux slice quản lý trạng thái hồ sơ người dùng
-            │       └── containers/   # Smart components (pages) của module Profile
+            │   └── profile/
+            │       ├── api.js
+            │       ├── slice.js
+            │       └── containers/
             │           └── ProfilePage.jsx
-            |
-            └── pages/                # Các trang chính của ứng dụng (thường là các "views" lớn)
-                                    # Có thể được chia nhỏ thành các component con nếu trang quá lớn
-                ├── Home/             # Trang chủ
-                │   └── HomePage.jsx  # Chứa các phần lớn của trang chủ (ví dụ: Gallery Isotope, Swiper Slider)
-                └── Products/         # (Có vẻ như đây là một thư mục không dùng đến nếu ProductsPage nằm trong modules/Products)
-                    └── ProductsPage.jsx # (Có thể bị trùng với modules/Products/containers/ProductsPage.jsx)
-                                        # Nếu ProductsPage là container chính, thư mục này có thể xóa.
+            └── pages/
+                └── Home/
+                    └── HomePage.jsx
