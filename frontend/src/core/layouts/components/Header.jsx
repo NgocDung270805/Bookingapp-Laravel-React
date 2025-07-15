@@ -3,10 +3,10 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
-import { PATHS } from '../../../common/constants';
-import { BASE_URL_ADMIN } from '../../../common/constants';
+import { PATHS, BASE_URL_ADMIN } from '../../../common/constants';
 // Import các custom hooks của Redux nếu bạn đã tạo (như useAppDispatch, useAppSelector)
 import { useDispatch, useSelector } from 'react-redux'; // Hoặc import { useAppDispatch, useAppSelector } from '../../../appRedux';
+import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../../modules/Categories/slice';
 import { fetchBanners, selectLogoBanner } from '../../../modules/Banners/slice';
 
 const Header = () => {
@@ -18,6 +18,13 @@ const Header = () => {
 
   // Lấy danh sách banners ở cấp cao nhất của component
   const allBanners = useSelector(state => state.banners.banners); // Đặt Hook này ở đây
+
+  // ===============================================
+  // Lấy dữ liệu Categories từ Redux store
+  // ===============================================
+  const categories = useSelector(selectAllCategories);
+  const categoriesLoading = useSelector(selectCategoriesLoading);
+  const categoriesError = useSelector(selectCategoriesError);
 
   // Các useEffect cũng là Hooks, đặt sau các useState/useRef/useSelector/useDispatch
   useEffect(() => {
@@ -33,6 +40,14 @@ const Header = () => {
       feather.replace();
     }
   }, []);
+
+  useEffect(() => {
+    // Điều kiện này để tránh fetch lại categories nếu đã có dữ liệu hoặc đang loading
+    if (!categoriesLoading && categories.length === 0 && !categoriesError) {
+      dispatch(fetchCategories());
+    }
+
+  }, [dispatch, categoriesLoading, categories.length, categoriesError]);
 
   // Kiểm tra nếu user là admin (logic thông thường, sau các Hooks)
   const isAdmin = user && user.roles && user.roles.some(role => role.name === 'admin');
@@ -266,14 +281,18 @@ const Header = () => {
         </button>
         <div className="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center pb-0" id="navbarTopCollapse">
           <ul className="navbar-nav travel-nav-top me-auto" data-dropdown-on-hover="data-dropdown-on-hover">
-            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle text-primary" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Thương hiệu</a>
+            <li className="nav-item dropdown">
+              <a className="nav-link fs-8 fw-bold dropdown-toggle text-primary" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Thương hiệu</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/homepage.html">Homepage</a></li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/hotel-details.html">Hotel Details</a></li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/hotel-compare.html">Hotel Compare</a></li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/checkout.html">Check out</a></li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/payment.html">Payment</a></li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/hotel/customer/gallery.html">Gallery</a></li>
+                {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
+                  <li>
+                    <Link to={`${PATHS.PRODUCTS_BY_CATEGORY_SLUG}${category.slug}`} className="dropdown-item">
+                      {category.name}
+                    </Link>
+                  </li>
+                ))) : (
+                  !categoriesLoading && !categoriesError && <div className="swiper-slide w-sm-auto"><p>Không có danh mục nào để hiển thị.</p></div>
+                )}
               </ul>
             </li>
             <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Xe</a>
@@ -281,11 +300,12 @@ const Header = () => {
                 <li>
                   <a className="dropdown-item" href={PATHS.PRODUCTS}>Danh sách xe</a>
                 </li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/booking.html">Booking</a></li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/payment.html">Payment</a></li>
+                {/* <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/booking.html">Booking</a></li> */}
+                {/* <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/payment.html">Payment</a></li> */}
               </ul>
             </li>
-            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Trip</a>
+            {/* <li className="nav-item dropdown">
+              <a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Trip</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
                 <li><a className="dropdown-item" href="../../../../apps/travel-agency/trip/homepage.html">Homepage</a></li>
                 <li><a className="dropdown-item" href="../../../../apps/travel-agency/trip/trip-details.html">Trip Details</a></li>
@@ -295,11 +315,11 @@ const Header = () => {
             <li className="nav-item dropdown">
               <a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Event</a>
             </li>
-            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Package</a></li>
+            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Package</a></li> */}
           </ul>
         </div>
-      </nav>
-    </div>
+      </nav >
+    </div >
   );
 };
 
