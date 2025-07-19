@@ -1,6 +1,6 @@
 // src/common/constants.js
-export const BASE_URL_ADMIN = 'https://phungngocdungapp.laravel.cloud'; // Đảm bảo đúng với URL API Laravel của bạn
-export const API_BASE_URL   = 'https://phungngocdungapp.laravel.cloud/api'; // Đảm bảo đúng với URL API Laravel của bạn
+export const BASE_URL_ADMIN = 'https://phungngocdungapp.laravel.cloud/'; // Đảm bảo đúng với URL API Laravel của bạn
+export const API_BASE_URL   = 'https://phungngocdungapp.laravel.cloud/api/'; // Đảm bảo đúng với URL API Laravel của bạn
 
 export const TOKEN_KEY = 'authToken'; // Key để lưu token xác thực trong Local Storage
 export const USER_INFO_KEY = 'userInfo'; // Key để lưu thông tin user trong Local Storage
