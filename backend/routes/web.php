@@ -103,3 +103,6 @@ Route::get('/product/{product}/attribute-value-configs', [ProductVariantControll
 
 // Route cho quản lý banners
 Route::resource('banners', BannerController::class);
+
+
+require __DIR__.'/backup.php';
