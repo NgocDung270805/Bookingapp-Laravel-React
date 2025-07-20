@@ -30,6 +30,8 @@ use App\Http\Controllers\Api\ProductActions\FavoriteController;
 Route::post('/login', LoginController::class)->name('login');
 Route::post('/register', RegisterController::class)->name('api.register');
 
+Route::get('products', [ProductController::class, 'index'])->name('index');
+
 // Protected routes (yêu cầu xác thực với Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', LogoutController::class)->name('api.logout');
@@ -40,7 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Bạn có thể thêm các route API khác cần xác thực tại đây
     // Ví dụ cho quản lý sản phẩm:
     // Product API Routes
-    Route::apiResource('products', ProductController::class); // Tạo các route CRUD RESTful cho products
+    // Route::apiResource('products', ProductController::class); // Tạo các route CRUD RESTful cho products
     // Thêm các route tùy chỉnh nếu cần, ví dụ lấy variants cho một product:
     Route::get('products/{product}/variants', [ProductVariantController::class, 'index']); // Nếu bạn đã có route này
     Route::get('products/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs']); // Nếu bạn đã có route này
