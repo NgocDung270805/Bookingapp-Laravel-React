@@ -9,7 +9,7 @@
     <!-- ===============================================-->
     <!--    Document Title-->
     <!-- ===============================================-->
-    <title>Phoenix</title>
+    <title>Ngọc Dũng - Login</title>
 
     <!-- ===============================================-->
     <!--    Favicons-->
@@ -101,7 +101,7 @@
                                     <div class="auth-form-box">
                                         <div class="text-center mb-7"><a
                                                 class="d-flex flex-center text-decoration-none mb-4"
-                                                href="../../../index.html">
+                                                href="{{ route('home')}}">
                                                 <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block">
                                                     <img src="https://cdn-icons-png.flaticon.com/512/2206/2206368.png"
                                                         alt="phoenix" width="58" />
@@ -109,11 +109,16 @@
                                             </a>
                                             <h3 class="text-body-highlight">Sign In</h3>
                                             <p class="text-body-tertiary">Nhận quyền truy cập vào tài khoản của bạn</p>
-                                        </div><button class="btn btn-phoenix-secondary w-100 mb-3"><span
-                                                class="fab fa-google text-danger me-2 fs-9"></span>Sign in with
-                                            google</button><button class="btn btn-phoenix-secondary w-100"><span
-                                                class="fab fa-facebook text-primary me-2 fs-9"></span>Sign in with
-                                            facebook</button>
+                                        </div>
+                                        <a href="{{ route('auth.google') }}"
+                                            class="btn btn-phoenix-secondary w-100 mb-3">
+                                            <span class="fab fa-google text-danger me-2 fs-9"></span>Sign in with
+                                            google
+                                        </a>
+                                        <a href="{{ route('auth.facebook') }}" class="btn btn-phoenix-secondary w-100">
+                                            <span class="fab fa-facebook text-primary me-2 fs-9"></span>Sign in with
+                                            facebook
+                                        </a>
                                         <div class="position-relative">
                                             <hr class="bg-body-secondary mt-5 mb-4" />
                                             <div class="divider-content-center bg-body-emphasis">or use email</div>
@@ -168,11 +173,68 @@
                                                             for="basic-checkbox">Remember me</label></div>
                                                 </div>
                                                 <div class="col-auto">
-                                                    <a class="fs-9 fw-semibold"
-                                                        href="#">Forgot
+                                                    <a class="fs-9 fw-semibold" href="#">Forgot
                                                         Password?</a>
                                                 </div>
                                             </div>
+
+                                            {{-- Thông báo cho Login Google, Fb --}}
+                                            <div class="toast-container position-fixed top-0 end-0 p-3">
+                                                @if (session('success'))
+                                                    <div class="toast align-items-center text-bg-success border-0"
+                                                        role="alert" aria-live="assertive" aria-atomic="true">
+                                                        <div class="d-flex">
+                                                            <div class="toast-body">
+                                                                {{ session('success') }}
+                                                            </div>
+                                                            <button type="button"
+                                                                class="btn-close btn-close-white me-2 m-auto"
+                                                                data-bs-dismiss="toast" aria-label="Close"></button>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                @if (session('error'))
+                                                    <div class="toast align-items-center text-bg-danger border-0"
+                                                        role="alert" aria-live="assertive" aria-atomic="true">
+                                                        <div class="d-flex">
+                                                            <div class="toast-body">
+                                                                {{ session('error') }}
+                                                            </div>
+                                                            <button type="button"
+                                                                class="btn-close btn-close-white me-2 m-auto"
+                                                                data-bs-dismiss="toast" aria-label="Close"></button>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                @if (session('warning'))
+                                                    <div class="toast align-items-center text-bg-warning border-0"
+                                                        role="alert" aria-live="assertive" aria-atomic="true">
+                                                        <div class="d-flex">
+                                                            <div class="toast-body">
+                                                                {{ session('warning') }}
+                                                            </div>
+                                                            <button type="button"
+                                                                class="btn-close btn-close-white me-2 m-auto"
+                                                                data-bs-dismiss="toast" aria-label="Close"></button>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <script>// JS cho phần thông báo Login Google FB
+                                                document.addEventListener('DOMContentLoaded', function() {
+                                                    var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+                                                    var toastList = toastElList.map(function(toastEl) {
+                                                        return new bootstrap.Toast(toastEl, {
+                                                            autohide: true,
+                                                            delay: 5000
+                                                        }) // 5 giây
+                                                    })
+                                                    toastList.forEach(toast => toast.show())
+                                                });
+                                            </script>
                                             <button class="btn btn-primary w-100 mb-3">Sign In</button>
                                             {{-- <div class="text-center"><a class="fs-9 fw-bold" href="../../../pages/authentication/card/sign-up.html">Create an account</a></div> --}}
                                         </form>
@@ -367,7 +429,7 @@
                 target="_blank">Purchase template</a>
         </div>
     </div>
-    
+
     <script>
         function togglePassword() {
             const passwordInput = document.getElementById('password');

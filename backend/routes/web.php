@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\Web\BannerController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Web\Accounts\AdminController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
@@ -30,6 +31,14 @@ Route::post('/admin/update/{id}', [AdminController::class, 'update'])->name('adm
 // Route riêng để phân quyền (nếu bạn muốn modal hoặc chức năng riêng biệt cho phân quyền)
 // Nếu bạn tích hợp vào modal chỉnh sửa chính, route này không cần thiết.
 Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->name('admin.assign_roles');// Phân quyền roles
+
+// Routes cho Google Login
+Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
+
+// Routes cho Facebook Login
+Route::get('/auth/facebook', [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');
+Route::get('/auth/facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
 
 // Route cho Category CRUD
 Route::prefix('category')->name('category.')->middleware('auth')->group(function () {
