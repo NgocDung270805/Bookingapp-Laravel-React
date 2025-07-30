@@ -9,7 +9,7 @@
             <a class="navbar-brand me-1 me-sm-3" href="{{ route('home') }}">
                 <div class="d-flex align-items-center">
                     <div class="d-flex align-items-center">
-                        <img src="/assets/img/icons/1.png" width="27px" />
+                        <img src="/assets/img/icons/logo.png" width="27px" />
                         {{-- <h5 class="logo-text ms-2 d-none d-sm-block">Administration</h5> --}}
                     </div>
                 </div>

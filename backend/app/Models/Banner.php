@@ -28,6 +28,8 @@ class Banner extends Model
     public const TYPE_HOMEPAGE_BANNER = 3;
     public const TYPE_SLIDER_IMAGE = 4;
     public const TYPE_PRODUCT_BANNER = 5;
+    public const TYPE_CUSTOMERS_HAVE_PURCHASED = 6;
+    public const TYPE_VEHICLE_DELIVERY = 7;
 
     // Ví dụ về Accessor để có URL ảnh đầy đủ nếu cần
     public function getImageUrlAttribute()

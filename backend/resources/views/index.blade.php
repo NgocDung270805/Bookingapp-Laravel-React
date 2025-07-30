@@ -1,63 +1,61 @@
 @extends('layouts.app')
 @section('title', 'Trang chủ')
 @section('content')
-{{-- Thông báo cho Login Google, Fb --}}
-                                            <div class="toast-container position-fixed top-0 end-0 p-3">
-                                                @if (session('success'))
-                                                    <div class="toast align-items-center text-bg-success border-0"
-                                                        role="alert" aria-live="assertive" aria-atomic="true">
-                                                        <div class="d-flex">
-                                                            <div class="toast-body">
-                                                                {{ session('success') }}
-                                                            </div>
-                                                            <button type="button"
-                                                                class="btn-close btn-close-white me-2 m-auto"
-                                                                data-bs-dismiss="toast" aria-label="Close"></button>
-                                                        </div>
-                                                    </div>
-                                                @endif
+    {{-- Thông báo cho Login Google, Fb --}}
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        @if (session('success'))
+            <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
 
-                                                @if (session('error'))
-                                                    <div class="toast align-items-center text-bg-danger border-0"
-                                                        role="alert" aria-live="assertive" aria-atomic="true">
-                                                        <div class="d-flex">
-                                                            <div class="toast-body">
-                                                                {{ session('error') }}
-                                                            </div>
-                                                            <button type="button"
-                                                                class="btn-close btn-close-white me-2 m-auto"
-                                                                data-bs-dismiss="toast" aria-label="Close"></button>
-                                                        </div>
-                                                    </div>
-                                                @endif
+        @if (session('error'))
+            <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('error') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
 
-                                                @if (session('warning'))
-                                                    <div class="toast align-items-center text-bg-warning border-0"
-                                                        role="alert" aria-live="assertive" aria-atomic="true">
-                                                        <div class="d-flex">
-                                                            <div class="toast-body">
-                                                                {{ session('warning') }}
-                                                            </div>
-                                                            <button type="button"
-                                                                class="btn-close btn-close-white me-2 m-auto"
-                                                                data-bs-dismiss="toast" aria-label="Close"></button>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </div>
+        @if (session('warning'))
+            <div class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive"
+                aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('warning') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                        aria-label="Close"></button>
+                </div>
+            </div>
+        @endif
+    </div>
+    <script>
+        // JS cho phần thông báo Login Google FB
+        document.addEventListener('DOMContentLoaded', function() {
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+            var toastList = toastElList.map(function(toastEl) {
+                return new bootstrap.Toast(toastEl, {
+                    autohide: true,
+                    delay: 5000 // 5 giây
+                })
+            })
+            toastList.forEach(toast => toast.show())
+        });
+    </script>
 
-                                            <script>// JS cho phần thông báo Login Google FB
-                                                document.addEventListener('DOMContentLoaded', function() {
-                                                    var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-                                                    var toastList = toastElList.map(function(toastEl) {
-                                                        return new bootstrap.Toast(toastEl, {
-                                                            autohide: true,
-                                                            delay: 5000// 5 giây
-                                                        }) 
-                                                    })
-                                                    toastList.forEach(toast => toast.show())
-                                                });
-                                            </script>
     <!-- BẮT ĐẦU MAIN -->
     <div class="content">
         <div class="pb-5">
@@ -65,7 +63,8 @@
                 <div class="col-12 col-xxl-6">
                     <div class="mb-8">
                         <h2 class="mb-2">Dashboard</h2>
-                        <h5 class="text-body-tertiary fw-semibold">Đây là những gì mà diễn ra tại doanh nghiệp của bạn ngay bây giờ</h5>
+                        <h5 class="text-body-tertiary fw-semibold">Đây là những gì mà diễn ra tại doanh nghiệp của bạn ngay
+                            bây giờ</h5>
                     </div>
                     <div class="row align-items-center g-4">
                         <div class="col-12 col-md-auto">
@@ -194,7 +193,8 @@
                                     <div>
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="bullet-item bg-primary me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Giảm giá theo tỷ lệ phần trăm</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Giảm giá theo tỷ lệ phần trăm
+                                            </h6>
                                             <h6 class="text-body fw-semibold mb-0">72%</h6>
                                         </div>
                                         <div class="d-flex align-items-center mb-2">
@@ -204,7 +204,8 @@
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <div class="bullet-item bg-info-dark me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Giảm giá theo sản phẩm cố định</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Giảm giá theo sản phẩm cố định
+                                            </h6>
                                             <h6 class="text-body fw-semibold mb-0">10%</h6>
                                         </div>
                                     </div>
@@ -295,7 +296,8 @@
                                     style="min-width:110px;">ĐÁNH GIÁ</th>
                                 <th class="sort align-middle" scope="col" style="max-width:350px;"
                                     data-sort="review">NHẬN XÉT</th>
-                                <th class="sort text-start ps-5 align-middle" scope="col" data-sort="status">TRẠNG THÁI
+                                <th class="sort text-start ps-5 align-middle" scope="col" data-sort="status">TRẠNG
+                                    THÁI
                                 </th>
                                 <th class="sort text-end align-middle" scope="col" data-sort="time">THỜI GIAN</th>
                                 <th class="sort text-end pe-0 align-middle" scope="col"></th>
@@ -1068,10 +1070,12 @@
                                     <div class="btn-reveal-trigger position-static"><button
                                             class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10"
                                             type="button" data-bs-toggle="dropdown" data-boundary="window"
-                                            aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span
+                                            aria-haspopup="true" aria-expanded="false"
+                                            data-bs-reference="parent"><span
                                                 class="fas fa-ellipsis-h fs-10"></span></button>
                                         <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item"
-                                                href="#!">View</a><a class="dropdown-item" href="#!">Export</a>
+                                                href="#!">View</a><a class="dropdown-item"
+                                                href="#!">Export</a>
                                             <div class="dropdown-divider"></div><a class="dropdown-item text-danger"
                                                 href="#!">Remove</a>
                                         </div>
@@ -1087,7 +1091,8 @@
                                 <td class="align-middle product white-space-nowrap py-0"><a
                                         class="d-block rounded-2 border border-translucent"
                                         href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/13.png" alt="" width="53" /></a>
+                                            src="assets/img//products/60x60/13.png" alt=""
+                                            width="53" /></a>
                                 </td>
                                 <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
                                         href="apps/e-commerce/landing/product-details.html">Nintendo Switch with Neon Blue

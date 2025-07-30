@@ -14,12 +14,12 @@
     <!-- ===============================================-->
     <!--    Favicons-->
     <!-- ===============================================-->
-    <link rel="apple-touch-icon" sizes="180x180" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
-    <link rel="shortcut icon" type="image/x-icon" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
-    {{-- <link rel="manifest" href="https://cdn-icons-png.flaticon.com/512/2206/2206368.png"> --}}
-    <meta name="msapplication-TileImage" content="https://cdn-icons-png.flaticon.com/512/2206/2206368.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/icons/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icons/logo.png">">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/icons/logo.png">">
+    <link rel="shortcut icon" type="image/x-icon" href="/assets/img/icons/logo.png">>
+    {{-- <link rel="manifest" href="/assets/img/icons/logo.png"> --}}
+    <meta name="msapplication-TileImage" content="/assets/img/icons/logo.png">
     <meta name="theme-color" content="#ffffff">
     <script src="vendors/simplebar/simplebar.min.js"></script>
     <script src="assets/js/config.js"></script>
