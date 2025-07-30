@@ -35,6 +35,8 @@ Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])
 // Route cho quản lý tài khoản manager
 Route::get('/manager', [AdminController::class, 'showManage'])->middleware('auth')->name('manager.index');
 
+Route::get('/users', [AdminController::class, 'showUsers'])->middleware('auth')->name('users.index');
+
 // Routes cho Google Login
 Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);

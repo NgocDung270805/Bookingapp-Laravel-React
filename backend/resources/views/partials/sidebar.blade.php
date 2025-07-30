@@ -96,16 +96,10 @@
                                     <div class="parent-wrapper">
                                         <ul class="nav collapse parent show" data-bs-parent="#nv-acc" id="nv-admin-acc">
                                             <li class="nav-item"><a class="nav-link"
-                                                    href="apps/e-commerce/admin/add-product.html">
+                                                    href="{{ route('users.index') }}">
                                                     <div class="d-flex align-items-center"><span
-                                                            class="nav-link-text">Add product</span>
+                                                            class="nav-link-text">Users Manager</span>
                                                     </div>
-                                                </a><!-- more inner pages-->
-                                            </li>
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="apps/e-commerce/admin/products.html">
-                                                    <div class="d-flex align-items-center"><span
-                                                            class="nav-link-text">Products</span></div>
                                                 </a><!-- more inner pages-->
                                             </li>
                                         </ul>
@@ -154,11 +148,6 @@
                                         </ul>
                                     </div>
                                 </li>
-                                {{-- <li class="nav-item"><a class="nav-link" href="{{ route('admin.index') }}">
-                                        <div class="d-flex align-items-center"><span
-                                                class="nav-link-text">Tài khoản</span></div>
-                                    </a><!-- more inner pages-->
-                                </li> --}}
                             </ul>
                         </div>
 

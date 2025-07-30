@@ -197,4 +197,18 @@ class AdminController extends Controller
         // dd($admins);
         return view('apps.account.manager.index', compact('admins'));
     }
+
+    public function showUsers()
+    {
+        // Lấy danh sách tất cả người dùng có vai trò là 'user'
+        $admins = User::with('roles')
+            ->whereHas('roles', function ($query) {
+                $query->whereIn('name', ['user']);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+        
+        // dd($admins);
+        return view('apps.account.users.index', compact('admins'));
+    }
 }
