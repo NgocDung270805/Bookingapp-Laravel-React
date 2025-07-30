@@ -8,10 +8,9 @@
                         class="toggle-line"></span></span></button>
             <a class="navbar-brand me-1 me-sm-3" href="{{ route('home') }}">
                 <div class="d-flex align-items-center">
-                    <div class="d-flex align-items-center"><img
-                            src="https://cdn-icons-png.flaticon.com/512/2206/2206368.png" alt="Administration"
-                            width="27" />
-                        <h5 class="logo-text ms-2 d-none d-sm-block">Administration</h5>
+                    <div class="d-flex align-items-center">
+                        <img src="/assets/img/icons/1.png" width="27px" />
+                        {{-- <h5 class="logo-text ms-2 d-none d-sm-block">Administration</h5> --}}
                     </div>
                 </div>
             </a>
@@ -515,7 +514,7 @@
                     role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true"
                     aria-expanded="false">
                     <div class="avatar avatar-l ">
-                        <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}"alt="Avatar" />
+                        <img class="rounded-circle" src="{{ asset('storage/' . $user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}"alt="Avatar" />
                     </div>
                 </a>
                 <div class="dropdown-menu dropdown-menu-end navbar-dropdown-caret py-0 dropdown-profile shadow border"
@@ -524,7 +523,7 @@
                         <div class="card-body p-0">
                             <div class="text-center pt-4 pb-3">
                                 <div class="avatar avatar-xl ">
-                                    <img class="rounded-circle" src="{{ asset($user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" />
+                                    <img class="rounded-circle" src="{{ asset('storage/' . $user->profile?->avatar ?? 'https://static.vecteezy.com/system/resources/previews/020/429/953/non_2x/admin-icon-vector.jpg') }}" alt="Avatar" />
                                 </div>
                                 {{-- Toán tử 3 ngôi check name --}}
                                 

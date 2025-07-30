@@ -35,16 +35,20 @@ class SocialiteController extends Controller
 
                 // Check user roles after successful login
                 // Only allow 'admin' (role_id 1) and 'manage' (role_id 2) roles
-                if ($user->hasRole('admin') || $user->hasRole('manager')) {
-                    return redirect()->intended('/')->with('success', 'Đăng nhập bằng Google thành công!');
+                if ($user->hasRole('admin')) {
+                    // Check Account Admin
+                    return redirect()->intended('/')->with('success', 'Login thành công! Chào mừng quản trị viên trở lại.');
+                } elseif ($user->hasRole('manager')) {
+                    // Check Account Manager
+                    return redirect()->route('home')->with('success', 'Login thành công! Chào mừng quản lý trở lại.');
                 } else {
                     // If the user has 'user' role (role_id 3) or any other unauthorized role, log them out
                     Auth::logout();
-                    return redirect()->route('login')->with('error', 'Tài khoản của bạn không có quyền truy cập.');
+                    return redirect()->route('login')->with('error', 'Tài khoản của bạn không có quyền truy cập.🖕🖕');
                 }
             } else {
                 // User doesn't exist, prevent new registration and show an error message
-                return redirect()->route('login')->with('error', 'Hiện không hỗ trợ thêm mới tài khoản. Vui lòng liên hệ quản trị viên.');
+                return redirect()->route('login')->with('error', 'Hiện không hỗ trợ thêm mới tài khoản. Vui lòng liên hệ quản trị viên 🤙🤙.');
             }
         } catch (\Exception $e) {
             Log::error('Google login failed: ' . $e->getMessage());
@@ -76,16 +80,20 @@ class SocialiteController extends Controller
 
                 // Check user roles after successful login
                 // Only allow 'admin' (role_id 1) and 'manage' (role_id 2) roles
-                if ($user->hasRole('admin') || $user->hasRole('manager')) {
-                    return redirect()->intended('/')->with('success', 'Đăng nhập bằng Facebook thành công!');
+                if ($user->hasRole('admin')) {
+                    // Check Account Admin
+                    return redirect()->intended('/')->with('success', 'Login thành công! Chào mừng quản trị viên trở lại.');
+                } elseif ($user->hasRole('manager')) {
+                    // Check Account Manager
+                    return redirect()->route('home')->with('success', 'Login thành công! Chào mừng quản lý trở lại.');
                 } else {
                     // If the user has 'user' role (role_id 3) or any other unauthorized role, log them out
                     Auth::logout();
-                    return redirect()->route('login')->with('error', 'Tài khoản của bạn không có quyền truy cập.');
+                    return redirect()->route('login')->with('error', 'Tài khoản của bạn không có quyền truy cập.🖕🖕');
                 }
             } else {
                 // User doesn't exist, prevent new registration and show an error message
-                return redirect()->route('login')->with('error', 'Tài khoản của bạn chưa được đăng ký. Vui lòng liên hệ quản trị viên.');
+                return redirect()->route('login')->with('error', 'Hiện không hỗ trợ thêm mới tài khoản. Vui lòng liên hệ quản trị viên 🤙🤙.');
             }
         } catch (\Exception $e) {
             Log::error('Facebook login failed: ' . $e->getMessage());

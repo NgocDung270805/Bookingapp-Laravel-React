@@ -76,12 +76,11 @@
                                     <div
                                         class="position-relative px-4 px-lg-7 pt-7 pb-7 pb-sm-5 text-center text-md-start pb-lg-7 pb-md-7">
                                         <h3 class="mb-3 text-body-emphasis fs-7">Đăng Nhập Vào Hệ Thống</h3>
-                                        <p class="text-body-tertiary">Hãy đăng nhập để trải nghiệm hệ thống bảo mật
-                                            nhanh chóng, đơn giản và an toàn!</p>
+                                        <p class="text-body-tertiary">Đăng nhập vào hệ thống quản lý, không thể tạo mới tài khoản khi chưa cho phép của quản trị viên😏😏😏</p>
                                         <ul class="list-unstyled mb-0 w-max-content w-md-auto">
                                             <li class="d-flex align-items-center"><span
                                                     class="uil uil-check-circle text-success me-2"></span><span
-                                                    class="text-body-tertiary fw-semibold">Nhanh chóng</span></li>
+                                                    class="text-body-tertiary fw-semibold">Bảo mật</span></li>
                                             <li class="d-flex align-items-center"><span
                                                     class="uil uil-check-circle text-success me-2"></span><span
                                                     class="text-body-tertiary fw-semibold">Đơn giản</span></li>
@@ -103,12 +102,12 @@
                                                 class="d-flex flex-center text-decoration-none mb-4"
                                                 href="{{ route('home')}}">
                                                 <div class="d-flex align-items-center fw-bolder fs-3 d-inline-block">
-                                                    <img src="https://cdn-icons-png.flaticon.com/512/2206/2206368.png"
+                                                    <img src="/assets/img/icons/logo1.png" width="100px" height="100px"
                                                         alt="phoenix" width="58" />
                                                 </div>
                                             </a>
                                             <h3 class="text-body-highlight">Sign In</h3>
-                                            <p class="text-body-tertiary">Nhận quyền truy cập vào tài khoản của bạn</p>
+                                            <p class="text-body-tertiary">Đăng nhập vào hệ thống quản lý!</p>
                                         </div>
                                         <a href="{{ route('auth.google') }}"
                                             class="btn btn-phoenix-secondary w-100 mb-3">
@@ -229,8 +228,8 @@
                                                     var toastList = toastElList.map(function(toastEl) {
                                                         return new bootstrap.Toast(toastEl, {
                                                             autohide: true,
-                                                            delay: 5000
-                                                        }) // 5 giây
+                                                            delay: 5000// 5 giây
+                                                        }) 
                                                     })
                                                     toastList.forEach(toast => toast.show())
                                                 });

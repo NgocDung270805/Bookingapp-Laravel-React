@@ -26,17 +26,15 @@ class LoginController extends Controller
             $user = Auth::user();
 
             if ($user->hasRole('admin')) {
-                return redirect()->route('home');
+                return redirect()->route('home')->with('success', 'Login thành công! Chào mừng quản trị viên trở lại.');
             }
 
             if ($user->hasRole('manage')) {
-                return redirect()->route('home');
+                return redirect()->route('home')->with('success', 'Login thành công! Chào mừng quản lý trở lại.');
             }
 
             if ($user->hasRole('user')) {
-                // return redirect()->route('welcome'); // hoặc route('home')
-                return redirect()->away('http://localhost:5173/');
-                // return redirect()->away('http://localhost:3000/');
+                return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập. Vui lòng liên hệ quản trị viên.');
             }
 
             // Nếu không có role nào hợp lệ
