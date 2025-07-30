@@ -9,14 +9,26 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AdminController extends Controller
 {
     public function index(Request $request)
     {
-        // Lấy tất cả người dùng, eager load roles để hiển thị vai trò hiện tại
-        $admins = User::with('roles')->get();
+        // Lấy tất cả người dùng, eager load roles để hiển thị vai trò hiện tại và ưu tiên hiển thị tài khoản role admin trước sau đó mới đến manager sau đó cuối dùng là user
+        $admins = User::select('users.*')
+            ->join('model_has_roles', function ($join) {
+                $join->on('users.id', '=', 'model_has_roles.model_id')
+                    ->where('model_has_roles.model_type', '=', User::class);
+            })
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->whereIn('roles.name', ['admin', 'manager', 'user'])
+            ->orderByRaw("CASE roles.name 
+            WHEN 'admin' THEN 1 
+            WHEN 'manager' THEN 2 
+            WHEN 'user' THEN 3 
+            ELSE 4 END")
+            ->with('roles') // để eager load
+            ->get();
         // dd($admins);
         return view('apps.account.admin.index', compact('admins'));
     }

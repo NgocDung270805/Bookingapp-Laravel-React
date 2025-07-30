@@ -25,12 +25,12 @@ Route::get('/pJM', [HomeController::class, 'pJM'])->middleware('auth')->name('pJ
 Route::get('/product', [HomeController::class, 'product'])->middleware('auth')->name('product');
 Route::get('/add-product', [HomeController::class, 'addProduct'])->middleware('auth')->name('addProduct');
 
-Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');// Admin
-Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->name('admin.edit');
-Route::post('/admin/update/{id}', [AdminController::class, 'update'])->name('admin.update');
+Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin.index');// Admin
+Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->middleware('auth')->name('admin.edit');
+Route::post('/admin/update/{id}', [AdminController::class, 'update'])->middleware('auth')->name('admin.update');
 // Route riêng để phân quyền (nếu bạn muốn modal hoặc chức năng riêng biệt cho phân quyền)
 // Nếu bạn tích hợp vào modal chỉnh sửa chính, route này không cần thiết.
-Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->name('admin.assign_roles');// Phân quyền roles
+Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->middleware('auth')->name('admin.assign_roles');// Phân quyền roles
 
 // Routes cho Google Login
 Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
@@ -84,7 +84,7 @@ Route::prefix('product-variant')->name('product_variant.')->middleware('auth')->
 // ==========================================================
 
 // Route cho ProductAttributeType CRUD
-Route::prefix('product-attribute-types')->name('product_attribute_type.')->group(function () {
+Route::prefix('product-attribute-types')->middleware('auth')->name('product_attribute_type.')->group(function () {
     Route::get('/', [ProductAttributeTypeController::class, 'index'])->name('index'); // Route bị thiếu
     Route::post('/', [ProductAttributeTypeController::class, 'store'])->name('store');
     Route::get('/{attributeType}/edit', [ProductAttributeTypeController::class, 'edit'])->name('edit');
@@ -99,7 +99,7 @@ Route::prefix('product-attribute-types')->name('product_attribute_type.')->group
 });
 
 // Route cho ProductAttributeValue CRUD (khi truy cập trực tiếp bằng ID giá trị)
-Route::prefix('product-attribute-values')->name('product_attribute_value.')->group(function () {
+Route::prefix('product-attribute-values')->middleware('auth')->name('product_attribute_value.')->group(function () {
     Route::get('/{attributeValue}/edit', [ProductAttributeValueController::class, 'edit'])->name('edit');
     // SỬA DÒNG NÀY:
     Route::put('/{attributeValue}', [ProductAttributeValueController::class, 'update'])->name('update'); // Đổi từ ProductAttributeValue::class
@@ -107,11 +107,11 @@ Route::prefix('product-attribute-values')->name('product_attribute_value.')->gro
     Route::post('/get-by-ids', [ProductAttributeValueController::class, 'getByIds']);
 });
 // Route để lấy các cấu hình giá trị thuộc tính cho một sản phẩm cụ thể
-Route::get('/product/{product}/attribute-value-configs', [ProductAttributeValueConfigController::class, 'index'])->name('product.attribute_value_configs.index');
-Route::get('/product/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs'])->name('product.attribute_value_configs.index');
+Route::get('/product/{product}/attribute-value-configs', [ProductAttributeValueConfigController::class, 'index'])->middleware('auth')->name('product.attribute_value_configs.index');
+Route::get('/product/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs'])->middleware('auth')->name('product.attribute_value_configs.index');
 
 // Route cho quản lý banners
-Route::resource('banners', BannerController::class);
+Route::resource('banners', BannerController::class)->middleware('auth');
 
 
 require __DIR__.'/backup.php';

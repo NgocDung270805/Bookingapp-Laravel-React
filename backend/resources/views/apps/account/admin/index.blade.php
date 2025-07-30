@@ -78,7 +78,7 @@
                                                         <th class="sort align-middle ps-3" data-sort="name">Name
                                                         </th>
                                                         <th class="sort align-middle" data-sort="email">Email</th>
-                                                        <th class="sort align-middle" data-sort="age">Age</th>
+                                                        <th class="sort align-middle" data-sort="age">Role</th>
                                                         <th class="sort text-end align-middle pe-0" scope="col">
                                                             ACTION</th>
                                                     </tr>
@@ -95,8 +95,7 @@
                                                             <td class="align-middle ps-3 name">{{ $admin->name }}</td>
                                                             <td class="align-middle email">{{ $admin->email }}</td>
                                                             <td class="align-middle age">
-                                                                {{-- Bạn cần định nghĩa cách tính tuổi trong Controller hoặc Model User --}}
-                                                                {{-- Hoặc xóa cột này nếu không cần --}}
+                                                                {{ $admin->roles->pluck('name')->implode(', ') }}</td>
                                                             </td>
                                                             <td class="align-middle white-space-nowrap text-end pe-0">
                                                                 <div class="btn-reveal-trigger position-static"><button
@@ -107,11 +106,12 @@
                                                                         data-bs-reference="parent"><span
                                                                             class="fas fa-ellipsis-h fs-10"></span></button>
                                                                     <div class="dropdown-menu dropdown-menu-end py-2">
-                                                                        <a class="dropdown-item" href="#!">Xem</a>
-                                                                        <a class="dropdown-item" href="#!">Xuất</a>
+                                                                        {{-- <a class="dropdown-item" href="#!">Xem</a> --}}
+                                                                        {{-- <a class="dropdown-item" href="#!">Xuất</a> --}}
                                                                         <a class="dropdown-item edit-account-btn"
                                                                             href="#">Chỉnh sửa tài khoản</a>
-                                                                        <div class="dropdown-divider"></div><a
+                                                                        <div class="dropdown-divider"></div>
+                                                                        <a
                                                                             class="dropdown-item text-danger"
                                                                             href="#!">Xóa</a>
                                                                     </div>
