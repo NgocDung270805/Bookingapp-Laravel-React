@@ -32,6 +32,9 @@ Route::post('/admin/update/{id}', [AdminController::class, 'update'])->middlewar
 // Nếu bạn tích hợp vào modal chỉnh sửa chính, route này không cần thiết.
 Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->middleware('auth')->name('admin.assign_roles');// Phân quyền roles
 
+// Route cho quản lý tài khoản manager
+Route::get('/manager', [AdminController::class, 'showManage'])->middleware('auth')->name('manager.index');
+
 // Routes cho Google Login
 Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);

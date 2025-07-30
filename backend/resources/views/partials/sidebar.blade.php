@@ -125,16 +125,11 @@
                                         <ul class="nav collapse parent show" data-bs-parent="#e-commerce"
                                             id="nv-admin">
                                             <li class="nav-item"><a class="nav-link"
-                                                    href="apps/e-commerce/landing/homepage.html">
+                                                    href="{{ route('manager.index') }}">
                                                     <div class="d-flex align-items-center"><span
-                                                            class="nav-link-text">Homepage</span></div>
+                                                            class="nav-link-text">Manager</span></div>
                                                 </a></li>
                                             <!-- ... các mục con khác giữ nguyên ... -->
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="apps/e-commerce/landing/invoice.html">
-                                                    <div class="d-flex align-items-center"><span
-                                                            class="nav-link-text">Invoice</span></div>
-                                                </a></li>
                                         </ul>
                                     </div>
                                 </li>

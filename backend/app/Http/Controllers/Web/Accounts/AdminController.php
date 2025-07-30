@@ -183,4 +183,18 @@ class AdminController extends Controller
             return response()->json(['message' => 'Đã xảy ra lỗi khi phân quyền.'], 500);
         }
     }
+
+    public function showManage()
+    {
+        // Lấy danh sách tất cả người dùng có vai trò là 'manager'
+        $admins = User::with('roles')
+            ->whereHas('roles', function ($query) {
+                $query->whereIn('name', ['manager']);
+            })
+            ->orderBy('id', 'desc')
+            ->get();
+        
+        // dd($admins);
+        return view('apps.account.manager.index', compact('admins'));
+    }
 }
