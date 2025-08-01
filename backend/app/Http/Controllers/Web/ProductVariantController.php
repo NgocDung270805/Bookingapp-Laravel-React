@@ -19,7 +19,7 @@ class ProductVariantController extends Controller
     public function index(Product $product)
     {
         // Loại bỏ 'attributeValueConfigs' khỏi eager load của ProductVariant
-        $variants = $product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get(); 
+        $variants = $product->variants()->with('attributeValues.attributeType')->orderBy('variant_name')->get();
         return response()->json(['variants' => $variants]);
     }
 
@@ -81,10 +81,14 @@ class ProductVariantController extends Controller
             'is_featured' => $validatedData['is_featured'] ?? 0,
         ]);
 
+        // Sửa đổi: Sử dụng attach() thay vì sync() cho lần tạo đầu tiên
+        // vì sync() sẽ xóa các bản ghi hiện có nếu không được cung cấp.
+        // Khi tạo mới, chúng ta chỉ cần thêm các liên kết mới.
         if (isset($validatedData['attribute_value_ids'])) {
-            $variant->attributeValues()->sync($validatedData['attribute_value_ids']);
+            $variant->attributeValues()->attach($validatedData['attribute_value_ids']);
         } else {
-            $variant->attributeValues()->detach();
+            // Nếu không có attribute_value_ids nào được gửi, đảm bảo không có liên kết nào được tạo
+            $variant->attributeValues()->detach(); // Hoặc bỏ qua dòng này nếu không muốn detach khi tạo mới
         }
 
         if (isset($validatedData['attribute_value_configs']) && is_array($validatedData['attribute_value_configs'])) {
@@ -116,16 +120,15 @@ class ProductVariantController extends Controller
             }
             $submittedConfigValueIds = collect($validatedData['attribute_value_configs'])->pluck('product_attribute_value_id')->toArray();
             ProductAttributeValueConfig::where('product_id', $product->id)
-                                    ->whereNotIn('product_attribute_value_id', $submittedConfigValueIds)
-                                    ->delete();
-
+                ->whereNotIn('product_attribute_value_id', $submittedConfigValueIds)
+                ->delete();
         } else {
             ProductAttributeValueConfig::where('product_id', $product->id)->delete();
         }
 
         // Tải lại products với các mối quan hệ cần thiết.
         // attributeValueConfigs được load trực tiếp từ Product model.
-        $products = Product::with('categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs')->get(); 
+        $products = Product::with('categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs')->get();
         return response()->json(['success' => 'Variant created successfully.', 'products' => $products]);
     }
 
@@ -134,11 +137,11 @@ class ProductVariantController extends Controller
      */
     public function edit(ProductVariant $productVariant)
     {
-        $productVariant->load('attributeValues'); 
-        
+        $productVariant->load('attributeValues');
+
         $attributeValueConfigs = ProductAttributeValueConfig::where('product_id', $productVariant->product_id)->get();
 
-        $attributeTypes = ProductAttributeType::with('values')->orderBy('name')->get(); 
+        $attributeTypes = ProductAttributeType::with('values')->orderBy('name')->get();
 
         $selectedAttributeValueIds = $productVariant->attributeValues->pluck('id')->toArray();
 
@@ -211,9 +214,11 @@ class ProductVariantController extends Controller
             'is_featured' => $validatedData['is_featured'] ?? 0,
         ]);
 
+        // Sửa đổi: Sử dụng sync() để đồng bộ hóa các giá trị thuộc tính
         if (isset($validatedData['attribute_value_ids'])) {
             $productVariant->attributeValues()->sync($validatedData['attribute_value_ids']);
         } else {
+            // Nếu không có attribute_value_ids nào được gửi, xóa tất cả các liên kết cũ
             $productVariant->attributeValues()->detach();
         }
 
@@ -271,19 +276,19 @@ class ProductVariantController extends Controller
             Storage::disk('public')->delete($productVariant->img);
         }
         $productVariant->delete();
-        
+
         // Tải lại products với các mối quan hệ cần thiết.
         // attributeValueConfigs được load trực tiếp từ Product model.
         $products = Product::with('categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs')->get();
         return response()->json(['success' => 'Variant deleted successfully.', 'products' => $products]);
     }
-    
+
     // Phương thức mới để lấy các cấu hình giá trị thuộc tính cho một sản phẩm
     public function getAttributeValueConfigs(Product $product)
     {
         $configs = ProductAttributeValueConfig::where('product_id', $product->id)
-                                             ->with('attributeValue.attributeType')
-                                             ->get();
+            ->with('attributeValue.attributeType')
+            ->get();
         return response()->json(['configs' => $configs]);
     }
 }

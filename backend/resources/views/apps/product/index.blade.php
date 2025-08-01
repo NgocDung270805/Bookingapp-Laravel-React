@@ -153,7 +153,20 @@
                                         <td
                                             class="product-price align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4">
                                             @if ($product->variants->isNotEmpty())
-                                                {{ number_format($product->variants->min('price'), 2) }} VNĐ
+                                                @php
+                                                    $variant = $product->variants->sortBy('price')->first();
+                                                @endphp
+
+                                                @if ($variant->discount_price)
+                                                    <span>{{ number_format($variant->discount_price, 0, ',', '.') }}
+                                                        VNĐ</span>
+                                                    <br>
+                                                    <small class="text-muted" style="text-decoration: line-through;">
+                                                        {{ number_format($variant->price, 0, ',', '.') }} VNĐ
+                                                    </small>
+                                                @else
+                                                    {{ number_format($variant->price, 0, ',', '.') }} VNĐ
+                                                @endif
                                             @else
                                                 N/A
                                             @endif
@@ -299,12 +312,15 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="variantsModalLabel">Quản lý biến thể cho sản phẩm: <span
-                                id="variantProductName"></span></h5>
+                            id="variantProductName"></span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="currentProductIdForVariants">
-                    <h6>Các biến thể hiện có:</h6>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6>Các biến thể hiện có:</h6>
+                    </div>
+
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -336,11 +352,16 @@
 
                         {{-- Phần quản lý thuộc tính biến thể - MỖI GIÁ TRỊ CÓ FORM RIÊNG --}}
                         <div class="mb-3 border p-3 rounded">
-                            <label class="form-label d-block">THUỘC TÍNH BIẾN THỂ</label>
+                            <label class="form-label d-block">THUỘC TÍNH BIẾN THỂ
+                                <button type="button" class="btn btn-link btn-sm"id="manageAttributesBtn"
+                                    data-bs-toggle="modal" data-bs-target="#attributesModal">
+                                    <i class="fas fa-plus"></i> Thêm mới thuộc tính
+                                </button>
+                            </label>
                             <div id="variantAttributesSelectionContainer">
                                 {{-- Các loại thuộc tính và giá trị sẽ được tải ở đây qua JS --}}
                                 {{-- Mỗi giá trị thuộc tính sẽ có khối nhập liệu riêng bên dưới --}}
-                                <p class="text-muted small">Đang tải thuộc tính...</p>
+                                <p class="text-muted small">Đang tải thuộc tính...</p><br>
                             </div>
                             {{-- Input ẩn để lưu các ID giá trị thuộc tính đã chọn cho biến thể hoàn chỉnh --}}
                             <input type="hidden" name="attribute_value_ids" id="attributeValueIdsInput">
@@ -395,7 +416,8 @@
                                 <div class="text-danger" id="discount_priceError"></div>
                             </div>
                             <div class="mb-3">
-                                <label for="variantDiscountPercent" class="form-label">PHẦN TRĂM GIẢM GIÁ (%) (Biến thể tổng hợp)</label>
+                                <label for="variantDiscountPercent" class="form-label">PHẦN TRĂM GIẢM GIÁ (%) (Biến thể
+                                    tổng hợp)</label>
                                 <input type="number" class="form-control" id="variantDiscountPercent"
                                     name="discount_percent" min="0" max="100">
                                 <div class="text-danger" id="discount_percentError"></div>
@@ -412,8 +434,8 @@
                             <label for="variantImage" class="form-label">HÌNH ẢNH BIẾN THỂ (Biến thể tổng hợp)</label>
                             <input class="form-control" type="file" id="variantImage" name="img">
                             <div class="text-danger" id="variant_imgError"></div>
-                            <img id="currentVariantImage" src="" alt="Hình ảnh hiện tại" class="img-thumbnail mt-2"
-                                style="max-width: 80px; display: none;">
+                            <img id="currentVariantImage" src="" alt="Hình ảnh hiện tại"
+                                class="img-thumbnail mt-2" style="max-width: 80px; display: none;">
                         </div>
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" id="variantStatus" name="status"
@@ -537,6 +559,41 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal nhỏ để thêm giá trị thuộc tính nhanh --}}
+    <div class="modal fade" id="quickAddAttrValueModal" tabindex="-1" aria-labelledby="quickAddAttrValueModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <form id="quickAddAttrValueForm">
+                    @csrf
+                    <input type="hidden" name="attribute_type_id" id="quickAddAttrTypeId">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="quickAddAttrValueModalLabel">Thêm giá trị cho: <span
+                                id="quickAddAttrTypeName"></span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="quickAttrValueValue" class="form-label">Giá trị</label>
+                            <input type="text" class="form-control" id="quickAttrValueValue" name="value" required>
+                            <div class="text-danger" id="quick_attr_value_valueError"></div>
+                        </div>
+                        <div class="mb-3" id="quickAttrValueMetadataField" style="display:none;">
+                            <label for="quickAttrValueMetadata" class="form-label">Metadata (JSON)</label>
+                            <input type="text" class="form-control" id="quickAttrValueMetadata" name="metadata"
+                                placeholder='e.g. {"hex_code": "#FF0000"}'>
+                            <div class="text-danger" id="quick_attr_value_metadataError"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
@@ -548,6 +605,9 @@
             let currentProductName = '';
             let allProductVariants = []; // Lưu trữ tất cả biến thể của sản phẩm hiện tại để tìm kiếm
             let currentProductAttributeValueConfigs = [];
+            let
+                selectedVariantAttrValues = []; // Global array to store selected attribute value IDs for the variant form
+            let currentManagingAttrTypeId = null; // Để biết loại thuộc tính nào đang được quản lý trong modal chính
 
             function updateProductTable(products) {
                 let tableBody = $('#products-table-body');
@@ -678,23 +738,27 @@
                             let actualSelectedCategory = null;
                             // Ưu tiên tìm category được chọn có parent_id (là child)
                             actualSelectedCategory = categories.find(cat =>
-                                selectedProductCategoryIds.includes(cat.id) && cat.parent_id !== null
+                                selectedProductCategoryIds.includes(cat.id) && cat.parent_id !==
+                                null
                             );
 
                             if (actualSelectedCategory) {
                                 parentCategorySelect.val(actualSelectedCategory.parent_id);
                                 // Khi chỉnh sửa, cần truyền `selectedProductCategoryIds` để hàm `loadChildCategories` biết những child nào đang được chọn
-                                loadChildCategories(actualSelectedCategory.parent_id, categories, selectedProductCategoryIds);
+                                loadChildCategories(actualSelectedCategory.parent_id, categories,
+                                    selectedProductCategoryIds);
                                 childCategoriesCheckboxesContainer.show();
                             } else {
                                 // Nếu không có child nào được chọn, kiểm tra xem có parent nào được chọn trực tiếp không
                                 actualSelectedCategory = categories.find(cat =>
-                                    selectedProductCategoryIds.includes(cat.id) && cat.parent_id === null
+                                    selectedProductCategoryIds.includes(cat.id) && cat.parent_id ===
+                                    null
                                 );
                                 if (actualSelectedCategory) {
                                     parentCategorySelect.val(actualSelectedCategory.id);
                                     // Dù là parent được chọn trực tiếp, vẫn có thể có children ẩn, nên vẫn gọi loadChildCategories
-                                    loadChildCategories(actualSelectedCategory.id, categories, selectedProductCategoryIds);
+                                    loadChildCategories(actualSelectedCategory.id, categories,
+                                        selectedProductCategoryIds);
                                     childCategoriesCheckboxesContainer.show();
                                 }
                             }
@@ -712,10 +776,13 @@
 
                             if (selectedParentId) {
                                 // Nếu parent được chọn trực tiếp, thêm nó vào hidden input
-                                if (selectedProductCategoryIds.includes(parseInt(selectedParentId))) {
-                                    updateHiddenCategoryIds(parseInt(selectedParentId), true, categories);
+                                if (selectedProductCategoryIds.includes(parseInt(
+                                        selectedParentId))) {
+                                    updateHiddenCategoryIds(parseInt(selectedParentId), true,
+                                        categories);
                                 }
-                                loadChildCategories(selectedParentId, categories, selectedProductCategoryIds);
+                                loadChildCategories(selectedParentId, categories,
+                                    selectedProductCategoryIds);
                                 childCategoriesCheckboxesContainer.show();
                             } else {
                                 childCategoriesCheckboxesContainer.hide();
@@ -766,24 +833,30 @@
                         }
                     });
                 } else {
-                    childCategoriesCheckboxesContainer.append('<p class="text-muted small mt-2">No subcategories for this parent.</p>');
+                    childCategoriesCheckboxesContainer.append(
+                        '<p class="text-muted small mt-2">No subcategories for this parent.</p>');
                 }
 
                 // Đảm bảo rằng nếu parent category được chọn trực tiếp và không có children
-                const isParentCategorySelectedDirectlyAndNoChildren = selectedProductCategoryIds.includes(parseInt(parentId)) && childCategories.length === 0;
+                const isParentCategorySelectedDirectlyAndNoChildren = selectedProductCategoryIds.includes(parseInt(
+                    parentId)) && childCategories.length === 0;
                 if (isParentCategorySelectedDirectlyAndNoChildren) {
                     updateHiddenCategoryIds(parseInt(parentId), true, allCategoriesData);
                 }
 
                 // Attach change listener to newly added child checkboxes
-                childCategoriesCheckboxesContainer.off('change', '.category-checkbox').on('change', '.category-checkbox', function() {
-                    const categoryId = parseInt($(this).val());
-                    if ($(this).is(':checked')) {
-                        updateHiddenCategoryIds(categoryId, true, allCategoriesData); // Pass allCategoriesData
-                    } else {
-                        updateHiddenCategoryIds(categoryId, false, allCategoriesData); // Pass allCategoriesData
-                    }
-                });
+                childCategoriesCheckboxesContainer.off('change', '.category-checkbox').on('change',
+                    '.category-checkbox',
+                    function() {
+                        const categoryId = parseInt($(this).val());
+                        if ($(this).is(':checked')) {
+                            updateHiddenCategoryIds(categoryId, true,
+                                allCategoriesData); // Pass allCategoriesData
+                        } else {
+                            updateHiddenCategoryIds(categoryId, false,
+                                allCategoriesData); // Pass allCategoriesData
+                        }
+                    });
             }
 
             /**
@@ -807,7 +880,8 @@
 
                         // Also add its parent if it's a child category and its parent is not already in the list
                         const category = allCategoriesData.find(cat => cat.id === categoryId);
-                        if (category && category.parent_id !== null && !selectedIdsArray.includes(category.parent_id)) {
+                        if (category && category.parent_id !== null && !selectedIdsArray.includes(category
+                                .parent_id)) {
                             selectedIdsArray.push(category.parent_id);
                         }
                     } else {
@@ -876,10 +950,11 @@
 
                                 let priceHtml;
                                 if (variant.pricing_type === 'public_price') {
-                                    priceHtml = `$${parseFloat(variant.price).toFixed(2)}`;
+                                    priceHtml =
+                                        `${parseFloat(variant.price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}`;
                                     if (variant.discount_price) {
                                         priceHtml +=
-                                            `<br><small class="text-danger">Disc: $${parseFloat(variant.discount_price).toFixed(2)}</small>`;
+                                            `<br><small class="text-danger">Giảm: ${parseFloat(variant.discount_price).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</small>`;
                                     }
                                 } else {
                                     priceHtml = `Request Quote`;
@@ -912,7 +987,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colspan="9" class="small text-muted ps-5">Attributes: ${variantAttrValuesHtml || 'None'}</td>
+                                        <td colspan="9" class="small text-muted ps-5">Biến thể: ${variantAttrValuesHtml || 'None'}</td>
                                     </tr>
                                 `);
                             });
@@ -926,7 +1001,7 @@
                 });
             }
 
-             // Tải các cấu hình giá trị thuộc tính cho sản phẩm hiện tại
+            // Tải các cấu hình giá trị thuộc tính cho sản phẩm hiện tại
             function loadProductAttributeValueConfigs(productId) {
                 // Return the AJAX promise so .done() can be chained
                 return $.ajax({
@@ -934,7 +1009,8 @@
                     method: 'GET',
                     success: function(response) {
                         currentProductAttributeValueConfigs = response.configs; // Lưu trữ các cấu hình
-                        console.log("Loaded Attribute Value Configs:", currentProductAttributeValueConfigs);
+                        console.log("Loaded Attribute Value Configs:",
+                            currentProductAttributeValueConfigs);
                     },
                     error: function(xhr, status, error) {
                         console.error("Lỗi khi tải cấu hình giá trị thuộc tính:", error);
@@ -951,7 +1027,7 @@
                     $('#toggleVariantDetailsBtn').show(); // Hiển thị nút đóng/mở
                     // Nếu đang ở chế độ chỉnh sửa hoặc người dùng đã mở, thì hiển thị nội dung
                     if ($('#variantFormMethod').val() === 'PUT' || $('#variantDetailsFields').is(':visible')) {
-                         $('#variantDetailsFields').slideDown();
+                        $('#variantDetailsFields').slideDown();
                     }
                 } else {
                     $('#variantDetailsFields').slideUp(); // Ẩn hoàn toàn nếu không có thuộc tính nào được chọn
@@ -976,7 +1052,8 @@
                 // Reset các lựa chọn thuộc tính và form cấu hình của chúng
                 selectedVariantAttrValues = []; // Đảm bảo không có thuộc tính nào được chọn
                 $('#attributeValueIdsInput').val(''); // Xóa input ẩn chứa IDs thuộc tính
-                loadAttributeTypesForVariantModal([]); // Tải lại các loại thuộc tính (sẽ reset các checkbox và các khối config)
+                loadAttributeTypesForVariantModal(
+                    []); // Tải lại các loại thuộc tính (sẽ reset các checkbox và các khối config)
 
                 // Reset các trường của biến thể tổng hợp
                 populateVariantDetailsForm(null); // Reset các trường chi tiết của biến thể
@@ -1089,56 +1166,25 @@
 
                 // --- LOGIC: TÌM KIẾM BIẾN THỂ KHỚP VÀ CẬP NHẬT FORM ---
                 // Sắp xếp ID để so sánh chính xác
-                const sortedSelectedValueIds = [...currentSelectedValueIds].sort((a,b) => a - b);
+                const sortedSelectedValueIds = [...currentSelectedValueIds].sort((a, b) => a - b);
 
                 let matchedVariant = null;
                 if (allProductVariants.length > 0 && sortedSelectedValueIds.length > 0) {
                     matchedVariant = allProductVariants.find(v => {
                         // Lấy các thuộc tính của biến thể từ DB, sắp xếp để so sánh
-                        const variantAttributeValueIds = v.attribute_values.map(av => av.id).sort((a,b) => a - b);
-                        return JSON.stringify(sortedSelectedValueIds) === JSON.stringify(variantAttributeValueIds);
+                        const variantAttributeValueIds = v.attribute_values.map(av => av.id).sort((a, b) =>
+                            a - b);
+                        return JSON.stringify(sortedSelectedValueIds) === JSON.stringify(
+                            variantAttributeValueIds);
                     });
                 }
-                populateVariantDetailsForm(matchedVariant); // Điền form chi tiết biến thể dựa trên biến thể tìm được (hoặc reset nếu không tìm thấy)
+                // CHỈ GỌI populateVariantDetailsForm TẠI ĐÂY ĐỂ ĐIỀN CÁC TRƯỜNG GIÁ/SỐ LƯỢNG/HÌNH ẢNH CỦA BIẾN THỂ TỔNG HỢP
+                // Dựa trên biến thể tìm được (hoặc reset nếu không tìm thấy)
+                populateVariantDetailsForm(matchedVariant);
 
-                // --- LOGIC ƯỚC TÍNH GIÁ/SỐ LƯỢNG/HÌNH ẢNH BIẾN THỂ TỔNG HỢP (Gợi ý cho người dùng) ---
-                // Đây là nơi bạn có thể thêm logic để ước tính các giá trị cho biến thể tổng hợp
-                // Dựa trên các cấu hình thuộc tính chi tiết đang được chọn
-                let estimatedPrice = 0;
-                let estimatedQuantity = Infinity; // Bắt đầu với vô cùng để tìm min
-                let estimatedImg = null;
-
-                $('.attribute-value-config-fields:visible').each(function() { // Chỉ lấy từ các khối đang hiển thị
-                    let configPrice = parseFloat($(this).find('input[name*="[price]"]').val()) || 0;
-                    let configQuantity = parseInt($(this).find('input[name*="[quantity]"]').val()) || 0;
-                    let configImgPath = $(this).find('input[name*="[current_image_path]"]').val();
-
-                    estimatedPrice += configPrice; // Ví dụ: tổng giá các cấu hình
-                    if (configQuantity < estimatedQuantity) {
-                        estimatedQuantity = configQuantity; // Ví dụ: số lượng min trong các cấu hình
-                    }
-                    // Ví dụ: Lấy hình ảnh từ cấu hình đầu tiên được chọn hoặc ưu tiên theo loại thuộc tính
-                    if (estimatedImg === null && configImgPath) { // Chỉ lấy ảnh đầu tiên tìm thấy
-                        estimatedImg = configImgPath;
-                    }
-                });
-
-                if (selectedAttrValueNames.length > 0) { // Chỉ cập nhật nếu có thuộc tính được chọn
-                    $('#variantPrice').val(estimatedPrice.toFixed(2));
-                    $('#variantQuantity').val(estimatedQuantity === Infinity ? 0 : estimatedQuantity);
-                    if (estimatedImg) {
-                        $('#currentVariantImage').attr('src', `/storage/${estimatedImg}`).show();
-                    } else {
-                        $('#currentVariantImage').hide().attr('src', '');
-                    }
-                    // Các trường khác như discount_price, status, is_featured có thể được ước tính tương tự
-                    // hoặc vẫn giữ giá trị từ populateVariantDetailsForm (nếu matchedVariant có giá trị)
-                } else {
-                    // Nếu không có thuộc tính nào được chọn, reset các trường ước tính
-                    $('#variantPrice').val('');
-                    $('#variantQuantity').val(0);
-                    $('#currentVariantImage').hide().attr('src', '');
-                }
+                // --- LOẠI BỎ LOGIC ƯỚC TÍNH GIÁ/SỐ LƯỢNG/HÌNH ẢNH BIẾN THỂ TỔNG HỢP TRỰC TIẾP TẠY ĐÂY ---
+                // Logic này sẽ được quản lý hoàn toàn bởi populateVariantDetailsForm(matchedVariant)
+                // để tránh ghi đè lên các giá trị thực của biến thể khi chỉnh sửa.
             }
 
             // Tải các loại thuộc tính và giá trị cho phần chọn thuộc tính của biến thể (Cập nhật)
@@ -1163,23 +1209,49 @@
 
                         allAttributeTypesAndValues.forEach(attrType => {
                             let attrTypeHtml = `
-                                <div class="mb-3 border p-2 rounded">
-                                    <strong>${attrType.name}:</strong>
-                                    <button type="button" class="btn btn-link btn-sm float-end add-attr-value-from-variant-modal" data-attr-type-id="${attrType.id}" data-attr-type-name="${attrType.name}">
-                                        <i class="fas fa-plus"></i> Thêm giá trị
-                                    </button>
+                                <div class="mb-3 border p-3 rounded">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <strong class="me-2">${attrType.name}:</strong>
+                                        <button type="button" class="btn btn-link btn-sm ms-auto add-attr-value-from-variant-modal" 
+                                            data-attr-type-id="${attrType.id}" 
+                                            data-attr-type-name="${attrType.name}"
+                                            data-attr-display-type="${attrType.display_type}">
+                                            <i class="fas fa-plus"></i> Thêm giá trị
+                                        </button>
+                                    </div>
                                     <div class="d-flex flex-wrap mt-2" data-attribute-type-id="${attrType.id}">
                             `;
                             if (attrType.values && attrType.values.length > 0) {
                                 attrType.values.forEach(attrValue => {
-                                    let checked = initialSelectedAttributeValueIds.includes(attrValue.id) ? 'checked' : '';
-                                    let attrValueName = attrValue.value ? attrValue.value : 'Giá trị không xác định';
+                                    let isChecked = initialSelectedAttributeValueIds
+                                        .includes(attrValue.id) ? 'checked' : '';
+                                    let attrValueName = attrValue.value ? attrValue
+                                        .value : 'Giá trị không xác định';
+
+                                    // Tìm dữ liệu cấu hình hiện có cho giá trị thuộc tính này và sản phẩm hiện tại
+                                    // currentProductAttributeValueConfigs phải được tải trước khi gọi hàm này
+                                    const configData =
+                                        currentProductAttributeValueConfigs.find(
+                                            config => config
+                                            .product_attribute_value_id === attrValue
+                                            .id &&
+                                            config.product_id ===
+                                            currentEditingProductId
+                                        );
+
+                                    // Tạo HTML cho checkbox/radio
                                     attrTypeHtml += `
-                                        <div class="form-check me-3">
+                                        <div class="form-check form-check-inline me-3">
                                             <input class="form-check-input variant-attribute-checkbox" type="checkbox"
-                                                value="${attrValue.id}" id="select-attr-value-${attrValue.id}" ${checked}
+                                                value="${attrValue.id}" id="select-attr-value-${attrValue.id}" ${isChecked}
                                                 data-value-name="${attrValueName}" data-type-id="${attrType.id}">
                                             <label class="form-check-label" for="select-attr-value-${attrValue.id}">${attrValueName}</label>
+                                        </div>
+                                    `;
+                                    // Chèn khối config ngay sau checkbox/label (cùng div cha)
+                                    attrTypeHtml += `
+                                        <div id="config-wrapper-${attrValue.id}" style="${isChecked ? '' : 'display:none;'}">
+                                            ${renderAttributeValueConfigFields(attrValue, configData)}
                                         </div>
                                     `;
                                 });
@@ -1194,39 +1266,56 @@
                             attributesContainer.append(attrTypeHtml);
                         });
 
-                        attributesContainer.off('change', '.variant-attribute-checkbox').on('change', '.variant-attribute-checkbox', function() {
-                            let selectedValueId = parseInt($(this).val());
-                            let attributeTypeId = parseInt($(this).data('type-id'));
+                        // Gắn trình nghe thay đổi cho các checkbox của thuộc tính biến thể
+                        attributesContainer.off('change', '.variant-attribute-checkbox').on('change',
+                            '.variant-attribute-checkbox',
+                            function() {
+                                let selectedValueId = parseInt($(this).val());
+                                let attributeTypeId = parseInt($(this).data('type-id'));
 
-                            if ($(this).is(':checked')) {
-                                // Bỏ chọn tất cả các checkbox khác cùng loại thuộc tính
-                                $(`#variantAttributesSelectionContainer div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`).not(this).prop('checked', false);
+                                // Hiển thị/ẩn khối cấu hình riêng cho checkbox này
+                                $(`#config-wrapper-${selectedValueId}`).slideToggle();
 
-                                // Cập nhật `selectedVariantAttrValues`: loại bỏ giá trị cũ của loại thuộc tính này (nếu có)
-                                // và thêm giá trị mới được chọn.
-                                selectedVariantAttrValues = selectedVariantAttrValues.filter(valId => {
-                                    const valObj = allAttributeTypesAndValues.flatMap(type => type.values).find(v => v.id === valId);
-                                    return !valObj || valObj.attribute_type_id !== attributeTypeId;
-                                });
-                                selectedVariantAttrValues.push(selectedValueId);
-                            } else {
-                                // Nếu bỏ chọn, chỉ loại bỏ giá trị đó khỏi mảng
-                                selectedVariantAttrValues = selectedVariantAttrValues.filter(val => val !== selectedValueId);
-                            }
+                                if ($(this).is(':checked')) {
+                                    // Bỏ chọn tất cả các checkbox khác cùng loại thuộc tính
+                                    $(`div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`)
+                                        .not(this).prop('checked', false);
+                                    // Ẩn các khối cấu hình của các checkbox vừa bị bỏ chọn
+                                    $(`div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`)
+                                        .not(this).each(function() {
+                                            $(`#config-wrapper-${$(this).val()}`).slideUp();
+                                        });
 
-                            // Cập nhật input ẩn và tên/SKU biến thể, sau đó ẩn/hiện các trường chi tiết
-                            $('#attributeValueIdsInput').val(JSON.stringify(selectedVariantAttrValues));
-                            updateVariantNameAndSku();
-                            toggleVariantDetailsFields(); // Kích hoạt ẩn/hiện ngay sau khi thay đổi thuộc tính
-                        });
 
-                        // Gọi `updateVariantNameAndSku` và `toggleVariantDetailsFields` lần đầu
-                        // để thiết lập trạng thái ban đầu của form (khi thêm hoặc sửa biến thể)
-                        updateVariantNameAndSku();
-                        toggleVariantDetailsFields();
+                                    // Cập nhật `selectedVariantAttrValues`: loại bỏ giá trị cũ của loại thuộc tính này (nếu có)
+                                    selectedVariantAttrValues = selectedVariantAttrValues.filter(
+                                        valId => {
+                                            const valObj = allAttributeTypesAndValues.flatMap(
+                                                type => type.values).find(v => v.id ===
+                                                valId);
+                                            return !valObj || (valObj.attribute_type && valObj
+                                                .attribute_type.id !== attributeTypeId
+                                            ); // Kiểm tra an toàn
+                                        });
+                                    selectedVariantAttrValues.push(
+                                        selectedValueId); // Thêm giá trị mới được chọn
+                                } else {
+                                    // Nếu bỏ chọn, chỉ loại bỏ giá trị đó khỏi mảng
+                                    selectedVariantAttrValues = selectedVariantAttrValues.filter(
+                                        val => val !== selectedValueId);
+                                }
+
+                                // Cập nhật input ẩn và tên/SKU biến thể (sẽ trigger tìm kiếm biến thể khớp và điền form)
+                                $('#attributeValueIdsInput').val(JSON.stringify(
+                                    selectedVariantAttrValues));
+                                updateVariantNameAndSku();
+                            });
+
+                        updateVariantNameAndSku(); // Cập nhật tên/SKU lần đầu sau khi tải thuộc tính
                     },
                     error: function(xhr, status, error) {
-                        console.error("Lỗi khi tải các loại thuộc tính và giá trị cho modal biến thể:", error);
+                        console.error("Lỗi khi tải các loại thuộc tính và giá trị cho modal biến thể:",
+                            error);
                         Swal.fire('Lỗi!', 'Không thể tải thuộc tính biến thể.', 'error');
                     }
                 });
@@ -1522,7 +1611,565 @@
 
                 // Hoặc nếu bạn muốn luôn gửi nó là một mảng JSON string,
                 // bạn cần Laravel giải mã nó ở backend.
-                // Nếu bạn giữ JSON.stringify, bạn cần thêm decoder ở Controller.
+                // formData.set('attribute_value_ids', JSON.stringify(selectedVariantAttrValues)); // <-- CÁCH CŨ GÂY LỖI
+
+                // Nếu là PUT, cần đảm bảo _method là PUT (đã có)
+                // formData.append('_method', method); // Không cần nếu đã có <input type="hidden" name="_method">
+
+                $.ajax({
+                    url: url,
+                    method: 'POST', // Luôn là POST với FormData, Laravel sẽ xử lý _method
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire('Success!', response.success, 'success');
+                        loadVariantsForProduct(productId);
+                        resetVariantForm();
+                        updateProductTable(response.products);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", xhr.responseText);
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            for (let field in errors) {
+                                let errorId = field.replace('.', '_') + 'Error';
+                                $(`#${errorId}`).text(errors[field][0]);
+                            }
+                        } else {
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Handle "Delete Product" button click
+            $(document).on('click', '.delete-product-btn', function() {
+                let id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this! All variants of this product will also be deleted.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `/product/${id}`,
+                            method: 'DELETE',
+                            data: {
+                                _token: '{{ csrf_token() }}'
+                            },
+                            success: function(response) {
+                                Swal.fire('Deleted!', response.success, 'success');
+                                updateProductTable(response
+                                    .products); // Cập nhật lại bảng sản phẩm
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("Error deleting product:", error);
+                                Swal.fire('Error!', xhr.responseJSON.error ||
+                                    'Failed to delete product.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Hàm tạo HTML cho các trường nhập liệu cấu hình của một giá trị thuộc tính
+            function renderAttributeValueConfigFields(attributeValue, configData = null) {
+                const configBlockId = `config-fields-${attributeValue.id}`;
+
+                let configId = configData ? configData.id : '';
+                let price = configData ? (configData.price || '') : '';
+                let discountPrice = configData ? (configData.discount_price || '') : '';
+                let discountPercent = configData ? (configData.discount_percent || '') : '';
+                let quantity = configData ? (configData.quantity || 0) : 0;
+                let imagePath = configData ? (configData.img_path || '') : ''; // Sử dụng img_path từ DB
+                let isActive = configData ? (configData.is_active == 1 ? 'checked' : '') : 'checked';
+                let isFeatured = configData ? (configData.is_featured == 1 ? 'checked' : '') : '';
+
+                let currentImageHtml = imagePath ?
+                    `<img src="/storage/${imagePath}" alt="Ảnh hiện tại" class="img-thumbnail mt-2" style="max-width: 60px;">` :
+                    '';
+
+                // Thêm kiểm tra an toàn cho attribute_type.name
+                const attributeTypeName = attributeValue.attribute_type ? attributeValue.attribute_type.name : '';
+
+                return `
+                    <div class="attribute-value-config-fields p-3 mt-2 border rounded" id="${configBlockId}">
+                        <h6>Cấu hình giá trị " ${attributeValue.value} " ${attributeTypeName}</h6>
+                        <input type="hidden" name="configs[${attributeValue.id}][id]" value="${configId}">
+                        <input type="hidden" name="configs[${attributeValue.id}][product_attribute_value_id]" value="${attributeValue.id}">
+                        <input type="hidden" name="configs[${attributeValue.id}][product_id]" value="${currentEditingProductId}">
+                        
+                        <div class="mb-2">
+                            <label for="config-price-${attributeValue.id}" class="form-label small">Giá</label>
+                            <input type="number" step="0.01" class="form-control form-control-sm" id="config-price-${attributeValue.id}" name="configs[${attributeValue.id}][price]" value="${price}" placeholder="Vui lòng nhập giá gốc sản phẩm">
+                            <div class="text-danger" id="config-price-error-${attributeValue.id}"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="config-discount-price-${attributeValue.id}" class="form-label small">Giá giảm</label>
+                            <input type="number" step="0.01" class="form-control form-control-sm" id="config-discount-price-${attributeValue.id}" name="configs[${attributeValue.id}][discount_price]" value="${discountPrice}" placeholder="Vui lòng nhập giá giảm sản phẩm">
+                            <div class="text-danger" id="config-discount-price-error-${attributeValue.id}"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="config-discount-percent-${attributeValue.id}" class="form-label small">Phần trăm giảm (%)</label>
+                            <input type="number" class="form-control form-control-sm" id="config-discount-percent-${attributeValue.id}" name="configs[${attributeValue.id}][discount_percent]" value="${discountPercent}" min="0" max="100" placeholder="Vui lòng nhập phần trăm giảm">
+                            <div class="text-danger" id="config-discount-percent-error-${attributeValue.id}"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="config-quantity-${attributeValue.id}" class="form-label small">Số lượng</label>
+                            <input type="number" class="form-control form-control-sm" id="config-quantity-${attributeValue.id}" name="configs[${attributeValue.id}][quantity]" value="${quantity}" min="0">
+                            <div class="text-danger" id="config-quantity-error-${attributeValue.id}"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label for="config-image-${attributeValue.id}" class="form-label small">Hình ảnh</label>
+                            <input type="file" class="form-control-sm form-control" id="config-image-${attributeValue.id}" name="configs[${attributeValue.id}][image_file]">
+                            ${currentImageHtml}
+                            <input type="hidden" name="configs[${attributeValue.id}][current_image_path]" value="${imagePath}">
+                            <div class="text-danger" id="config-image-error-${attributeValue.id}"></div>
+                        </div>
+                        <div class="form-check form-check-inline mb-1">
+                            <input class="form-check-input" type="checkbox" id="config-active-${attributeValue.id}" name="configs[${attributeValue.id}][is_active]" value="1" ${isActive}>
+                            <label class="form-check-label small" for="config-active-${attributeValue.id}">Hoạt động</label>
+                        </div>
+                        <div class="form-check form-check-inline mb-1">
+                            <input class="form-check-input" type="checkbox" id="config-featured-${attributeValue.id}" name="configs[${attributeValue.id}][is_featured]" value="1" ${isFeatured}>
+                            <label class="form-check-label small" for="config-featured-${attributeValue.id}">Nổi bật</label>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Tải các loại thuộc tính và giá trị, tạo các khối nhập liệu riêng cho từng giá trị
+            function loadAttributeTypesForVariantModal(initialSelectedAttributeValueIds = []) {
+                // selectedVariantAttrValues sẽ được cập nhật bởi sự kiện change
+                // currentProductAttributeValueConfigs phải được tải trước khi gọi hàm này
+
+                $.ajax({
+                    url: "{{ route('product_attribute_type.index') }}", // Route này cần trả về attributeTypes kèm theo values của chúng
+                    method: 'GET',
+                    success: function(response) {
+                        let attributesContainer = $('#variantAttributesSelectionContainer');
+                        attributesContainer.empty();
+
+                        if (response.attributeTypes.length === 0) {
+                            attributesContainer.append(
+                                '<p class="text-muted small">Chưa có loại thuộc tính nào được định nghĩa. Vui lòng thêm chúng qua modal "Quản lý thuộc tính".</p>'
+                            );
+                            return;
+                        }
+
+                        const allAttributeTypesAndValues = response.attributeTypes;
+
+                        allAttributeTypesAndValues.forEach(attrType => {
+                            let attrTypeHtml = `
+                                <div class="mb-3 border p-3 rounded">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <strong class="me-2">${attrType.name}:</strong>
+                                        <button type="button" class="btn btn-link btn-sm ms-auto add-attr-value-from-variant-modal" 
+                                            data-attr-type-id="${attrType.id}" 
+                                            data-attr-type-name="${attrType.name}"
+                                            data-attr-display-type="${attrType.display_type}">
+                                            <i class="fas fa-plus"></i> Thêm giá trị
+                                        </button>
+                                    </div>
+                                    <div class="d-flex flex-wrap mt-2" data-attribute-type-id="${attrType.id}">
+                            `;
+                            if (attrType.values && attrType.values.length > 0) {
+                                attrType.values.forEach(attrValue => {
+                                    let isChecked = initialSelectedAttributeValueIds
+                                        .includes(attrValue.id) ? 'checked' : '';
+                                    let attrValueName = attrValue.value ? attrValue
+                                        .value : 'Giá trị không xác định';
+
+                                    // Tìm dữ liệu cấu hình hiện có cho giá trị thuộc tính này và sản phẩm hiện tại
+                                    // currentProductAttributeValueConfigs phải được tải trước khi gọi hàm này
+                                    const configData =
+                                        currentProductAttributeValueConfigs.find(
+                                            config => config
+                                            .product_attribute_value_id === attrValue
+                                            .id &&
+                                            config.product_id ===
+                                            currentEditingProductId
+                                        );
+
+                                    // Tạo HTML cho checkbox/radio
+                                    attrTypeHtml += `
+                                        <div class="form-check form-check-inline me-3">
+                                            <input class="form-check-input variant-attribute-checkbox" type="checkbox"
+                                                value="${attrValue.id}" id="select-attr-value-${attrValue.id}" ${isChecked}
+                                                data-value-name="${attrValueName}" data-type-id="${attrType.id}">
+                                            <label class="form-check-label" for="select-attr-value-${attrValue.id}">${attrValueName}</label>
+                                        </div>
+                                    `;
+                                    // Chèn khối config ngay sau checkbox/label (cùng div cha)
+                                    attrTypeHtml += `
+                                        <div id="config-wrapper-${attrValue.id}" style="${isChecked ? '' : 'display:none;'}">
+                                            ${renderAttributeValueConfigFields(attrValue, configData)}
+                                        </div>
+                                    `;
+                                });
+                            } else {
+                                attrTypeHtml +=
+                                    `<p class="text-muted small">Không có giá trị nào được định nghĩa cho loại thuộc tính này.</p>`;
+                            }
+                            attrTypeHtml += `
+                                    </div>
+                                </div>
+                            `;
+                            attributesContainer.append(attrTypeHtml);
+                        });
+
+                        // Gắn trình nghe thay đổi cho các checkbox của thuộc tính biến thể
+                        attributesContainer.off('change', '.variant-attribute-checkbox').on('change',
+                            '.variant-attribute-checkbox',
+                            function() {
+                                let selectedValueId = parseInt($(this).val());
+                                let attributeTypeId = parseInt($(this).data('type-id'));
+
+                                // Hiển thị/ẩn khối cấu hình riêng cho checkbox này
+                                $(`#config-wrapper-${selectedValueId}`).slideToggle();
+
+                                if ($(this).is(':checked')) {
+                                    // Bỏ chọn tất cả các checkbox khác cùng loại thuộc tính
+                                    $(`div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`)
+                                        .not(this).prop('checked', false);
+                                    // Ẩn các khối cấu hình của các checkbox vừa bị bỏ chọn
+                                    $(`div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`)
+                                        .not(this).each(function() {
+                                            $(`#config-wrapper-${$(this).val()}`).slideUp();
+                                        });
+
+
+                                    // Cập nhật `selectedVariantAttrValues`: loại bỏ giá trị cũ của loại thuộc tính này (nếu có)
+                                    selectedVariantAttrValues = selectedVariantAttrValues.filter(
+                                        valId => {
+                                            const valObj = allAttributeTypesAndValues.flatMap(
+                                                type => type.values).find(v => v.id ===
+                                                valId);
+                                            return !valObj || (valObj.attribute_type && valObj
+                                                .attribute_type.id !== attributeTypeId
+                                            ); // Kiểm tra an toàn
+                                        });
+                                    selectedVariantAttrValues.push(
+                                        selectedValueId); // Thêm giá trị mới được chọn
+                                } else {
+                                    // Nếu bỏ chọn, chỉ loại bỏ giá trị đó khỏi mảng
+                                    selectedVariantAttrValues = selectedVariantAttrValues.filter(
+                                        val => val !== selectedValueId);
+                                }
+
+                                // Cập nhật input ẩn và tên/SKU biến thể (sẽ trigger tìm kiếm biến thể khớp và điền form)
+                                $('#attributeValueIdsInput').val(JSON.stringify(
+                                    selectedVariantAttrValues));
+                                updateVariantNameAndSku();
+                            });
+
+                        updateVariantNameAndSku(); // Cập nhật tên/SKU lần đầu sau khi tải thuộc tính
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Lỗi khi tải các loại thuộc tính và giá trị cho modal biến thể:",
+                            error);
+                        Swal.fire('Lỗi!', 'Không thể tải thuộc tính biến thể.', 'error');
+                    }
+                });
+            }
+
+            // Function to update the display of selected attributes in the main variant form
+            function updateSelectedAttributesDisplay() {
+                let container = $('#selectedVariantAttributesContainer');
+                container.empty();
+                $('#noAttrsSelectedText').remove();
+
+                if (selectedVariantAttrValues.length === 0) {
+                    container.append(
+                        '<p class="text-muted small" id="noAttrsSelectedText">No attributes selected.</p>');
+                    $('#attributeValueIdsInput').val('');
+                    updateVariantNameAndSku();
+                    return;
+                }
+
+                let uniqueSelectedIds = [...new Set(selectedVariantAttrValues)];
+
+                $.ajax({
+                    url: `/product-attribute-values/get-by-ids`,
+                    method: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        ids: uniqueSelectedIds
+                    },
+                    success: function(response) {
+                        if (response.attributeValues.length > 0) {
+                            response.attributeValues.forEach(attrValue => {
+                                let attrTypeName = attrValue.attribute_type ? attrValue
+                                    .attribute_type.name + ': ' : '';
+                                container.append(
+                                    `<span class="badge bg-primary me-1 mb-1">${attrTypeName}${attrValue.value}</span>`
+                                );
+                            });
+                        } else {
+                            container.append(
+                                '<p class="text-muted small" id="noAttrsSelectedText">No attributes selected.</p>'
+                            );
+                        }
+                        $('#attributeValueIdsInput').val(JSON.stringify(uniqueSelectedIds));
+                        updateVariantNameAndSku();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading selected attribute details for display:", error);
+                        container.append(
+                            `<span class="badge bg-danger me-1 mb-1">Error loading attributes</span>`
+                        );
+                        $('#attributeValueIdsInput').val(''); // Clear on error
+                        updateVariantNameAndSku();
+                    }
+                });
+            }
+
+
+            // Load attribute types and values for the main attribute modal
+            function loadAttributeTypesForManageModal() {
+                $.ajax({
+                    url: "{{ route('product_attribute_type.index') }}",
+                    method: 'GET',
+                    success: function(response) {
+                        let tableBody = $('#attributeTypesTableBody');
+                        tableBody.empty();
+                        if (response.attributeTypes.length === 0) {
+                            tableBody.append(
+                                '<tr><td colspan="3" class="text-center">No attribute types found.</td></tr>'
+                            );
+                        } else {
+                            response.attributeTypes.forEach(type => {
+                                tableBody.append(`
+                                    <tr>
+                                        <td><a href="#" class="select-attr-type-to-manage-values" data-id="${type.id}" data-name="${type.name}" data-display-type="${type.display_type}">${type.name}</a></td>
+                                        <td>${type.display_type}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info edit-attr-type-btn" data-id="${type.id}">Edit</button>
+                                            <button class="btn btn-sm btn-danger delete-attr-type-btn" data-id="${type.id}">Delete</button>
+                                        </td>
+                                    </tr>
+                                `);
+                            });
+                        }
+                        // Reset form
+                        $('#attrTypeForm')[0].reset();
+                        $('#attrTypeFormMethod').val('POST');
+                        $('#attrTypeId').val('');
+                        $('#cancelAttrTypeEditBtn').hide();
+                        $('.text-danger').text('');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading attribute types for manage modal:", error);
+                    }
+                });
+            }
+
+            // Load attribute values for a specific type in the main attribute modal
+            function loadAttributeValuesForManageModal(attrTypeId) {
+                $.ajax({
+                    url: `/product-attribute-types/${attrTypeId}/values`, // Route to get attribute values for a type
+                    method: 'GET',
+                    success: function(response) {
+                        let tableBody = $('#attributeValuesTableBody');
+                        tableBody.empty();
+                        if (response.attributeValues.length === 0) {
+                            tableBody.append(
+                                '<tr><td colspan="2" class="text-center">No values found.</td></tr>'
+                            );
+                        } else {
+                            response.attributeValues.forEach(value => {
+                                tableBody.append(`
+                                    <tr>
+                                        <td>${value.value}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info edit-attr-value-btn" data-id="${value.id}" data-type-id="${value.attribute_type_id}">Edit</button>
+                                            <button class="btn btn-sm btn-danger delete-attr-value-btn" data-id="${value.id}" data-type-id="${value.attribute_type_id}">Delete</button>
+                                        </td>
+                                    </tr>
+                                `);
+                            });
+                        }
+                        // Reset form
+                        $('#attrValueForm')[0].reset();
+                        $('#attrValueFormMethod').val('POST');
+                        $('#attrValueId').val('');
+                        $('#currentAttrTypeIdForValue').val(attrTypeId);
+                        $('#cancelAttrValueEditBtn').hide();
+                        $('.text-danger').text('');
+                        $('#attrValueForm').hide(); // Hide form initially
+                        $('#addAttrValueBtn').show(); // Show add button
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading attribute values for manage modal:", error);
+                    }
+                });
+            }
+
+            // ===============================================
+            // Product CRUD (Add/Edit/Save/Delete)
+            // ===============================================
+
+            // Handle "Add Product" button click
+            $('#addProductBtn').on('click', function() {
+                $('#productModalLabel').text('Add New Product');
+                $('#productForm')[0].reset();
+                $('#formMethod').val('POST');
+                $('#productId').val('');
+                $('#currentProductImage').hide().attr('src', '');
+
+                $('#productStatus').prop('checked', true);
+                $('#productIsFeatured').prop('checked', false);
+
+                // Truyền tham số `false` cho chế độ thêm mới
+                loadCategoriesForProductModal([], false);
+                loadTagsForProductModal([]);
+
+                $('.text-danger').text('');
+                $('#variantManagementSection').hide(); // Ẩn phần quản lý biến thể khi thêm mới sản phẩm
+                $('#productModal').modal('show');
+            });
+
+            // Handle "Edit Product" button click
+            $(document).on('click', '.edit-product-btn', function() {
+                let id = $(this).data('id');
+                currentEditingProductId = id; // Lưu ID sản phẩm đang chỉnh sửa
+
+                $('#productModalLabel').text('Edit Product');
+                $('#productForm')[0].reset();
+                $('#formMethod').val('PUT');
+                $('#productId').val(id);
+                $('.text-danger').text('');
+
+                $.ajax({
+                    url: `/product/${id}/edit`,
+                    method: 'GET',
+                    success: function(response) {
+                        let product = response.product;
+                        let productCategoryIds = response.productCategoryIds;
+                        let productTagIds = response.productTagIds;
+
+                        $('#productName').val(product.name);
+                        $('#productDescription').val(product.description);
+                        $('#productStatus').prop('checked', product.status == 1);
+                        $('#productIsFeatured').prop('checked', product.is_featured == 1);
+
+                        if (product.img) {
+                            $('#currentProductImage').attr('src', `/storage/${product.img}`)
+                                .show();
+                        } else {
+                            $('#currentProductImage').hide().attr('src', '');
+                        }
+
+                        // Truyền tham số `true` cho chế độ chỉnh sửa
+                        loadCategoriesForProductModal(productCategoryIds, true);
+                        loadTagsForProductModal(productTagIds);
+
+                        $('#variantManagementSection').show(); // Hiện phần quản lý biến thể
+                        $('#productModal').modal('show');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error fetching product for edit:", error);
+                        console.error("Response Text:", xhr.responseText);
+                        Swal.fire('Error!',
+                            'Failed to load product details. Check console for more info.',
+                            'error');
+                    }
+                });
+            });
+
+            // Handle form submission (Add/Edit Product)
+            $('#productForm').on('submit', function(e) {
+                e.preventDefault();
+
+                // Clear previous errors
+                $('.text-danger').text('');
+
+                let formData = new FormData(this);
+
+                // Remove any existing category_ids entries from formData
+                // because we're manually adding them from the hidden input.
+                // This is crucial if a product starts with categories and then changes.
+                if (formData.has('category_ids[]')) {
+                    formData.delete('category_ids[]');
+                }
+
+                // Parse the JSON string from the hidden input and append each ID
+                let selectedCategoryIds = JSON.parse($('#selectedCategoryIdsHidden').val() || '[]');
+                selectedCategoryIds.forEach(id => {
+                    formData.append('category_ids[]', id);
+                });
+
+                // Existing logic for product ID, method, URL
+                let productId = $('#productId').val();
+                let method = $('#formMethod').val();
+                let url = method === 'POST' ? "{{ route('product.store') }}" : `/product/${productId}`;
+
+                $.ajax({
+                    url: url,
+                    method: 'POST', // Always POST for FormData with _method override (Laravel will handle _method parameter)
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire('Success!', response.success, 'success');
+                        $('#productModal').modal('hide');
+                        updateProductTable(response.products); // Cập nhật lại bảng sản phẩm
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error:", xhr.responseText);
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            for (let field in errors) {
+                                let errorId = field.replace('.', '_') + 'Error';
+                                // Handle validation for category_ids (if it's an array, errors might be on category_ids.0, category_ids.1)
+                                if (field.startsWith('category_ids.')) {
+                                    $('#category_idsError').text(errors[field][0]);
+                                } else {
+                                    $(`#${errorId}`).text(errors[field][0]);
+                                }
+                            }
+                        } else {
+                            Swal.fire('Error!', xhr.responseJSON.error ||
+                                'Something went wrong.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // Handle form submission (Add/Edit Variant)
+            $('#variantForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let formData = new FormData(this);
+                let variantId = $('#variantId').val();
+                let productId = $('#variantProductIdField').val();
+                let method = $('#variantFormMethod').val();
+                let url = method === 'POST' ? `/product/${productId}/variants` :
+                    `/product-variant/${variantId}`;
+
+                $('.text-danger').text('');
+
+                // SỬA ĐOẠN NÀY ĐỂ attribute_value_ids ĐƯỢC GỬI DƯỚI DẠNG MẢNG ĐÚNG CÁCH
+                // Xóa trường attribute_value_ids cũ nếu đã tồn tại trong formData
+                if (formData.has('attribute_value_ids')) {
+                    formData.delete('attribute_value_ids');
+                }
+                // Thêm từng ID riêng lẻ vào formData dưới dạng mảng
+                // Laravel sẽ parse 'attribute_value_ids[]' thành một mảng
+                selectedVariantAttrValues.forEach(function(id) {
+                    formData.append('attribute_value_ids[]', id);
+                });
+                // Nếu mảng rỗng, không append gì cả, Laravel sẽ coi đó là mảng rỗng hợp lệ (hoặc nullable)
+
+                // Hoặc nếu bạn muốn luôn gửi nó là một mảng JSON string,
+                // bạn cần Laravel giải mã nó ở backend.
                 // formData.set('attribute_value_ids', JSON.stringify(selectedVariantAttrValues)); // <-- CÁCH CŨ GÂY LỖI
 
                 // Nếu là PUT, cần đảm bảo _method là PUT (đã có)
@@ -1604,31 +2251,32 @@
                 let isFeatured = configData ? (configData.is_featured == 1 ? 'checked' : '') : '';
 
                 let currentImageHtml = imagePath ?
-                    `<img src="/storage/${imagePath}" alt="Ảnh hiện tại" class="img-thumbnail mt-2" style="max-width: 60px;">` : '';
+                    `<img src="/storage/${imagePath}" alt="Ảnh hiện tại" class="img-thumbnail mt-2" style="max-width: 60px;">` :
+                    '';
 
                 // Thêm kiểm tra an toàn cho attribute_type.name
-                const attributeTypeName = attributeValue.attribute_type ? attributeValue.attribute_type.name : 'Unknown Type';
+                const attributeTypeName = attributeValue.attribute_type ? attributeValue.attribute_type.name : '';
 
                 return `
-                    <div class="attribute-value-config-fields p-3 mt-2 border rounded bg-light" id="${configBlockId}">
-                        <h6>Cấu hình cho "${attributeValue.value}" (${attributeTypeName})</h6>
+                    <div class="attribute-value-config-fields p-3 mt-2 border rounded" id="${configBlockId}">
+                        <h6>Cấu hình giá trị " ${attributeValue.value} " ${attributeTypeName}</h6>
                         <input type="hidden" name="configs[${attributeValue.id}][id]" value="${configId}">
                         <input type="hidden" name="configs[${attributeValue.id}][product_attribute_value_id]" value="${attributeValue.id}">
                         <input type="hidden" name="configs[${attributeValue.id}][product_id]" value="${currentEditingProductId}">
                         
                         <div class="mb-2">
                             <label for="config-price-${attributeValue.id}" class="form-label small">Giá</label>
-                            <input type="number" step="0.01" class="form-control form-control-sm" id="config-price-${attributeValue.id}" name="configs[${attributeValue.id}][price]" value="${price}">
+                            <input type="number" step="0.01" class="form-control form-control-sm" id="config-price-${attributeValue.id}" name="configs[${attributeValue.id}][price]" value="${price}" placeholder="Vui lòng nhập giá gốc sản phẩm">
                             <div class="text-danger" id="config-price-error-${attributeValue.id}"></div>
                         </div>
                         <div class="mb-2">
                             <label for="config-discount-price-${attributeValue.id}" class="form-label small">Giá giảm</label>
-                            <input type="number" step="0.01" class="form-control form-control-sm" id="config-discount-price-${attributeValue.id}" name="configs[${attributeValue.id}][discount_price]" value="${discountPrice}">
+                            <input type="number" step="0.01" class="form-control form-control-sm" id="config-discount-price-${attributeValue.id}" name="configs[${attributeValue.id}][discount_price]" value="${discountPrice}" placeholder="Vui lòng nhập giá giảm sản phẩm">
                             <div class="text-danger" id="config-discount-price-error-${attributeValue.id}"></div>
                         </div>
                         <div class="mb-2">
                             <label for="config-discount-percent-${attributeValue.id}" class="form-label small">Phần trăm giảm (%)</label>
-                            <input type="number" class="form-control form-control-sm" id="config-discount-percent-${attributeValue.id}" name="configs[${attributeValue.id}][discount_percent]" value="${discountPercent}" min="0" max="100">
+                            <input type="number" class="form-control form-control-sm" id="config-discount-percent-${attributeValue.id}" name="configs[${attributeValue.id}][discount_percent]" value="${discountPercent}" min="0" max="100" placeholder="Vui lòng nhập phần trăm giảm">
                             <div class="text-danger" id="config-discount-percent-error-${attributeValue.id}"></div>
                         </div>
                         <div class="mb-2">
@@ -1659,7 +2307,7 @@
             function loadAttributeTypesForVariantModal(initialSelectedAttributeValueIds = []) {
                 // selectedVariantAttrValues sẽ được cập nhật bởi sự kiện change
                 // currentProductAttributeValueConfigs phải được tải trước khi gọi hàm này
-                
+
                 $.ajax({
                     url: "{{ route('product_attribute_type.index') }}", // Route này cần trả về attributeTypes kèm theo values của chúng
                     method: 'GET',
@@ -1681,7 +2329,10 @@
                                 <div class="mb-3 border p-3 rounded">
                                     <div class="d-flex align-items-center mb-2">
                                         <strong class="me-2">${attrType.name}:</strong>
-                                        <button type="button" class="btn btn-link btn-sm ms-auto add-attr-value-from-variant-modal" data-attr-type-id="${attrType.id}" data-attr-type-name="${attrType.name}">
+                                        <button type="button" class="btn btn-link btn-sm ms-auto add-attr-value-from-variant-modal" 
+                                            data-attr-type-id="${attrType.id}" 
+                                            data-attr-type-name="${attrType.name}"
+                                            data-attr-display-type="${attrType.display_type}">
                                             <i class="fas fa-plus"></i> Thêm giá trị
                                         </button>
                                     </div>
@@ -1689,16 +2340,22 @@
                             `;
                             if (attrType.values && attrType.values.length > 0) {
                                 attrType.values.forEach(attrValue => {
-                                    let isChecked = initialSelectedAttributeValueIds.includes(attrValue.id) ? 'checked' : '';
-                                    let attrValueName = attrValue.value ? attrValue.value : 'Giá trị không xác định';
+                                    let isChecked = initialSelectedAttributeValueIds
+                                        .includes(attrValue.id) ? 'checked' : '';
+                                    let attrValueName = attrValue.value ? attrValue
+                                        .value : 'Giá trị không xác định';
 
                                     // Tìm dữ liệu cấu hình hiện có cho giá trị thuộc tính này và sản phẩm hiện tại
                                     // currentProductAttributeValueConfigs phải được tải trước khi gọi hàm này
-                                    const configData = currentProductAttributeValueConfigs.find(
-                                        config => config.product_attribute_value_id === attrValue.id &&
-                                                  config.product_id === currentEditingProductId
-                                    );
-                                    
+                                    const configData =
+                                        currentProductAttributeValueConfigs.find(
+                                            config => config
+                                            .product_attribute_value_id === attrValue
+                                            .id &&
+                                            config.product_id ===
+                                            currentEditingProductId
+                                        );
+
                                     // Tạo HTML cho checkbox/radio
                                     attrTypeHtml += `
                                         <div class="form-check form-check-inline me-3">
@@ -1727,42 +2384,55 @@
                         });
 
                         // Gắn trình nghe thay đổi cho các checkbox của thuộc tính biến thể
-                        attributesContainer.off('change', '.variant-attribute-checkbox').on('change', '.variant-attribute-checkbox', function() {
-                            let selectedValueId = parseInt($(this).val());
-                            let attributeTypeId = parseInt($(this).data('type-id'));
-                            
-                            // Hiển thị/ẩn khối cấu hình riêng cho checkbox này
-                            $(`#config-wrapper-${selectedValueId}`).slideToggle();
+                        attributesContainer.off('change', '.variant-attribute-checkbox').on('change',
+                            '.variant-attribute-checkbox',
+                            function() {
+                                let selectedValueId = parseInt($(this).val());
+                                let attributeTypeId = parseInt($(this).data('type-id'));
 
-                            if ($(this).is(':checked')) {
-                                // Bỏ chọn tất cả các checkbox khác cùng loại thuộc tính
-                                $(`div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`).not(this).prop('checked', false);
-                                // Ẩn các khối cấu hình của các checkbox vừa bị bỏ chọn
-                                $(`div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`).not(this).each(function() {
-                                    $(`#config-wrapper-${$(this).val()}`).slideUp();
-                                });
+                                // Hiển thị/ẩn khối cấu hình riêng cho checkbox này
+                                $(`#config-wrapper-${selectedValueId}`).slideToggle();
+
+                                if ($(this).is(':checked')) {
+                                    // Bỏ chọn tất cả các checkbox khác cùng loại thuộc tính
+                                    $(`div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`)
+                                        .not(this).prop('checked', false);
+                                    // Ẩn các khối cấu hình của các checkbox vừa bị bỏ chọn
+                                    $(`div[data-attribute-type-id="${attributeTypeId}"] .variant-attribute-checkbox`)
+                                        .not(this).each(function() {
+                                            $(`#config-wrapper-${$(this).val()}`).slideUp();
+                                        });
 
 
-                                // Cập nhật `selectedVariantAttrValues`: loại bỏ giá trị cũ của loại thuộc tính này (nếu có)
-                                selectedVariantAttrValues = selectedVariantAttrValues.filter(valId => {
-                                    const valObj = allAttributeTypesAndValues.flatMap(type => type.values).find(v => v.id === valId);
-                                    return !valObj || (valObj.attribute_type && valObj.attribute_type.id !== attributeTypeId); // Kiểm tra an toàn
-                                });
-                                selectedVariantAttrValues.push(selectedValueId); // Thêm giá trị mới được chọn
-                            } else {
-                                // Nếu bỏ chọn, chỉ loại bỏ giá trị đó khỏi mảng
-                                selectedVariantAttrValues = selectedVariantAttrValues.filter(val => val !== selectedValueId);
-                            }
+                                    // Cập nhật `selectedVariantAttrValues`: loại bỏ giá trị cũ của loại thuộc tính này (nếu có)
+                                    selectedVariantAttrValues = selectedVariantAttrValues.filter(
+                                        valId => {
+                                            const valObj = allAttributeTypesAndValues.flatMap(
+                                                type => type.values).find(v => v.id ===
+                                                valId);
+                                            return !valObj || (valObj.attribute_type && valObj
+                                                .attribute_type.id !== attributeTypeId
+                                            ); // Kiểm tra an toàn
+                                        });
+                                    selectedVariantAttrValues.push(
+                                        selectedValueId); // Thêm giá trị mới được chọn
+                                } else {
+                                    // Nếu bỏ chọn, chỉ loại bỏ giá trị đó khỏi mảng
+                                    selectedVariantAttrValues = selectedVariantAttrValues.filter(
+                                        val => val !== selectedValueId);
+                                }
 
-                            // Cập nhật input ẩn và tên/SKU biến thể (sẽ trigger tìm kiếm biến thể khớp và điền form)
-                            $('#attributeValueIdsInput').val(JSON.stringify(selectedVariantAttrValues));
-                            updateVariantNameAndSku();
-                        });
+                                // Cập nhật input ẩn và tên/SKU biến thể (sẽ trigger tìm kiếm biến thể khớp và điền form)
+                                $('#attributeValueIdsInput').val(JSON.stringify(
+                                    selectedVariantAttrValues));
+                                updateVariantNameAndSku();
+                            });
 
                         updateVariantNameAndSku(); // Cập nhật tên/SKU lần đầu sau khi tải thuộc tính
                     },
                     error: function(xhr, status, error) {
-                        console.error("Lỗi khi tải các loại thuộc tính và giá trị cho modal biến thể:", error);
+                        console.error("Lỗi khi tải các loại thuộc tính và giá trị cho modal biến thể:",
+                            error);
                         Swal.fire('Lỗi!', 'Không thể tải thuộc tính biến thể.', 'error');
                     }
                 });
@@ -1780,8 +2450,10 @@
 
                     // Tải cả biến thể và cấu hình thuộc tính giá trị
                     $.when(
-                        loadVariantsForProduct(currentEditingProductId), // Tải và lưu trữ các biến thể hiện có
-                        loadProductAttributeValueConfigs(currentEditingProductId) // Tải cấu hình thuộc tính giá trị
+                        loadVariantsForProduct(
+                            currentEditingProductId), // Tải và lưu trữ các biến thể hiện có
+                        loadProductAttributeValueConfigs(
+                            currentEditingProductId) // Tải cấu hình thuộc tính giá trị
                     ).done(function() {
                         resetAndHideVariantForm(); // Sẽ gọi loadAttributeTypesForVariantModal
                         $('#variantsModal').modal('show');
@@ -1808,18 +2480,25 @@
                     method: 'GET',
                     success: function(response) {
                         let variant = response.variant;
-                        let variantAttributeValueIds = variant.attribute_values.map(av => av.id);
-                        
+                        let variantAttributeValueIds = variant.attribute_values.map(av => av
+                            .id);
+
                         // Cập nhật selectedVariantAttrValues để loadAttributeTypesForVariantModal có thể chọn đúng checkbox
                         selectedVariantAttrValues = variantAttributeValueIds;
 
                         // Tải cấu hình giá trị thuộc tính cho sản phẩm, sau đó điền form
                         loadProductAttributeValueConfigs(variant.product_id).done(function() {
-                            populateVariantDetailsForm(variant); // Điền dữ liệu biến thể tổng hợp
-                            loadAttributeTypesForVariantModal(selectedVariantAttrValues); // Tải thuộc tính và chọn checkbox/hiện config
-                            $('#variantForm').slideDown(); // Hiển thị biểu mẫu để chỉnh sửa
+                            populateVariantDetailsForm(
+                                variant); // Điền dữ liệu biến thể tổng hợp
+                            loadAttributeTypesForVariantModal(
+                                selectedVariantAttrValues
+                            ); // Tải thuộc tính và chọn checkbox/hiện config
+                            $('#variantForm')
+                                .slideDown(); // Hiển thị biểu mẫu để chỉnh sửa
                         }).fail(function() {
-                            Swal.fire('Lỗi!', 'Không thể tải cấu hình thuộc tính cho chỉnh sửa.', 'error');
+                            Swal.fire('Lỗi!',
+                                'Không thể tải cấu hình thuộc tính cho chỉnh sửa.',
+                                'error');
                         });
                     },
                     error: function(xhr, status, error) {
@@ -1853,7 +2532,7 @@
                 updateVariantNameAndSku);
 
 
-             // Xử lý submit form biến thể (Cập nhật để gửi cả dữ liệu cấu hình)
+            // Xử lý submit form biến thể (Cập nhật để gửi cả dữ liệu cấu hình)
             $('#variantForm').on('submit', function(e) {
                 e.preventDefault();
                 let formData = new FormData(this);
@@ -1861,60 +2540,76 @@
                 // Thu thập dữ liệu từ các khối cấu hình giá trị thuộc tính đang hiển thị
                 let attributeConfigsData = [];
                 // Chỉ thu thập từ các khối mà checkbox của nó ĐANG ĐƯỢC CHỌN
-                $('#variantAttributesSelectionContainer .variant-attribute-checkbox:checked').each(function() {
-                    let attrValueId = $(this).val();
-                    let $configBlock = $(`#config-fields-${attrValueId}`);
+                $('#variantAttributesSelectionContainer .variant-attribute-checkbox:checked').each(
+                    function() {
+                        let attrValueId = $(this).val();
+                        let $configBlock = $(`#config-fields-${attrValueId}`);
 
-                    if ($configBlock.length) { // Đảm bảo khối config tồn tại
-                        let configId = $configBlock.find('input[name*="[id]"]').val();
-                        let price = $configBlock.find('input[name*="[price]"]').val();
-                        let discountPrice = $configBlock.find('input[name*="[discount_price]"]').val();
-                        let discountPercent = $configBlock.find('input[name*="[discount_percent]"]').val();
-                        let quantity = $configBlock.find('input[name*="[quantity]"]').val();
-                        let isActive = $configBlock.find('input[name*="[is_active]"]').is(':checked') ? 1 : 0;
-                        let isFeatured = $configBlock.find('input[name*="[is_featured]"]').is(':checked') ? 1 : 0;
-                        let currentImagePath = $configBlock.find('input[name*="[current_image_path]"]').val();
-                        let imageFile = $configBlock.find('input[type="file"][name*="[image_file]"]')[0].files[0];
-                        
-                        attributeConfigsData.push({
-                            id: configId,
-                            product_id: currentEditingProductId,
-                            product_attribute_value_id: attrValueId,
-                            price: price,
-                            discount_price: discountPrice,
-                            discount_percent: discountPercent,
-                            quantity: quantity,
-                            is_active: isActive,
-                            is_featured: isFeatured,
-                            image_file: imageFile,
-                            current_image_path: currentImagePath
-                        });
-                    }
-                });
+                        if ($configBlock.length) { // Đảm bảo khối config tồn tại
+                            let configId = $configBlock.find('input[name*="[id]"]').val();
+                            let price = $configBlock.find('input[name*="[price]"]').val();
+                            let discountPrice = $configBlock.find('input[name*="[discount_price]"]')
+                                .val();
+                            let discountPercent = $configBlock.find('input[name*="[discount_percent]"]')
+                                .val();
+                            let quantity = $configBlock.find('input[name*="[quantity]"]').val();
+                            let isActive = $configBlock.find('input[name*="[is_active]"]').is(
+                                ':checked') ? 1 : 0;
+                            let isFeatured = $configBlock.find('input[name*="[is_featured]"]').is(
+                                ':checked') ? 1 : 0;
+                            let currentImagePath = $configBlock.find(
+                                'input[name*="[current_image_path]"]').val();
+                            let imageFile = $configBlock.find(
+                                'input[type="file"][name*="[image_file]"]')[0].files[0];
+
+                            attributeConfigsData.push({
+                                id: configId,
+                                product_id: currentEditingProductId,
+                                product_attribute_value_id: attrValueId,
+                                price: price,
+                                discount_price: discountPrice,
+                                discount_percent: discountPercent,
+                                quantity: quantity,
+                                is_active: isActive,
+                                is_featured: isFeatured,
+                                image_file: imageFile,
+                                current_image_path: currentImagePath
+                            });
+                        }
+                    });
 
                 // Xóa các trường `configs[...]` cũ khỏi formData (nếu có) và thêm lại
-                formData.delete('attribute_value_configs'); 
+                formData.delete('attribute_value_configs');
                 attributeConfigsData.forEach((config, index) => {
                     formData.append(`attribute_value_configs[${index}][id]`, config.id);
-                    formData.append(`attribute_value_configs[${index}][product_id]`, config.product_id);
-                    formData.append(`attribute_value_configs[${index}][product_attribute_value_id]`, config.product_attribute_value_id);
+                    formData.append(`attribute_value_configs[${index}][product_id]`, config
+                        .product_id);
+                    formData.append(`attribute_value_configs[${index}][product_attribute_value_id]`,
+                        config.product_attribute_value_id);
                     formData.append(`attribute_value_configs[${index}][price]`, config.price);
-                    formData.append(`attribute_value_configs[${index}][discount_price]`, config.discount_price);
-                    formData.append(`attribute_value_configs[${index}][discount_percent]`, config.discount_percent);
+                    formData.append(`attribute_value_configs[${index}][discount_price]`, config
+                        .discount_price);
+                    formData.append(`attribute_value_configs[${index}][discount_percent]`, config
+                        .discount_percent);
                     formData.append(`attribute_value_configs[${index}][quantity]`, config.quantity);
-                    formData.append(`attribute_value_configs[${index}][is_active]`, config.is_active);
-                    formData.append(`attribute_value_configs[${index}][is_featured]`, config.is_featured);
-                    
+                    formData.append(`attribute_value_configs[${index}][is_active]`, config
+                        .is_active);
+                    formData.append(`attribute_value_configs[${index}][is_featured]`, config
+                        .is_featured);
+
                     if (config.image_file) {
-                        formData.append(`attribute_value_configs[${index}][image_file]`, config.image_file);
+                        formData.append(`attribute_value_configs[${index}][image_file]`, config
+                            .image_file);
                     } else if (config.current_image_path) {
-                        formData.append(`attribute_value_configs[${index}][current_image_path]`, config.current_image_path);
+                        formData.append(`attribute_value_configs[${index}][current_image_path]`,
+                            config.current_image_path);
                     }
                 });
 
                 // Kiểm tra nếu không có thuộc tính nào được chọn cho biến thể tổng hợp
                 if (selectedVariantAttrValues.length === 0) {
-                    $('#attribute_value_idsError').text('Vui lòng chọn ít nhất một thuộc tính cho biến thể.');
+                    $('#attribute_value_idsError').text(
+                        'Vui lòng chọn ít nhất một thuộc tính cho biến thể.');
                     return;
                 }
                 // Thêm các IDs thuộc tính đã chọn cho biến thể tổng hợp
@@ -1926,7 +2621,8 @@
                 let variantId = $('#variantId').val();
                 let productId = $('#variantProductIdField').val();
                 let method = $('#variantFormMethod').val();
-                let url = method === 'POST' ? `/product/${productId}/variants` : `/product-variant/${variantId}`;
+                let url = method === 'POST' ? `/product/${productId}/variants` :
+                    `/product-variant/${variantId}`;
 
                 $('.text-danger').text('');
 
@@ -1934,7 +2630,7 @@
                     url: url,
                     method: 'POST',
                     data: formData,
-                    contentType: false, 
+                    contentType: false,
                     processData: false,
                     success: function(response) {
                         Swal.fire('Thành công!', response.success, 'success');
@@ -1951,15 +2647,21 @@
                                 // Xử lý lỗi cho các trường configs[...]
                                 if (field.startsWith('attribute_value_configs.')) {
                                     // Tìm chỉ số và tên trường thực tế
-                                    const match = field.match(/attribute_value_configs\.(\d+)\.(.+)/);
+                                    const match = field.match(
+                                        /attribute_value_configs\.(\d+)\.(.+)/);
                                     if (match) {
                                         const configIndex = match[1];
                                         const configField = match[2];
                                         // Cần tìm ID giá trị thuộc tính tương ứng với configIndex để hiển thị lỗi đúng chỗ
                                         // Ví dụ: dựa vào attributeConfigsData[configIndex].product_attribute_value_id
-                                        const attrValueIdForError = attributeConfigsData[configIndex] ? attributeConfigsData[configIndex].product_attribute_value_id : 'unknown';
-                                        $(`#config-${configField}-error-${attrValueIdForError}`).text(errors[field][0]);
-                                        console.error(`Lỗi cấu hình thuộc tính: ${field} - ${errors[field][0]}`);
+                                        const attrValueIdForError = attributeConfigsData[
+                                                configIndex] ? attributeConfigsData[configIndex]
+                                            .product_attribute_value_id : 'unknown';
+                                        $(`#config-${configField}-error-${attrValueIdForError}`)
+                                            .text(errors[field][0]);
+                                        console.error(
+                                            `Lỗi cấu hình thuộc tính: ${field} - ${errors[field][0]}`
+                                        );
                                     }
                                 } else {
                                     $(`#${errorId}`).text(errors[field][0]);
@@ -2105,9 +2807,11 @@
                         // Cập nhật lại danh sách thuộc tính và config trong modal biến thể nếu đang mở
                         if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
                             // Tải lại configs sau khi thay đổi attribute type/value
-                            loadProductAttributeValueConfigs(currentEditingProductId).done(function() {
-                                loadAttributeTypesForVariantModal(selectedVariantAttrValues); // Sau đó cập nhật UI
-                            });
+                            loadProductAttributeValueConfigs(currentEditingProductId).done(
+                                function() {
+                                    loadAttributeTypesForVariantModal(
+                                        selectedVariantAttrValues); // Sau đó cập nhật UI
+                                });
                         }
                     },
                     error: function(xhr, status, error) {
@@ -2147,14 +2851,18 @@
                                 Swal.fire('Deleted!', response.success, 'success');
                                 loadAttributeTypesForManageModal();
                                 // Cập nhật lại danh sách thuộc tính và config trong modal biến thể nếu đang mở
-                                if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
-                                    loadProductAttributeValueConfigs(currentEditingProductId).done(function() {
-                                        loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                                if ($('#variantsModal').hasClass('show') &&
+                                    currentEditingProductId) {
+                                    loadProductAttributeValueConfigs(
+                                        currentEditingProductId).done(function() {
+                                        loadAttributeTypesForVariantModal(
+                                            selectedVariantAttrValues);
                                     });
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error("Error deleting attribute type:", xhr.responseText);
+                                console.error("Error deleting attribute type:", xhr
+                                    .responseText);
                                 Swal.fire('Error!', xhr.responseJSON.error ||
                                     'Failed to delete attribute type.', 'error');
                             }
@@ -2239,9 +2947,11 @@
                         resetAttrValueForm();
                         // Cập nhật lại danh sách thuộc tính và config trong modal biến thể nếu đang mở
                         if ($('#variantsModal').hasClass('show') && currentEditingProductId) {
-                            loadProductAttributeValueConfigs(currentEditingProductId).done(function() {
-                                loadAttributeTypesForVariantModal(selectedVariantAttrValues);
-                            });
+                            loadProductAttributeValueConfigs(currentEditingProductId).done(
+                                function() {
+                                    loadAttributeTypesForVariantModal(
+                                        selectedVariantAttrValues);
+                                });
                         }
                     },
                     error: function(xhr, status, error) {
@@ -2285,13 +2995,16 @@
                                 // Cập nhật lại danh sách thuộc tính và config trong modal biến thể nếu đang mở
                                 if ($('#variantsModal').hasClass('show') &&
                                     currentEditingProductId) {
-                                    loadProductAttributeValueConfigs(currentEditingProductId).done(function() {
-                                        loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                                    loadProductAttributeValueConfigs(
+                                        currentEditingProductId).done(function() {
+                                        loadAttributeTypesForVariantModal(
+                                            selectedVariantAttrValues);
                                     });
                                 }
                             },
                             error: function(xhr, status, error) {
-                                console.error("Error deleting attribute value:", xhr.responseText);
+                                console.error("Error deleting attribute value:", xhr
+                                    .responseText);
                                 Swal.fire('Error!', xhr.responseJSON.error ||
                                     'Failed to delete attribute value.', 'error');
                             }
@@ -2304,6 +3017,74 @@
                 resetAttrValueForm();
                 $('#attrValueForm').slideUp();
             });
+
+            // ===============================================
+            // Quick Add Attribute Value Logic
+            // ===============================================
+
+            // Handle click on "Thêm giá trị" button in variant modal
+            $(document).on('click', '.add-attr-value-from-variant-modal', function() {
+                let attrTypeId = $(this).data('attr-type-id');
+                let attrTypeName = $(this).data('attr-type-name');
+                let attrDisplayType = $(this).data('attr-display-type');
+
+                $('#quickAddAttrTypeId').val(attrTypeId);
+                $('#quickAddAttrTypeName').text(attrTypeName);
+                $('#quickAttrValueValue').val('');
+                $('#quickAttrValueMetadata').val('');
+                $('#quick_attr_value_valueError').text('');
+                $('#quick_attr_value_metadataError').text('');
+
+                if (attrDisplayType === 'color_picker') {
+                    $('#quickAttrValueMetadataField').show();
+                } else {
+                    $('#quickAttrValueMetadataField').hide();
+                }
+
+                $('#quickAddAttrValueModal').modal('show');
+            });
+
+            // Handle submission of quick add attribute value form
+            $('#quickAddAttrValueForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let formData = new FormData(this);
+                let attrTypeId = $('#quickAddAttrTypeId').val();
+
+                $('#quick_attr_value_valueError').text('');
+                $('#quick_attr_value_metadataError').text('');
+
+                $.ajax({
+                    url: `/product-attribute-types/${attrTypeId}/values`, // Sử dụng cùng route store value
+                    method: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        Swal.fire('Thành công!', response.success, 'success');
+                        $('#quickAddAttrValueModal').modal('hide');
+                        // Tải lại các thuộc tính trong modal biến thể để hiển thị giá trị mới
+                        loadAttributeTypesForVariantModal(selectedVariantAttrValues);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Lỗi khi thêm nhanh giá trị thuộc tính:", xhr
+                            .responseText);
+                        let errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            if (errors.value) {
+                                $('#quick_attr_value_valueError').text(errors.value[0]);
+                            }
+                            if (errors.metadata) {
+                                $('#quick_attr_value_metadataError').text(errors.metadata[0]);
+                            }
+                        } else {
+                            Swal.fire('Lỗi!', xhr.responseJSON.error ||
+                                'Đã xảy ra lỗi khi thêm giá trị.', 'error');
+                        }
+                    }
+                });
+            });
+
 
             // ===============================================
             // Logic cho nhập giá hàng loạt (Bulk Price)
