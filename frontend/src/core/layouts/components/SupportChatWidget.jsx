@@ -6,6 +6,7 @@ import { sendGeminiMessage, fetchProducts } from '../../../modules/Products/slic
 
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const SupportChatWidget = () => {
     // Refs
@@ -59,20 +60,29 @@ const SupportChatWidget = () => {
 
     // Hàm gọi AI Gemini và xử lý phản hồi, sau đó hiển thị sản phẩm từ backend
     const getAIResponseFromGemini = async (userText) => {
-        setMessages((prev) => [...prev, { type: 'ai', text: 'Đang kết nối AI... Vui lòng đợi.' }]);
+        // Thêm tin nhắn loading vào cuối mảng
+        setMessages((prev) => [...prev, {
+            type: 'ai',
+            is_loading: true,
+            component: <DotLottieReact
+                src="https://lottie.host/d9f2bc14-4931-4460-8d34-99ae08ad0ee0/zjBnHhy8Q6.lottie"
+                loop
+                autoplay
+            />
+        }]);
 
         try {
-            // Gửi tin nhắn người dùng đến backend (backend sẽ gọi Gemini và tìm sản phẩm)
             const resultAction = await dispatch(sendGeminiMessage(userText));
 
             if (sendGeminiMessage.fulfilled.match(resultAction)) {
                 const { ai_response, suggested_products } = resultAction.payload;
                 let finalAiText = ai_response;
 
-                // Kiểm tra và thêm sản phẩm gợi ý
-                if (suggested_products && suggested_products.length > 0) {
-                    // Tạo một mảng các phần tử JSX cho sản phẩm
-                    const productLinks = suggested_products.map(p => (
+                // Tạo phản hồi AI mới
+                const newAiMessage = {
+                    type: 'ai',
+                    text: finalAiText,
+                    products: suggested_products && suggested_products.length > 0 ? suggested_products.map(p => (
                         <div key={p.id} style={{
                             marginTop: '10px',
                             border: '1px solid #ddd',
@@ -81,8 +91,8 @@ const SupportChatWidget = () => {
                             backgroundColor: '#f9f9f9',
                             display: 'flex',
                             alignItems: 'center',
-                            textDecoration: 'none', // Bỏ gạch chân link
-                            color: 'inherit' // Kế thừa màu chữ
+                            textDecoration: 'none',
+                            color: 'inherit'
                         }}>
                             {p.img && <img src={p.img} alt={p.name} style={{ width: '50px', height: '50px', marginRight: '10px', borderRadius: '3px', objectFit: 'cover' }} />}
                             <div>
@@ -92,25 +102,32 @@ const SupportChatWidget = () => {
                                 <p style={{ margin: 0, fontSize: '0.8em', color: '#555' }}>Lượt xem: {p.views || 0}</p>
                             </div>
                         </div>
-                    ));
+                    )) : null
+                };
 
-                    // Thêm sản phẩm vào phản hồi AI
-                    setMessages((prev) => [...prev, {
-                        type: 'ai',
-                        text: finalAiText,
-                        products: productLinks // Lưu các phần tử JSX vào đây
-                    }]);
-                } else {
-                    // Nếu không có sản phẩm gợi ý
-                    setMessages((prev) => [...prev, { type: 'ai', text: finalAiText }]);
-                }
+                // Cập nhật state bằng cách thay thế tin nhắn loading bằng phản hồi mới
+                setMessages((prev) => {
+                    const updatedMessages = [...prev];
+                    updatedMessages.pop(); // Xóa tin nhắn loading cuối cùng
+                    return [...updatedMessages, newAiMessage]; // Thêm tin nhắn mới
+                });
             } else {
-                setMessages((prev) => [...prev, { type: 'ai', text: 'Xin lỗi, có lỗi xảy ra khi nhận phản hồi từ AI.' }]);
+                // Cập nhật state khi có lỗi bằng cách thay thế tin nhắn loading
+                setMessages((prev) => {
+                    const updatedMessages = [...prev];
+                    updatedMessages.pop();
+                    return [...updatedMessages, { type: 'ai', text: 'Xin lỗi, có lỗi xảy ra khi nhận phản hồi từ AI.' }];
+                });
                 console.error("Error from AI dispatch (rejected):", resultAction.payload);
             }
         } catch (error) {
             console.error("Error calling AI API:", error);
-            setMessages((prev) => [...prev, { type: 'ai', text: 'Rất tiếc, không thể kết nối với dịch vụ AI.' }]);
+            // Cập nhật state khi có lỗi bằng cách thay thế tin nhắn loading
+            setMessages((prev) => {
+                const updatedMessages = [...prev];
+                updatedMessages.pop();
+                return [...updatedMessages, { type: 'ai', text: 'Rất tiếc, không thể kết nối với dịch vụ AI.' }];
+            });
         }
     };
 
@@ -203,7 +220,13 @@ const SupportChatWidget = () => {
                         <SimpleBar className="d-flex flex-column-reverse scrollbar h-100 p-3" ref={simplebarReactRef}>
                             <div class="text-center mt-auto">
                                 <div class="avatar avatar-3xl status-online">
-                                    <img class="rounded-circle border border-3 border-light-subtle" src="https://cdn-icons-png.flaticon.com/512/13330/13330989.png" alt="" /></div>
+                                    {/* Cho nó to ra */}
+                                    <DotLottieReact
+                                        src="https://lottie.host/4442012d-4a38-4cb1-a90f-4e43bde28c29/25t0bF36LK.lottie"
+                                        loop
+                                        autoplay style={{ width: "250px", height: "150px ", marginLeft: "-90px", marginTop: "-40px" }}
+                                    />
+                                </div>
                                 <h5 class="mt-2 mb-3">CSKH</h5>
                                 <p class="text-center text-body-emphasis mb-0">"Tôi là trợ lý của bạn – online 24/24, trả lời mọi câu hỏi!"</p>
                             </div>
@@ -215,13 +238,18 @@ const SupportChatWidget = () => {
                                     wordWrap: 'break-word',
                                 }}>
                                     <span style={{
-                                        backgroundColor: msg.type === 'user' ? '#007bff' : '#e0e0e0',
+                                        backgroundColor: msg.is_loading ? 'transparent' : (msg.type === 'user' ? '#007bff' : '#e0e0e0'),
                                         color: msg.type === 'user' ? 'white' : 'black',
                                         padding: '8px 12px',
                                         borderRadius: '15px',
                                         display: 'inline-block',
                                     }}>
-                                        {/* Render text hoặc JSX nếu có products */}
+                                        {/* Render text hoặc JSX products nếu có */}
+                                        {msg.component && (
+                                            <div style={{ width: '50px', height: '50px' }}>{/* Render component loading nếu có */}
+                                                {msg.component}
+                                            </div>
+                                        )}
                                         {msg.text}
                                         {msg.products && msg.products.length > 0 && (
                                             <div style={{ marginTop: '10px' }}>
@@ -261,9 +289,16 @@ const SupportChatWidget = () => {
                     </div>
                 </div>
             </div>
-            {/* Nút "Chat Với AI" - GẮN ONCLICK */}
-            <button className={`btn btn-support-chat p-0 border border-translucent ${showChat ? 'btn-chat-close' : ''}`} onClick={handleChatToggle}>
-                <span className="fs-8 btn-text text-primary text-nowrap">Chat Bot</span>
+            {/* Nút "Chat Với AI" */}
+            <button className={`btn btn-support-chat p-0 ${showChat ? 'btn-chat-close' : ''}`} onClick={handleChatToggle}>
+                <span className="fs-8 btn-text text-primary text-nowrap" style={{ transform: "translateX(90px)" }}>
+                    <DotLottieReact
+                        src="https://lottie.host/b3c296b0-4ee3-44d5-af72-dd9091a410d4/6kxlNEK1rA.lottie"
+                        loop
+                        autoplay style={{ width: "250px", height: "150px ", marginLeft: "-200px", marginTop: "-40px" }}
+                    />
+                </span>
+
                 <span className="ping-icon-wrapper mt-n4 ms-n6 mt-sm-0 ms-sm-2 position-absolute position-sm-relative">
                     <span className="ping-icon-bg"></span>
                     <span className="fa-solid fa-circle ping-icon"></span>
