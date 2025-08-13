@@ -9,14 +9,16 @@ import SupportChatWidget from '../components/SupportChatWidget';
 const MainLayout = () => {
   return (
     <>
-      <Header /> {/* Hiển thị Header */}
-      <div style={{ display: 'flex', flexGrow: 1, width: '100%' }}>
-        <main style={{ flexGrow: 1, padding: '20px', backgroundColor: '#fff', width: '1900px' }}>
-          <Outlet /> {/* Đây là nơi các trang (pages) sẽ được render */}
-        </main>
-      </div>
-      <Footer />
-      <SupportChatWidget />
+      <main className="main" id="top">
+        <Header />
+        <div style={{ flexGrow: 1, width: '100%', maxWidth: '100vw' }}>
+          <main style={{ flexGrow: 1, padding: '20px', backgroundColor: '#fff' }}>
+            <Outlet />{/* Đây là nơi các trang (pages) sẽ được render */}
+          </main>
+        </div>
+        <Footer />
+        <SupportChatWidget />
+      </main>
     </>
   );
 };

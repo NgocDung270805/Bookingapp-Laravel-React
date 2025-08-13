@@ -178,7 +178,7 @@ const ProductsPage = () => {
           </div>
           <div className="row g-3 mb-6">
             {products.map((product) => (
-              <div className="col-sm-6 col-lg-4 col-xl-3">
+              <div className="col-sm-6 col-lg-4 col-xl-3" key={product.id}>
                 <div className="hover-actions-trigger mx-auto rounded-3 overflow-hidden">
                   {product.img ? (
                     <img src={`${PATHS.ADMIN_DASHBOARD}storage/${product.img}`} alt={product.name} className="img-fluid" style={{ width: '336px', height: '420px', objectFit: 'cover' }} />

@@ -10,14 +10,13 @@ import MainLayout from './core/layouts/MainLayout/MainLayout';
 import AuthLayout from './core/layouts/AuthLayout/AuthLayout';
 
 // Pages/Containers
-import HomePage from './pages/Home/HomePage';
+import HomePage from './modules/Home/containers/HomePage.jsx';
 import ProductsPage from './modules/Products/containers/ProductsPage'; // THAY ĐỔI ĐƯỜNG DẪN NÀY
 import LoginPage from './modules/Auth/containers/LoginPage';
 import RegisterPage from './modules/Auth/containers/RegisterPage';
 import ProfilePage from './modules/profile/containers/ProfilePage';
 import ProductsByCategoriesPage from './modules/Products/containers/ProductsByCategoriesPage';
 import ProductDetailPage from './modules/Products/containers/ProductDetailPage.jsx';
-
 
 // HOCs
 import withAuth from './hoc/withAuth.jsx';

@@ -285,7 +285,7 @@ const Header = () => {
               <a className="nav-link fs-8 fw-bold dropdown-toggle text-primary" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Thương hiệu</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
                 {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
-                  <li>
+                  <li key={category.id}>
                     <Link to={`${PATHS.PRODUCTS_BY_CATEGORY_SLUG}${category.slug}`} className="dropdown-item">
                       {category.name}
                     </Link>

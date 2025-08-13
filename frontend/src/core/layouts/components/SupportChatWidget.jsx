@@ -218,8 +218,8 @@ const SupportChatWidget = () => {
                     <div className="card-body chat p-0">
                         {/* KHUNG TIN NHẮN ĐƯỢC QUẢN LÝ BẰNG SimpleBar */}
                         <SimpleBar className="d-flex flex-column-reverse scrollbar h-100 p-3" ref={simplebarReactRef}>
-                            <div class="text-center mt-auto">
-                                <div class="avatar avatar-3xl status-online">
+                            <div className="text-center mt-auto">
+                                <div className="avatar avatar-3xl status-online">
                                     {/* Cho nó to ra */}
                                     <DotLottieReact
                                         src="https://lottie.host/4442012d-4a38-4cb1-a90f-4e43bde28c29/25t0bF36LK.lottie"
@@ -227,8 +227,8 @@ const SupportChatWidget = () => {
                                         autoplay style={{ width: "250px", height: "150px ", marginLeft: "-90px", marginTop: "-40px" }}
                                     />
                                 </div>
-                                <h5 class="mt-2 mb-3">CSKH</h5>
-                                <p class="text-center text-body-emphasis mb-0">"Tôi là trợ lý của bạn – online 24/24, trả lời mọi câu hỏi!"</p>
+                                <h5 className="mt-2 mb-3">CSKH</h5>
+                                <p className="text-center text-body-emphasis mb-0">"Tôi là trợ lý của bạn – online 24/24, trả lời mọi câu hỏi!"</p>
                             </div>
                             {messages.map((msg, index) => (
                                 <div key={index} style={{

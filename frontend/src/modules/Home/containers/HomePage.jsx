@@ -4,12 +4,14 @@ import React, { use, useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth'; // Lấy thông tin user
-import { PATHS, BASE_URL_ADMIN } from '../../common/constants';
+import { useAuth } from '../../../hooks/useAuth'; // Lấy thông tin user
+import { PATHS, BASE_URL_ADMIN } from '../../../common/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBanners, selectSliderBanners, selectDaMuaBanners, selectDiaDiemDaQuaBanners } from '../../modules/Banners/slice';
-import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../modules/Categories/slice'; // Phần import lấy all category
-import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError, selectNewestProducts, fetchNewestProducts } from '../../modules/Products/slice';
+import { fetchBanners, selectSliderBanners, selectDaMuaBanners, selectDiaDiemDaQuaBanners } from '../../Banners/slice';
+import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../Categories/slice'; // Phần import lấy all category
+import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError, selectNewestProducts, fetchNewestProducts } from '../../Products/slice';
+import categoryStyles from './CategorySlider.module.css'; // Import CSS module cho category
+import customerStyles from './CustomerSlider.module.css'
 
 dayjs.locale('vi')
 const HomePage = () => {
@@ -64,7 +66,7 @@ const HomePage = () => {
 
     // Fetch Top Viewed Products (nếu chưa có hoặc đang không tải)
     if (!productsLoading && topViewedProducts.length === 0) {
-      console.log("Dispatching fetchTopViewedProducts()...");
+      // console.log("Dispatching fetchTopViewedProducts()...");
       dispatch(fetchTopViewedProducts());
     }
     //
@@ -89,7 +91,7 @@ const HomePage = () => {
     if (window.Isotope && window.imagesLoaded && galleryRef.current) {
       window.imagesLoaded(galleryRef.current, () => {
         setTimeout(() => { // Giữ setTimeout để ổn định DOM
-          console.log("Initializing Isotope for Gallery:", galleryRef.current.children);
+          // console.log("Initializing Isotope for Gallery:", galleryRef.current.children);
           const iso = new window.Isotope(galleryRef.current, {
             itemSelector: '.isotope-item',
             layoutMode: 'packery',
@@ -218,7 +220,7 @@ const HomePage = () => {
           )}
         </div>
       </div>
-      {/*  */}
+
       <section className="pt-6 pt-md-10 pb-10" >
         <div className="container-medium">
           <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-left-27.png)", backgroundSize: "auto", backgroundPosition: "left" }}></div>
@@ -286,7 +288,7 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      {/*  */}
+
       <section className="pb-10 pt-0">
         <div className="bg-holder d-none d-md-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-left-28.png)", backgroundSize: "7%", backgroundPosition: "left 27%" }}></div>
         <div className="bg-holder d-none d-md-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-right-28.png)", backgroundSize: "16%", backgroundPosition: "right -25px" }}></div>
@@ -302,16 +304,13 @@ const HomePage = () => {
             </div>
             <div className="swiper theme-slider" data-swiper='{"loop":false, "centeredSlides":true,"autoplay":true,"centeredSlidesBounds":true,"spaceBetween":16,"slidesPerView":1,"speed":1500,"breakpoints":{"576":{"slidesPerView":"auto"}}}' ref={swiperRef1}>
               <div className="swiper-wrapper">
-
                 {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
-                  <div className="swiper-slide w-sm-auto" key={category.id}>
+                  <div className={`swiper-slide w-sm-auto ${categoryStyles.myCustomSlide}`} key={category.id}>
                     <Link to={`${PATHS.PRODUCTS_BY_CATEGORY_SLUG}${category.slug}`} className="position-relative rounded-3 overflow-hidden d-block">
-                      <img className="w-100 w-sm-auto object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${category.img}`} alt={category.name} width="420px" height="220px" />
-                      <div className="img-backdrop-faded">
+                      <img className="w-100 w-sm-auto object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${category.img}`} alt={category.name} style={{ height: "220px" }} />
+                      <div className="img-backdrop-faded" style={{ height: "220px" }}>
                         <div className="image-reveal-content mb-3">
                           <div className="d-flex align-items-center gap-2 mb-2">
-                            {/* <span className="fa-solid fa-hotel text-secondary-lighter"></span> */}
-                            {/* <h6 className="mb-0 text-secondary-lighter fw-semibold">17 Hotels</h6> */}
                           </div>
                           <div className="d-flex align-items-center gap-2"><span className="fa-solid fa-car text-secondary-lighter"></span>
                             <h6 className="mb-0 text-secondary-lighter fw-semibold">{category.products_count} Xe</h6>
@@ -332,6 +331,7 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
       <section className="py-0">
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-left-29.png)", backgroundSize: "auto", backgroundPosition: "-15%" }}></div>
         <div className="container-medium position-relative">
@@ -347,7 +347,7 @@ const HomePage = () => {
               <div className="row gy-5 gx-xl-7 justify-content-between pe-4">
                 {!productsLoading && topViewedProducts.length > 0 && (
                   topViewedProducts.map((product) => (
-                    <div className="col-xl-4">
+                    <div className="col-xl-4" key={product.id}>
                       <div className="card card-img-shift border-0 mx-auto">
                         <div className="rounded-3 overflow-hidden w-100 position-relative z-5">
                           <img className="w-100" src={`${PATHS.ADMIN_DASHBOARD}storage/${product.img}`} alt="" height="250" />
@@ -359,7 +359,6 @@ const HomePage = () => {
                           <div className="card-content">
                             <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
                               <div>
-                                {/* <span className="badge badge-phoenix px-1 me-2 badge-phoenix-warning">promoted</span> */}
                                 <span className="badge badge-phoenix px-1 badge-phoenix-info">{product.tags?.map((cat) => cat.name).join(', ') || ''}</span>
                               </div>
                               <h6>
@@ -390,6 +389,7 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
       <section className="py-10 overflow-hidden">
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-left-30.png)", backgroundSize: "40%", backgroundPosition: "left", zIndex: 1 }}></div>
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-right-30.png)", backgroundSize: "26%", backgroundPosition: "right 25px", zIndex: 1 }}></div>
@@ -501,6 +501,7 @@ const HomePage = () => {
           </div>
         </div> */}
       </section>
+
       <section className="pb-7 pt-0 overflow-x-hidden">
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-left-31.png)', backgroundSize: '22%', backgroundPosition: 'left', zIndex: 1 }}></div>
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-right-31.png)', backgroundSize: '15%', backgroundPosition: 'right bottom', zIndex: 1 }}></div>
@@ -510,10 +511,13 @@ const HomePage = () => {
           <p className="mb-0 text-body-tertiary mb-13">Mỗi nụ cười là một sự hài lòng. Cảm ơn quý khách đã lựa chọn chúng tôi để cùng khởi đầu những hành trình mới.</p>
         </div>
         <div className="swiper-theme-container swiper-zooming-slider">
-          <div className="swiper-container theme-slider" data-swiper='{"loop":false,"slidesPerView":1.3,"spaceBetween":32,"speed":2000,"autoplay":true,"centeredSlides":true,"simulateTouch":false,"breakpoints":{"540":{"slidesPerView":1.5},"768":{"slidesPerView":1.8},"1200":{"slidesPerView":2},"1530":{"slidesPerView":2.8}}}' ref={swiperRef2}>
+          <div className="swiper-container customer-slider"
+            // Sửa lại cấu hình Swiper của phần khách hàng
+            data-swiper='{"loop":false,"spaceBetween":32,"speed":2000,"autoplay":true,"centeredSlides":true,"simulateTouch":false,"breakpoints":{"0":{"slidesPerView":1,"spaceBetween":16},"540":{"slidesPerView":1.5},"768":{"slidesPerView":1.8},"1200":{"slidesPerView":2},"1530":{"slidesPerView":2.8}}}'
+            ref={swiperRef2}>
             <div className="swiper-wrapper">
               {daMuaBanners.map((banner) => (
-                <div className="swiper-slide rounded-3 overflow-hidden">
+                <div className={`swiper-slide rounded-3 overflow-hidden ${customerStyles.myCustomSlide}`} key={banner.id}>
                   <div className="position-relative w-100 h-100">
                     <img className="w-100 h-100 object-fit-cover" src={banner.image_path} alt={banner.title} />
                     <div className="backdrop-faded p-4 p-md-6">
@@ -536,6 +540,7 @@ const HomePage = () => {
         </div>
         <div className="text-center mt-12 position-relative z-2"><button className="btn btn-link p-0 fs-8">Xem thêm<span className="fa-solid fa-chevron-right ms-2" data-fa-transform="shrink-1"></span></button></div>
       </section>
+
       <section className="pb-10 pt-3">
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-left-32.png)', backgroundSize: '26%', backgroundPosition: 'left 115px' }}></div>
         <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-right-32.png)', backgroundSize: '28%', backgroundPosition: 'right -25px' }}></div>
@@ -566,15 +571,6 @@ const HomePage = () => {
             <p className="mb-0 text-body-tertiary">Cảm ơn quý khách hàng đã đồng hành cùng chúng tôi! Dưới đây là một số địa điểm mà chúng tôi đã giao xe thành công.</p>
           </div>
           <div className="row g-3">
-            {/*  */}
-            {/* <div className="col-md-6 col-xl-4">
-              <div className="img-zoom-hover rounded-3 overflow-hidden position-relative">
-                <a href="#!">
-                  <img className="latest-img w-100 object-fit-cover" src={firstDiaDiemBanner.image_path} alt="" />
-                </a>
-                <div className="backdrop-faded"><a className="fw-semibold mb-0 text-secondary-lighter stretched-link" href="#!"><span className="fa-solid fa-location-dot text-secondary-lighter me-2"></span>Grand Canyon</a></div>
-              </div>
-            </div> */}
             {diaDiemDaQuaBanners.map((banner) => (
               <div className="col-md-6 col-xl-4" key={banner.id}>
                 <div className="img-zoom-hover rounded-3 overflow-hidden position-relative">

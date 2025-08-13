@@ -1,0 +1,10 @@
+/* Chỉ áp dụng cho slider danh mục */
+.myCustomSlide {
+  width: 100% !important;
+}
+
+@media (min-width: 576px) {
+  .myCustomSlide {
+    width: auto !important;
+  }
+}

@@ -1,0 +1,18 @@
+/* src/pages/Home/CustomerSlider.module.css */
+/* Các quy tắc CSS trong file này chỉ áp dụng cho component CustomerSlider.jsx */
+
+.myCustomSlide {
+  /*
+  * Đối với slider khách hàng, Swiper.js tự động tính toán chiều rộng của mỗi slide
+  * dựa trên thuộc tính "slidesPerView" trong data-swiper.
+  * Vì vậy, chúng ta không cần phải ghi đè thuộc tính width ở đây.
+  */
+  
+  /* Tuy nhiên, bạn có thể thêm các style khác tùy chỉnh tại đây nếu cần */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* * Nếu bạn muốn điều chỉnh một chút, bạn có thể thêm các quy tắc tại đây.
+* Ví dụ: .myCustomSlide img { object-fit: cover; }
+*/
