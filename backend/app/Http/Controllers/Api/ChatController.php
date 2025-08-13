@@ -26,9 +26,9 @@ class ChatController extends Controller
         $lowerUserMessage = strtolower($userMessage);
 
         $searchQuery = '';
-        $productKeywords = ['sản phẩm', 'xe', 'tư vấn', 'tìm kiếm', 'muốn biết về', 'về', 'model', 'loại', 'giá', 'mua', 'bán', 'có không', 'camry', 'everest', 'toyota', 'ford', 'sedan', 'suv'];
-        
-        $allProductNamesInDb = Product::select('name')->get()->pluck('name')->map(function($name) {
+        $productKeywords = ['sản phẩm', 'xe', 'tư vấn', 'tìm kiếm', 'muốn biết về', 'về', 'model', 'loại', 'giá', 'mua', 'bán', 'có không', 'camry', 'everest', 'toyota', 'ford', 'sedan', 'suv']; // Đây là danh sách các từ khóa về xe
+
+        $allProductNamesInDb = Product::select('name')->get()->pluck('name')->map(function ($name) {
             return strtolower($name);
         })->toArray();
 
@@ -52,8 +52,8 @@ class ChatController extends Controller
             $searchQuery = $lowerUserMessage;
         }
 
-        $commonWords = ['tôi', 'bạn', 'là', 'có', 'cái', 'nào', 'gì', 'thế', 'này', 'đó', 'xin', 'chào', 'cảm ơn', 'hỏi', 'cho', 'biết', 'không', 'muốn', 'về'];
-        $searchQueryParts = array_filter(preg_split('/\s+/', $searchQuery), function($word) use ($commonWords) {
+        $commonWords = ['tôi', 'bạn', 'là', 'có', 'cái', 'nào', 'gì', 'thế', 'này', 'đó', 'xin', 'chào', 'cảm ơn', 'hỏi', 'cho', 'biết', 'không', 'muốn', 'về']; // Đây là danh sách các từ thông dụng
+        $searchQueryParts = array_filter(preg_split('/\s+/', $searchQuery), function ($word) use ($commonWords) {
             return !in_array($word, $commonWords) && strlen($word) > 1;
         });
         $finalSearchQuery = implode(' ', $searchQueryParts);
@@ -63,17 +63,17 @@ class ChatController extends Controller
 
         if (!empty($finalSearchQuery) && strlen($finalSearchQuery) > 2) {
             // THÊM 'views' VÀO CÂU TRUY VẤN
-            $productsFromDb = Product::select('id', 'name', 'slug', 'img', 'views') 
-                                    ->where('name', 'like', '%' . $finalSearchQuery . '%')
-                                    ->orWhere('description', 'like', '%' . $finalSearchQuery . '%')
-                                    ->limit(3)
-                                    ->get();
-            
+            $productsFromDb = Product::select('id', 'name', 'slug', 'img', 'views')
+                ->where('name', 'like', '%' . $finalSearchQuery . '%')
+                ->orWhere('description', 'like', '%' . $finalSearchQuery . '%')
+                ->limit(3)
+                ->get();
+
             foreach ($productsFromDb as $product) {
                 $suggestedProducts[] = [
                     'id' => $product->id,
                     'name' => $product->name,
-                    'slug' => $product->slug, 
+                    'slug' => $product->slug,
                     'img' => $product->img ? asset('storage/' . $product->img) : null,
                     'views' => $product->views, // THÊM TRƯỜNG VIEWS VÀO ĐÂY
                 ];
@@ -84,8 +84,15 @@ class ChatController extends Controller
 
 
         // --- Bước 2: Gọi Gemini API với prompt được điều chỉnh ---
-        $promptForGemini = "Bạn là một trợ lý tư vấn sản phẩm cho một website bán xe. Trả lời câu hỏi sau một cách NGẮN GỌN, TRỰC TIẾP và HỮU ÍCH (tối đa 2-3 câu). Không tự nhận là không bán sản phẩm. Nếu câu hỏi liên quan đến sản phẩm, hãy xác định tên sản phẩm và TRẢ LỜI NGẮN GỌN về sản phẩm đó, sau đó đề xuất người dùng xem chi tiết trên website của chúng tôi. Câu hỏi của người dùng: " . $userMessage;
-
+        $promptForGemini = "Bạn là một trợ lý tư vấn sản phẩm cho một website 'Văn Đại Car' bán xe. Trả lời câu hỏi sau một cách NGẮN GỌN, TRỰC TIẾP và HỮU ÍCH (tối đa 2-3 câu). Không tự nhận là không bán 
+        sản phẩm. Nếu câu hỏi liên quan đến sản phẩm, hãy xác định tên sản phẩm và TRẢ LỜI NGẮN GỌN về sản phẩm đó, sau đó đề xuất người dùng xem chi tiết trên website của chúng tôi. Tránh các câu hỏi phức 
+        tạp và không lên quan và không đi sau vào các câu hỏi về kỹ thuật, lịch sử hoặc đối thủ cạnh tranh, thay vào đó nhận diện các câu hỏi và đề xuất tìm kiếm các chuyên gia và quản trị của website, số 
+        điện thoại của quản trị viên hệ thống '+84 965.336.741', và sau đó chuyển hướng cuộc trò chuyện về mục tiêu chính bán xe, đặt lịch. Sau mỗi câu trả lời, nên kết thúc bằng các lời kêu gọi 'Đặt lịch 
+        lái thử.','Xem chi tiết trên website.', 'Đặt lịch hẹn tư vấn.', 'Liên hệ để nhận báo giá chính xác nhất.', hãy linh hoạt trong cách sử dụng các lời kêu gọi hành động để tránh lặp lại. Có thể kết hợp 
+        'Đặt lịch lái thử' với một câu hỏi như 'Bạn có muốn trải nghiệm thực tế xe không?' để cuộc trò chuyện tự nhiên hơn. Khi người dùng hỏi về giá, hãy trả lời một cách khéo léo về sản phẩm chưa có giá 
+        (liên hệ). Thay vì đưa ra một con số cụ thể, hãy đề xuất họ liên hệ để nhận báo giá chính xác nhất kèm theo các chương trình ưu đãi hiện tại. Tuyệt đối không sử dụng các từ ngữ tiêu cực hoặc mang 
+        tính chất chê bai khi nói về sản phẩm của đối thủ. Chỉ tập trung vào điểm mạnh của xe tại 'Văn Đại Car'. Với câu hỏi khó giữ sự tôn trọng và lập trường của trợ lý bán hàng. Câu hỏi không liên quan 
+        khéo léo từ chối và lái cuộc trò chuyện về sản phẩm của mình. Nếu có xe hiển thị cho khách hàng luôn, không đưa đưa ra các xe không có trong hệ thống tránh bị lỗi. Câu hỏi của người dùng: " . $userMessage;
         $geminiResponse = Http::withHeaders([
             'Content-Type' => 'application/json',
             'X-goog-api-key' => $geminiApiKey,
@@ -117,7 +124,7 @@ class ChatController extends Controller
             Log::error('Gemini API Error: ' . json_encode($geminiResponseData));
             return response()->json(['error' => 'Lỗi từ dịch vụ AI: ' . ($geminiResponseData['error']['message'] ?? 'Unknown error')], 500);
         }
-        
+
         $aiTextResponse = $geminiResponseData['candidates'][0]['content']['parts'][0]['text'] ?? 'Xin lỗi, tôi không thể xử lý yêu cầu này lúc này.';
         Log::info('Gemini AI Raw Response: ' . $aiTextResponse);
 
