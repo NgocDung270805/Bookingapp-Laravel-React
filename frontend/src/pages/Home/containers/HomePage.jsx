@@ -7,9 +7,9 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth'; // Lấy thông tin user
 import { PATHS, BASE_URL_ADMIN } from '../../../common/constants';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchBanners, selectSliderBanners, selectDaMuaBanners, selectDiaDiemDaQuaBanners } from '../../Banners/slice';
-import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../Categories/slice'; // Phần import lấy all category
-import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError, selectNewestProducts, fetchNewestProducts } from '../../Products/slice';
+import { fetchBanners, selectSliderBanners, selectDaMuaBanners, selectDiaDiemDaQuaBanners } from '../../../modules/Banners/slice';
+import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../../modules/Categories/slice'; // Phần import lấy all category
+import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError, selectNewestProducts, fetchNewestProducts } from '../../../modules/Products/slice';
 import categoryStyles from './CategorySlider.module.css'; // Import CSS module cho category
 import customerStyles from './CustomerSlider.module.css'
 

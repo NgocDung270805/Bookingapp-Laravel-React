@@ -1,22 +1,19 @@
 // src/modules/Products/containers/ProductsPage.jsx
 
 import React, { useEffect, useState } from 'react';
+import { PATHS } from '../../../common/constants'; 
 import { useAppDispatch, useAppSelector } from '../../../appRedux';
 import { Link } from 'react-router-dom';
-import {
-  fetchProducts,
-  toggleFavorite,
-  // Bỏ các action CRUD sản phẩm không dùng ở đây
-} from '../slice';
+import { fetchProducts, toggleFavorite,} from '../slice';
 
 // Import các component Modal mới
 import CommentFormModal from '../components/CommentFormModal';
 import BookingFormModal from '../components/BookingFormModal';
-import { PATHS } from '../../../common/constants'; // Import PATHS nếu cần
+
+import { DotLottieReact } from '@lottiefiles/dotlottie-react'; // Import Icon Lottie
 
 const ProductsPage = () => {
   useEffect(() => {
-    // Thay đổi tiêu đề trang khi component này được render
     document.title = 'Products - BookingApp';
   }, []); // [] đảm bảo hiệu ứng chỉ chạy một lần sau khi render đầu tiên
   const dispatch = useAppDispatch();
@@ -70,7 +67,13 @@ const ProductsPage = () => {
   // ===========================================
 
   if (loading) {
-    return <div>Đang tải sản phẩm...</div>;
+    return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <DotLottieReact
+        src="https://lottie.host/3722dbdc-d3e0-407e-bf0b-5b6805db01ba/duMhR6ttZz.lottie"
+        loop
+        autoplay
+        style={{ width: "300px", height: "300px" }} />
+    </div>;
   }
 
   if (error) {
