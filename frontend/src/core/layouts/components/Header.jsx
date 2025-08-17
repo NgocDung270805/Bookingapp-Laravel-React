@@ -304,18 +304,23 @@ const Header = () => {
                 {/* <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/payment.html">Payment</a></li> */}
               </ul>
             </li>
-            {/* <li className="nav-item dropdown">
-              <a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Trip</a>
+            <li className="nav-item dropdown">
+              <a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Thông tin / Chính sách</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/trip/homepage.html">Homepage</a></li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/trip/trip-details.html">Trip Details</a></li>
-                <li><a className="dropdown-item" href="../../../../apps/travel-agency/trip/checkout.html">Checkout</a></li>
+                <li><Link to={PATHS.ABOUT} className="dropdown-item">Giới thiệu</Link></li>
+                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Chính Sách Bảo Mật</Link></li> */}
+                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Chính Sách Đặt Lịch</Link></li> */}
+                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Câu Hỏi Thường Gặp</Link></li> */}
+                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Liên Hệ</Link></li> */}
+                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Chính Sách Bảo Hành</Link></li> */}
+                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Điều Khoản</Link></li> */}
               </ul>
             </li>
-            <li className="nav-item dropdown">
-              <a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Event</a>
-            </li>
-            <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Package</a></li> */}
+            {/* <li className="nav-item dropdown">
+              <Link to={PATHS.ABOUT} className="nav-link fs-8 fw-bold" role="button" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Giới thiệu</Link>
+            </li> */}
+            
+            {/* <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Package</a></li> */}
           </ul>
         </div>
       </nav >

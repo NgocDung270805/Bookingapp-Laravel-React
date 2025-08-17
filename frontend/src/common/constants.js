@@ -8,6 +8,7 @@ export const USER_INFO_KEY = 'userInfo'; // Key để lưu thông tin user trong
 // Các đường dẫn route frontend mà bạn sẽ dùng trong React Router
 export const PATHS = {
   HOME: '/',
+  ABOUT: '/about',
   LOGIN: '/login',
   REGISTER: '/register',
   PROFILE: '/user/profile',

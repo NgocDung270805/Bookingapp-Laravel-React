@@ -11,7 +11,7 @@ import { fetchBanners, selectSliderBanners, selectDaMuaBanners, selectDiaDiemDaQ
 import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCategoriesError } from '../../../modules/Categories/slice'; // Phần import lấy all category
 import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError, selectNewestProducts, fetchNewestProducts } from '../../../modules/Products/slice';
 import categoryStyles from './CategorySlider.module.css'; // Import CSS module cho category
-import customerStyles from './CustomerSlider.module.css'
+import customerStyles from './CustomerSlider.module.css';
 
 dayjs.locale('vi')
 const HomePage = () => {

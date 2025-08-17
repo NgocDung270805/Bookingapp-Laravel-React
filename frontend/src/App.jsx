@@ -11,6 +11,7 @@ import AuthLayout from './core/layouts/AuthLayout/AuthLayout';
 
 // Pages/Containers
 import HomePage from './pages/Home/containers/HomePage.jsx';
+import AboutPage from './pages/About/containers/AboutPage.jsx';
 import ProductsPage from './modules/Products/containers/ProductsPage';
 import LoginPage from './modules/Auth/containers/LoginPage';
 import RegisterPage from './modules/Auth/containers/RegisterPage';
@@ -46,7 +47,7 @@ const App = () => {
 
           <Route path="/" element={<MainLayout />}>
             <Route index element={<HomePage />} /> 
-
+            <Route path={PATHS.ABOUT} element={<AboutPage />} />
             <Route
               path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProductsByCategoriesPage />}
             />
