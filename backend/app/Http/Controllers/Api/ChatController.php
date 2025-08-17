@@ -62,13 +62,12 @@ class ChatController extends Controller
         Log::info('Final Search Query for DB: ' . $finalSearchQuery);
 
         if (!empty($finalSearchQuery) && strlen($finalSearchQuery) > 2) {
-            // THÊM 'views' VÀO CÂU TRUY VẤN
             $productsFromDb = Product::select('id', 'name', 'slug', 'img', 'views')
                 ->where('name', 'like', '%' . $finalSearchQuery . '%')
                 ->orWhere('description', 'like', '%' . $finalSearchQuery . '%')
                 ->limit(3)
                 ->get();
-
+                
             foreach ($productsFromDb as $product) {
                 $suggestedProducts[] = [
                     'id' => $product->id,
