@@ -109,7 +109,7 @@ const ProductsPage = () => {
             </ul>
           </nav>
         </div>
-      </section>
+      </section><br /><br /><br />
 
       <div className="container-medium-md px-0 px-md-3">
         <div className="px-3 py-8 position-relative">
@@ -289,7 +289,8 @@ const ProductsPage = () => {
           {/* <input className="rating-radio btn-check" type="radio" name="ratingOption" id="option3" autocomplete="off" /><label className="btn w-100 d-flex align-items-center gap-1 mb-2" for="option3"><span className="fa-solid fa-star text-warning"></span><span className="fa-solid fa-star text-warning"></span><span className="fa-solid fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="text-body ms-1 fs-8 fw-normal">and above</span><span className="fa-solid fa-check ms-auto text-primary check-icon"></span></label><input className="rating-radio btn-check" type="radio" name="ratingOption" id="option4" autocomplete="off" /><label className="btn w-100 d-flex align-items-center gap-1 mb-2" for="option4"><span className="fa-solid fa-star text-warning"></span><span className="fa-solid fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="text-body ms-1 fs-8 fw-normal">and above</span><span className="fa-solid fa-check ms-auto text-primary check-icon"></span></label><input className="rating-radio btn-check" type="radio" name="ratingOption" id="option5" autocomplete="off" /><label className="btn w-100 d-flex align-items-center gap-1" for="option5"><span className="fa-solid fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="fa-regular fa-star text-warning"></span><span className="text-body ms-1 fs-8 fw-normal">and above</span><span className="fa-solid fa-check ms-auto text-primary check-icon"></span></label> */}
         </div>
         <div className="p-4 border-top border-translucent d-flex gap-2"><button className="btn btn-lg btn-phoenix-primary">Reset</button><button className="btn btn-lg btn-primary flex-1">Show 445 items</button></div>
-      </div>
+      </div><br /><br /><br />
+
       <section className="py-0 mb-9">
         <div className="container-medium-md px-0 px-md-3">
           <div className="p-5 p-sm-7 py-xl-12 px-xl-15 rounded-md-2 overflow-hidden position-relative">

@@ -75,23 +75,24 @@
 }
 
 .aboutMain p {
-  font-weight: 400;   /* đảm bảo chữ không bị đậm */
-  font-size: 1rem;    /* đồng bộ với HTML gốc */
+  font-weight: 400;   /* Đảm bảo chữ không bị đậm */
+  font-size: 1rem;    /* Độ lớn chữ */
   color: #000;
 }
 
 .aboutMain strong {
-  font-weight: 600;   /* đậm vừa phải thay vì 700 */
+  font-weight: 600;   /* Độ đậm của chữ */
 }
 
 .aboutMain h2 {
   font-size: 1.5rem; 
-  font-weight: 600;   /* giống HTML */
+  font-weight: 700;
   line-height: 1.4;
+  margin-bottom: -100px;
 }
 
 section {
-  margin-bottom: 40px;
+  margin-bottom: -70px;
 }
 
 h2 {

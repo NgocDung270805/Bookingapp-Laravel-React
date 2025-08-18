@@ -58,13 +58,14 @@ const Header = () => {
       <nav className="navbar navbar-landing navbar-expand-lg container-medium">
         <Link to={PATHS.HOME} className="navbar-brand flex-1 flex-lg-grow-0 me-lg-8 me-xl-13">
           <div className="d-flex align-items-center">
-            {bannersLoading ? (
+            <img src="../../assets/img/icons/logo.png" alt="" style={{ height: "40px", width: "auto", maxWidth: "200px", objectFit: "contain", marginRight: "10px", display: "block" }} />
+            {/* {bannersLoading ? (
               <span></span> // Hiển thị trạng thái tải
             ) : logoBanner && logoBanner.image_path ? (
               <img src={logoBanner.image_path} alt={logoBanner.title || "Logo BookingApp"} style={{ height: '40px', marginRight: '10px' }} />
             ) : (
               <img src="../../assets/img/icons/logo.png" alt="" style={{ height: '40px', marginRight: '10px' }} />
-            )}
+            )} */}
           </div>
         </Link>
         <div className="col-auto order-md-1">
@@ -298,7 +299,8 @@ const Header = () => {
             <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Xe</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
                 <li>
-                  <a className="dropdown-item" href={PATHS.PRODUCTS}>Danh sách xe</a>
+                  {/* <a className="dropdown-item" href={PATHS.PRODUCTS}>Danh sách xe</a> */}
+                  <Link to={PATHS.PRODUCTS} className="dropdown-item">Danh sách xe</Link>
                 </li>
                 {/* <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/booking.html">Booking</a></li> */}
                 {/* <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/payment.html">Payment</a></li> */}
@@ -319,7 +321,7 @@ const Header = () => {
             {/* <li className="nav-item dropdown">
               <Link to={PATHS.ABOUT} className="nav-link fs-8 fw-bold" role="button" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Giới thiệu</Link>
             </li> */}
-            
+
             {/* <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Package</a></li> */}
           </ul>
         </div>

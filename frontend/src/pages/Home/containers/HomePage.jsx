@@ -588,28 +588,7 @@ const HomePage = () => {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Phần tải app */}
-      {/* <section className="pt-9 pb-10">
-        <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-left-33.png)', backgroundSize: 'auto', backgroundPosition: '-8% 38px' }}></div>
-        <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: 'url(../../assets/img/bg/bg-right-33.png)', backgroundSize: '18%', backgroundPosition: 'right' }}></div>
-        <div className="bg-get-app"></div>
-        <div className="container-medium position-relative">
-          <div className="row g-0 justify-content-center">
-            <div className="col-lg-10 col-xl-8 col-xxl-7">
-              <div className="d-md-flex align-items-center gap-5 text-center text-md-start">
-                <img className="img-fluid d-dark-none" src="../../assets/img/spot-illustrations/i-phone.png" alt="" style={{ maxHeight: '540px' }} /><img className="img-fluid d-light-none" src="../../assets/img/spot-illustrations/i-phone-dark.png" alt="" style={{ maxHeight: '540px' }} />
-                <div className="mt-5 mt-md-0">
-                  <div className="d-none d-md-block"><img className="d-dark-none" src="../../assets/img/spot-illustrations/41.png" alt="" width="200" /><img className="d-light-none" src="../../assets/img/spot-illustrations/dark_41.png" alt="" width="200" /></div>
-                  <h3 className="fw-bolder mt-4">Get The App Now</h3>
-                  <p className="text-body-tertiary">Designed to provide the best user experience possible to all our customers with activities ranging from anything thinkable to the unthinkables.</p><a className="me-2" href="#!"><img src="../../assets/img/generic/play-store.png" alt="" height="32" /></a><a href="#!"><img src="../../assets/img/generic/app-store.png" alt="" height="32" /></a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section> */}
+      </section><br /><br />
     </>
   );
 };
