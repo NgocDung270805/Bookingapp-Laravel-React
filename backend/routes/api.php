@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\ProfileController;
 use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\SocialiteController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Api\ProductActions\BookingController;
 use App\Http\Controllers\Api\ProductActions\CommentController;
@@ -29,6 +30,10 @@ use App\Http\Controllers\Api\ProductActions\FavoriteController;
 // Public routes (không yêu cầu xác thực)
 Route::post('/login', LoginController::class)->name('login');
 Route::post('/register', RegisterController::class)->name('api.register');
+
+// Router Api Login GG & FB
+Route::post('/auth/social/login', [SocialiteController::class, 'loginWithSocial']);
+Route::post('/auth/social/register', [SocialiteController::class, 'registerWithSocial']);
 
 Route::get('products', [ProductController::class, 'index'])->name('index');
 
