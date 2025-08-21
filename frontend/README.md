@@ -76,10 +76,9 @@ my-react-app/
 │
 <!--  -->
 Directory structure:
-└── ngocdung270805-bookingapp-laravel-react/
-    ├── docker-compose.yml
+├── docker-compose.yml
     ├── backend/
-    │   ├── README.md
+    │   ├── README.md   
     │   ├── artisan
     │   ├── CHANGELOG.md
     │   ├── composer.json
@@ -99,10 +98,10 @@ Directory structure:
     │   │   │       ├── CategoriesController.php
     │   │   │       ├── Controller.php
     │   │   │       ├── HomeController.php
-    │   │   │       ├── ProductsController.php
-    │   │   │       ├── UserDetailsController.php
-    │   │   │       ├── UsersProfilesController.php
     │   │   │       ├── Api/
+    │   │   │       │   ├── BannerController.php
+    │   │   │       │   ├── CategoryController.php
+    │   │   │       │   ├── ChatController.php
     │   │   │       │   ├── ProductController.php
     │   │   │       │   ├── Auth/
     │   │   │       │   │   ├── LoginController.php
@@ -114,15 +113,20 @@ Directory structure:
     │   │   │       │       ├── CommentController.php
     │   │   │       │       └── FavoriteController.php
     │   │   │       ├── Auth/
-    │   │   │       │   └── LoginController.php
+    │   │   │       │   ├── LoginController.php
+    │   │   │       │   └── SocialiteController.php
     │   │   │       └── Web/
+    │   │   │           ├── BannerController.php
     │   │   │           ├── ProductAttributeTypeController.php
     │   │   │           ├── ProductAttributeValueConfigController.php
     │   │   │           ├── ProductAttributeValueController.php
     │   │   │           ├── ProductController.php
     │   │   │           ├── ProductVariantController.php
-    │   │   │           └── TagController.php
+    │   │   │           ├── TagController.php
+    │   │   │           └── Accounts/
+    │   │   │               └── AdminController.php
     │   │   ├── Models/
+    │   │   │   ├── Banner.php
     │   │   │   ├── Booking.php
     │   │   │   ├── Category.php
     │   │   │   ├── Comment.php
@@ -138,44 +142,25 @@ Directory structure:
     │   │   │   ├── User_details.php
     │   │   │   └── Users_profiles.php
     │   │   └── Providers/
+    │   │       └── AppServiceProvider.php
     │   ├── bootstrap/
+    │   │   ├── app.php
+    │   │   ├── providers.php
+    │   │   └── cache/
+    │   │       └── .gitignore
     │   ├── config/
+    │   │   ├── app.php
+    │   │   ├── auth.php
+    │   │   ├── cache.php
+    │   │   ├── database.php
+    │   │   ├── filesystems.php
+    │   │   ├── logging.php
+    │   │   ├── mail.php
+    │   │   ├── queue.php
+    │   │   ├── sanctum.php
+    │   │   ├── services.php
+    │   │   └── session.php
     │   ├── database/
-    │   │   ├── factories/
-    │   │   │   ├── CategoriesFactory.php
-    │   │   │   ├── ProductsFactory.php
-    │   │   │   ├── UserDetailsFactory.php
-    │   │   │   ├── UserFactory.php
-    │   │   │   └── UsersProfilesFactory.php
-    │   │   ├── migrations/
-    │   │   │   ├── 0001_01_01_000000_create_users_table.php
-    │   │   │   ├── 0001_01_01_000001_create_cache_table.php
-    │   │   │   ├── 0001_01_01_000002_create_jobs_table.php
-    │   │   │   ├── 2025_05_15_155515_create_permission_tables.php
-    │   │   │   ├── 2025_05_23_072204_create_users_profiles_table.php
-    │   │   │   ├── 2025_05_23_073645_create_user_details_table.php
-    │   │   │   ├── 2025_05_23_160448_create_categories_table.php
-    │   │   │   ├── 2025_05_23_161217_create_products_table.php
-    │   │   │   ├── 2025_06_18_070550_create_tags_table.php
-    │   │   │   ├── 2025_06_18_070640_create_category_tag_table.php
-    │   │   │   ├── 2025_06_18_095645_create_product_tag_table.php
-    │   │   │   ├── 2025_06_19_064231_create_product_variants_table.php
-    │   │   │   ├── 2025_06_19_064739_create_product_images_table.php
-    │   │   │   ├── 2025_06_19_071932_create_product_category_table.php
-    │   │   │   ├── 2025_06_19_154535_create_product_attribute_types_table.php
-    │   │   │   ├── 2025_06_19_154548_create_product_attribute_values_table.php
-    │   │   │   ├── 2025_06_19_154559_create_product_variant_attribute_value_table.php
-    │   │   │   ├── 2025_06_24_080241_create_product_attribute_value_configs_table.php
-    │   │   │   ├── 2025_06_29_072232_create_personal_access_tokens_table.php
-    │   │   │   ├── 2025_06_30_073330_create_product_favorites_table.php
-    │   │   │   ├── 2025_06_30_073347_create_bookings_table.php
-    │   │   │   └── 2025_06_30_073354_create_comments_table.php
-    │   │   └── seeders/
-    │   │       ├── CategoriesSeeder.php
-    │   │       ├── DatabaseSeeder.php
-    │   │       ├── ProductsSeeder.php
-    │   │       ├── UserDetailsSeeder.php
-    │   │       └── UsersProfilesSeeder.php
     │   ├── public/
     │   ├── resources/
     │   │   ├── css/
@@ -187,6 +172,15 @@ Directory structure:
     │   │       ├── index.blade.php
     │   │       ├── welcome.blade.php
     │   │       ├── apps/
+    │   │       │   ├── account/
+    │   │       │   │   ├── admin/
+    │   │       │   │   │   └── index.blade.php
+    │   │       │   │   ├── manager/
+    │   │       │   │   │   └── index.blade.php
+    │   │       │   │   └── users/
+    │   │       │   │       └── index.blade.php
+    │   │       │   ├── banners/
+    │   │       │   │   └── index.blade.php
     │   │       │   ├── category/
     │   │       │   │   └── index.blade.php
     │   │       │   ├── product/
@@ -205,9 +199,11 @@ Directory structure:
     │   │           └── sidebar.blade.php
     │   ├── routes/
     │   │   ├── api.php
+    │   │   ├── backup.php
     │   │   ├── console.php
     │   │   └── web.php
     │   ├── storage/
+    │   ├── tests/
     │   └── .github/
     └── frontend/
         ├── README.md
@@ -217,6 +213,7 @@ Directory structure:
         ├── nginx.conf
         ├── package-lock.json
         ├── package.json
+        ├── vercel.json
         ├── vite.config.js
         ├── .gitignore
         ├── public/
@@ -277,5 +274,12 @@ Directory structure:
             │       └── containers/
             │           └── ProfilePage.jsx
             └── pages/
+                ├── About/
+                │   └── containers/
+                │       ├── AboutPage.jsx
+                │       └── AboutUs.module.css
                 └── Home/
-                    └── HomePage.jsx
+                    └── containers/
+                        ├── CategorySlider.module.css
+                        ├── CustomerSlider.module.css
+                        └── HomePage.jsx
