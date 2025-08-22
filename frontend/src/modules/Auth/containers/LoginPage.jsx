@@ -25,17 +25,17 @@ const LoginPage = () => {
 
   // Sử dụng useEffect để xử lý chuyển hướng sau khi state thay đổi
   useEffect(() => {
-    // Xử lý trạng thái xác thực
     if (isAuthenticated && user) {
-      console.log('Người dùng đã xác thực. Kiểm tra vai trò và chuyển hướng.');
       const isAdmin = user.roles?.some((r) => r.name === 'admin');
+
+      // Chuyển hướng một lần khi isAuthenticated là true
       if (isAdmin) {
-        window.location.href = PATHS.ADMIN_DASHBOARD;
+        navigate(PATHS.DASHBOARD, { replace: true });
       } else {
         navigate(PATHS.HOME, { replace: true });
       }
     }
-  }, [location, isAuthenticated, user, navigate, dispatch]);
+  }, [isAuthenticated, navigate, user]);
 
   // Nếu người dùng đã xác thực (và đang trong quá trình chuyển hướng bởi useEffect), không render form login
   if (isAuthenticated) {

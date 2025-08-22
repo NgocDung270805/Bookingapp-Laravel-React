@@ -1,7 +1,9 @@
 // src/App.jsx
 
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Layouts
 import MainLayout from './core/layouts/MainLayout/MainLayout';
@@ -30,31 +32,41 @@ const ProtectedProductsPage = withAuth(ProductsPage);
 const ProtectedProductsByCategoriesPage = withAuth(ProductsByCategoriesPage);
 const ProtectedProductDetailPage = withAuth(ProductDetailPage);
 
-
 const App = () => {
-  return (
-    // Loại bỏ <Provider> và <Router> ở đây
-    <Routes>
-      <Route path={PATHS.LOGIN} element={<AuthLayout />}>
-        <Route index element={<LoginPage />} />
-      </Route>
-      <Route path={PATHS.REGISTER} element={<AuthLayout />}>
-        <Route index element={<RegisterPage />} />
-      </Route>
-      <Route path={PATHS.AUTH_CALLBACK} element={<AuthCallbackPage />} />
-      <Route path={PATHS.HOME} element={<MainLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path={PATHS.ABOUT} element={<AboutPage />} />
-        <Route
-          path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProductsByCategoriesPage />}
-        />
-        <Route path={PATHS.PRODUCT_DETAIL_BY_SLUG} element={<ProductDetailPage />} />
-        <Route path={PATHS.PRODUCTS} element={<ProductsPage />} />
-        <Route path={PATHS.PROFILE} element={<ProtectedProfilePage />} />
-      </Route>
-    </Routes>
-    // Loại bỏ </Provider> và </Router> ở đây
-  );
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.message) {
+            toast.success(location.state.message);
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
+
+    return (
+        <div>
+            <Routes>
+                {/* Routes không cần layout, ví dụ: trang callback */}
+                <Route path={PATHS.AUTH_CALLBACK} element={<AuthCallbackPage />} />
+
+                {/* Routes với AuthLayout cho các trang đăng nhập/đăng ký */}
+                <Route element={<AuthLayout />}>
+                    <Route path={PATHS.LOGIN} element={<LoginPage />} />
+                    <Route path={PATHS.REGISTER} element={<RegisterPage />} />
+                </Route>
+
+                {/* Routes với MainLayout cho các trang chính và cần bảo vệ */}
+                <Route element={<MainLayout />}>
+                    <Route path={PATHS.HOME} element={<HomePage />} />
+                    <Route path={PATHS.ABOUT} element={<AboutPage />} />
+                    <Route path={PATHS.PRODUCTS} element={<ProtectedProductsPage />} />
+                    <Route path={PATHS.PROFILE} element={<ProtectedProfilePage />} />
+                    <Route path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProtectedProductsByCategoriesPage />} />
+                    <Route path={PATHS.PRODUCT_DETAIL_BY_SLUG} element={<ProtectedProductDetailPage />} />
+                </Route>
+            </Routes>
+            <ToastContainer />
+        </div>
+    );
 };
 
 export default App;

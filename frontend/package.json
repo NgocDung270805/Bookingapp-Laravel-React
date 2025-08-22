@@ -21,6 +21,7 @@
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.3",
+    "react-toastify": "^11.0.5",
     "simplebar-react": "^3.3.2",
     "typed.js": "^2.1.0"
   },
