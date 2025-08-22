@@ -1,4 +1,5 @@
 <?php
+// app/Http/Controllers/Api/Auth/SocialiteController.php
 
 namespace App\Http\Controllers\Api\Auth;
 
@@ -6,128 +7,63 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Facades\Socialite;
 
 class SocialiteController extends Controller
 {
     /**
-     * Login với thông tin từ Google/Facebook (chỉ cần email)
+     * Chuyển hướng người dùng đến trang xác thực của nhà cung cấp.
      */
-    /**
-     * Login với thông tin từ Google/Facebook (chỉ cần email)
-     * Tự động tạo tài khoản mới nếu chưa có
-     */
-    public function loginWithSocial(Request $request)
+    public function redirectToProvider($provider)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
-            'name' => ['nullable', 'string', 'max:255'],
-            'provider' => ['required', 'in:google,facebook'],
-            'device_name' => ['nullable', 'string', 'max:255'],
-        ]);
-
-        try {
-            // Tìm user bằng email
-            $user = User::where('email', $request->email)->first();
-
-            // Nếu chưa có user, tạo mới
-            if (!$user) {
-                $user = User::create([
-                    'name' => $request->name ?: 'User',
-                    'email' => $request->email,
-                    'password' => Hash::make(Str::random(16)),
-                    'email_verified_at' => now(),
-                ]);
-
-                // Gán role mặc định là user
-                $user->assignRole('user');
-
-                $message = 'Đăng ký và đăng nhập thành công!';
-            } else {
-                $message = 'Đăng nhập thành công!';
-            }
-
-            // Kiểm tra role - chỉ cho phép admin, manager và user
-            if (!$user->hasRole('admin') && !$user->hasRole('manager') && !$user->hasRole('user')) {
-                return response()->json([
-                    'message' => 'Tài khoản của bạn không có quyền truy cập.',
-                    'error' => 'UNAUTHORIZED_ROLE'
-                ], 403);
-            }
-
-            // Tạo Sanctum token
-            $deviceName = $request->input('device_name', $request->provider . '_login');
-            $token = $user->createToken($deviceName)->plainTextToken;
-
-            // Tải các relationship nếu cần
-            $user->load(['profile', 'details']);
-
-            return response()->json([
-                'message' => $message,
-                'user' => $user,
-                'token' => $token,
-                'role' => $user->getRoleNames()->first()
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Social login failed: ' . $e->getMessage(), [
-                'email' => $request->email,
-                'provider' => $request->provider
-            ]);
-
-            return response()->json([
-                'message' => 'Đăng nhập thất bại. Vui lòng thử lại.',
-                'error' => 'SOCIAL_LOGIN_FAILED'
-            ], 500);
-        }
+        Log::info('Redirecting to social provider', ['provider' => $provider]);
+        // ✅ Gửi người dùng đến trang đăng nhập của Google
+        return Socialite::driver($provider)->stateless()->redirect();
     }
 
     /**
-     * Đăng ký tài khoản mới từ social (nếu cần mở sau này)
+     * Nhận callback từ nhà cung cấp và xử lý đăng nhập/đăng ký.
      */
-    public function registerWithSocial(Request $request)
+    public function handleProviderCallback(Request $request, $provider)
     {
-        $request->validate([
-            'email' => ['required', 'email', 'unique:users,email'],
-            'name' => ['required', 'string', 'max:255'],
-            'provider' => ['required', 'in:google,facebook'],
-            'device_name' => ['nullable', 'string', 'max:255'],
-        ]);
+        Log::info('Received social callback from provider', ['provider' => $provider, 'query_params' => $request->all()]);
 
         try {
-            // Tạo user mới
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make(Str::random(16)), // Random password
-                'email_verified_at' => now(), // Mark as verified từ social
-            ]);
+            // ✅ Laravel Socialite sẽ tự động trao đổi mã xác thực với Google
+            $socialUser = Socialite::driver($provider)->stateless()->user();
+            
+            Log::info('Successfully fetched user info from Google', ['email' => $socialUser->getEmail(), 'name' => $socialUser->getName()]);
 
-            // Gán role mặc định
-            $user->assignRole('user'); // Hoặc role khác nếu cần
+            $user = User::firstOrCreate(
+                ['email' => $socialUser->getEmail()],
+                [
+                    'name' => $socialUser->getName(),
+                    'password' => Hash::make(Str::random(16)),
+                    'provider' => $provider,
+                    'provider_id' => $socialUser->getId(),
+                    'email_verified_at' => now(),
+                ]
+            );
 
-            $deviceName = $request->input('device_name', $request->provider . '_register');
-            $token = $user->createToken($deviceName)->plainTextToken;
+            if ($user->wasRecentlyCreated) {
+                // Giả sử có role `user`
+                $user->assignRole('user');
+            }
 
-            $user->load(['profile', 'details']);
+            $role = $user->getRoleNames()->first();
+            $token = $user->createToken('auth-token')->plainTextToken;
 
-            return response()->json([
-                'message' => 'Đăng ký thành công!',
-                'user' => $user,
-                'token' => $token,
-                'role' => $user->getRoleNames()->first()
-            ], 201);
+            Log::info('User login successful. Redirecting to frontend.', ['user_id' => $user->id]);
+
+            // ✅ Chuyển hướng về frontend, đính kèm token và thông tin user
+            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $token . '&user_name=' . urlencode($user->name) . '&user_email=' . urlencode($user->email));
+
         } catch (\Exception $e) {
-            Log::error('Social register failed: ' . $e->getMessage(), [
-                'email' => $request->email,
-                'provider' => $request->provider
-            ]);
-
-            return response()->json([
-                'message' => 'Đăng ký thất bại. Vui lòng thử lại.',
-                'error' => 'SOCIAL_REGISTER_FAILED'
-            ], 500);
+            Log::error('Socialite login failed', ['error' => $e->getMessage()]);
+            // ✅ Chuyển hướng về frontend với thông báo lỗi
+            return redirect(env('FRONTEND_URL') . '/auth/callback?error=login_failed');
         }
     }
 }

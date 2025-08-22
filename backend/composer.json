@@ -7,10 +7,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "google/apiclient": "^2.18",
         "google/cloud-ai-platform": "^1.31",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.1",
-        "laravel/socialite": "^5.23",
+        "laravel/socialite": "*",
         "laravel/tinker": "^2.10.1",
         "spatie/laravel-permission": "^6.18"
     },

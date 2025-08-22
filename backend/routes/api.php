@@ -27,13 +27,17 @@ use App\Http\Controllers\Api\ProductActions\FavoriteController;
 |
 */
 
+Route::get('/check-env', function () {
+    $client_id = config('services.google.client_id');
+    return response()->json(['google_client_id' => $client_id]);
+});
 // Public routes (không yêu cầu xác thực)
 Route::post('/login', LoginController::class)->name('login');
 Route::post('/register', RegisterController::class)->name('api.register');
 
 // Router Api Login GG & FB
-Route::post('/auth/social/login', [SocialiteController::class, 'loginWithSocial']);
-Route::post('/auth/social/register', [SocialiteController::class, 'registerWithSocial']);
+Route::get('auth/{provider}/redirect', [SocialiteController::class, 'redirectToProvider']);
+Route::get('auth/{provider}/callback', [SocialiteController::class, 'handleProviderCallback']);
 
 Route::get('products', [ProductController::class, 'index'])->name('index');
 
@@ -46,9 +50,9 @@ Route::post('/chat/gemini', [ChatController::class, 'geminiChat'])->name('api.ch
 // Lấy tất cả danh mục
 Route::get('categories', [CategoryController::class, 'index']);
 // Lấy danh sách sản phẩm theo slug danh mục
-Route::get('/products/categories/:categorySlug{category_slug}', [ProductController::class, 'productsByCategory']);// Ví dụ: /api/categories/sedan-cars/products
+Route::get('/products/categories/:categorySlug{category_slug}', [ProductController::class, 'productsByCategory']); // Ví dụ: /api/categories/sedan-cars/products
 // Lấy chi tiết sản phẩm theo slug
-Route::get('products/{product_slug}', [ProductController::class, 'show']);// Ví dụ: /api/products/vinfast-lux-a2-0
+Route::get('products/{product_slug}', [ProductController::class, 'show']); // Ví dụ: /api/products/vinfast-lux-a2-0
 
 
 // Protected routes (yêu cầu xác thực với Sanctum)
@@ -78,7 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('comments', CommentController::class)->except(['index', 'store']); // Quản lý comments (show, update, destroy)
 });
 
-Route::get('banners', [BannerController::class, 'index'])->name('api.banners.index'); 
+Route::get('banners', [BannerController::class, 'index'])->name('api.banners.index');
 Route::get('banners/{banner}', [BannerController::class, 'show'])->name('api.banners.show'); 
 
 // Api Url 
