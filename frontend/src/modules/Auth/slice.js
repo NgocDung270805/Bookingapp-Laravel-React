@@ -1,7 +1,7 @@
 // src/modules/Auth/slice.js
 
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, registerApi, logoutApi } from './api';
+import { loginApi, registerApi, logoutApi, loginSocialApi } from './api';
 import { TOKEN_KEY, USER_INFO_KEY } from '../../common/constants';
 
 // Khởi tạo trạng thái ban đầu, cố gắng lấy từ Local Storage
@@ -60,11 +60,36 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+// Async Thunk cho đăng nhập bằng mạng xã hội
+export const loginSocial = createAsyncThunk(
+  'auth/loginSocial',
+  async ({ provider, token }, { rejectWithValue }) => {
+    try {
+      const response = await loginSocialApi({ provider, token });
+      localStorage.setItem(TOKEN_KEY, response.token);
+      localStorage.setItem(USER_INFO_KEY, JSON.stringify(response.user));
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Đăng nhập bằng ' + provider + ' thất bại.');
+    }
+  }
+);
+
 // Auth Slice
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setAuth: (state, action) => {
+      const { token, user } = action.payload;
+      state.token = token;
+      state.user = user;
+      state.isAuthenticated = true;
+      state.loading = false;
+      state.error = null;
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(USER_INFO_KEY, JSON.stringify(user));
+    },
     // Action để xóa trạng thái auth (ví dụ: khi người dùng tự động logout)
     clearAuth: (state) => {
       state.token = null;
@@ -84,7 +109,15 @@ const authSlice = createSlice({
     updateUser: (state, action) => {
       state.user = action.payload;
       localStorage.setItem(USER_INFO_KEY, JSON.stringify(action.payload));
-    }
+    },
+    socialLoginSuccess: (state, action) => {
+      const { token, role } = action.payload;
+      state.isAuthenticated = true;
+      state.token = token;
+      state.user = { role }; // Lưu role, có thể cần fetch user info đầy đủ sau
+      localStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(USER_INFO_KEY, JSON.stringify({ role }));
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -145,9 +178,30 @@ const authSlice = createSlice({
         state.token = null;
         state.user = null;
         state.error = action.payload;
+      })
+
+      // xử lý cho login social trong extraReducers
+      .addCase(loginSocial.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginSocial.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+        state.error = null;
+      })
+      .addCase(loginSocial.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.token = null;
+        state.user = null;
+        state.error = action.payload;
       });
   },
 });
 
+export const { setAuth } = authSlice.actions;
 export const { clearAuth, setAuthError, updateUser } = authSlice.actions; // Export actions
 export default authSlice.reducer; // Export reducer mặc định

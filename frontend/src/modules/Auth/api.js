@@ -19,3 +19,9 @@ export const logoutApi = async () => {
   const response = await api.post('/logout'); // Endpoint logout thường không cần body
   return response.data;
 };
+
+// Hàm API cho social login
+export const loginSocialApi = async ({ provider, token }) => {
+  const response = await api.post(`/auth/social/${provider}/callback`, { token });
+  return response.data;
+};

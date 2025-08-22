@@ -10,6 +10,7 @@ export const PATHS = {
   HOME: '/',
   ABOUT: '/about',
   LOGIN: '/login',
+  AUTH_CALLBACK: '/auth/callback',
   REGISTER: '/register',
   PROFILE: '/user/profile',
   LOGOUT: '/logout',
@@ -17,6 +18,7 @@ export const PATHS = {
   PRODUCTS_BY_CATEGORY_SLUG: '/products/categories/:categorySlug',
   PRODUCT_DETAIL_BY_SLUG: '/products/:productSlug',
   ADMIN_DASHBOARD: BASE_URL_ADMIN,
+  API_BASE_URL: API_BASE_URL,
 };
 
 // Bạn có thể định nghĩa các giá trị giới tính nếu cần kiểm tra
