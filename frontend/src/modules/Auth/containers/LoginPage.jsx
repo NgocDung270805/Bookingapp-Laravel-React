@@ -74,15 +74,15 @@ const LoginPage = () => {
 
   return (
     <>
-      <main className="main" id="top" style={{ width: '100%', height: '100vh', maxWidth: '100%', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', }}>
-        <div className="container-fluid bg-body-tertiary dark__bg-gray-1200" style={{ width: '100%', maxWidth: '1200px', }}>
+      <main className="main" id="top" style={{ width: '100%' }}>
+        <div className="container-fluid bg-body-tertiary dark__bg-gray-1200">
           <div className="bg-holder bg-auth-card-overlay" style={{ backgroundImage: 'url(../../../assets/img/bg/37.png)' }}>
           </div>
           <div className="row flex-center position-relative min-vh-200 g-0 py-5">
             <div className="col-12 col-lg-10 col-xl-12">
               <div className="card border border-translucent auth-card">
-                <div className="card-body pe-md-0">
-                  <div className="row align-items-center gx-5 gy-7">
+                <div className="card-body pe-md-15">
+                  <div className="row align-items-center gap-15">
                     <div
                       className="col-12 col-lg-6 bg-body-highlight dark__bg-gray-1100 rounded-3 position-relative overflow-hidden auth-title-box">
                       <div className="bg-holder" style={{ backgroundImage: 'url(../../../assets/img/bg/38.png)' }}>
@@ -110,7 +110,7 @@ const LoginPage = () => {
                           src="../../../assets/img/spot-illustrations/auth-dark.png" alt="auth1" />
                       </div>
                     </div>
-                    <div className="col-12 col-lg-6 d-flex flex-column justify-content-center">
+                    <div className="col mx-auto col-lg-100">
                       <div className="auth-form-box">
                         <div className="text-center mb-7">
                           <Link to={PATHS.HOME} className="d-flex flex-center text-decoration-none mb-4">

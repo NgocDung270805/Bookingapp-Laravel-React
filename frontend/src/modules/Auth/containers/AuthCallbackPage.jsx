@@ -22,7 +22,7 @@ const AuthCallbackPage = () => {
             const user = { name: decodeURIComponent(user_name), email: decodeURIComponent(user_email) };
             dispatch(setAuth({ user, token }));
             // ✅ Truyền thông báo thành công qua state
-            navigate(PATHS.DASHBOARD, { state: { message: `Xin chào, ${user.name}! Bạn đã đăng nhập thành công.` } });
+            navigate(PATHS.HOME, { state: { message: `Xin chào, ${user.name}! Bạn đã đăng nhập thành công.` } });
         } else if (error) {
             console.error('Đăng nhập thất bại:', error);
             // ✅ Truyền thông báo lỗi qua state
