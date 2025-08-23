@@ -18,9 +18,9 @@ class SocialiteController extends Controller
      */
     public function redirectToProvider($provider)
     {
-        Log::info('Redirecting to social provider', ['provider' => $provider]);
-        // ✅ Gửi người dùng đến trang đăng nhập của Google
-        return Socialite::driver($provider)->stateless()->redirect();
+        $redirectUrl = env('GOOGLE_FRONTEND_URL');
+        $response = Socialite::driver('google')->stateless()->redirectUrl($redirectUrl)->redirect();
+        return $response;
     }
 
     /**
@@ -32,8 +32,11 @@ class SocialiteController extends Controller
 
         try {
             // ✅ Laravel Socialite sẽ tự động trao đổi mã xác thực với Google
-            $socialUser = Socialite::driver($provider)->stateless()->user();
-            
+            $socialUser = Socialite::driver($provider)
+                ->stateless()
+                ->redirectUrl(env('GOOGLE_FRONTEND_URL')) // 👈 thêm dòng này
+                ->user();
+
             Log::info('Successfully fetched user info from Google', ['email' => $socialUser->getEmail(), 'name' => $socialUser->getName()]);
 
             $user = User::firstOrCreate(
@@ -47,8 +50,9 @@ class SocialiteController extends Controller
                 ]
             );
 
+            // Nếu là account mới gán mặc định là user
             if ($user->wasRecentlyCreated) {
-                // Giả sử có role `user`
+                // Giả sử có role `user` thì gán role cho user là user
                 $user->assignRole('user');
             }
 
@@ -58,8 +62,9 @@ class SocialiteController extends Controller
             Log::info('User login successful. Redirecting to frontend.', ['user_id' => $user->id]);
 
             // ✅ Chuyển hướng về frontend, đính kèm token và thông tin user
-            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $token . '&user_name=' . urlencode($user->name) . '&user_email=' . urlencode($user->email));
-
+            return redirect(env('FRONTEND_URL') . '/auth/callback?token=' . $token .
+                '&user_name=' . urlencode($user->name) .
+                '&user_email=' . urlencode($user->email));
         } catch (\Exception $e) {
             Log::error('Socialite login failed', ['error' => $e->getMessage()]);
             // ✅ Chuyển hướng về frontend với thông báo lỗi
