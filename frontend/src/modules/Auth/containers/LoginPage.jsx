@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../appRedux';
-import { loginUser, loginSocial } from '../slice';
+import { loginUser } from '../slice';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { PATHS } from '../../../common/constants';
 import FacebookLogin from "@greatsumini/react-facebook-login";
@@ -21,6 +21,12 @@ const LoginPage = () => {
   const handleGoogleLogin = () => {
     // Chuyển hướng đến endpoint backend để bắt đầu quá trình OAuth
     window.location.href = `${PATHS.API_BASE_URL}auth/google/redirect`;
+  };
+
+  // Hàm xử lý việc chuyển hướng
+  const handleFacebookLogin = () => {
+    // Chuyển hướng đến endpoint backend để bắt đầu quá trình OAuth
+    window.location.href = `${PATHS.API_BASE_URL}auth/facebook/redirect`;
   };
 
   // Sử dụng useEffect để xử lý chuyển hướng sau khi state thay đổi
@@ -125,22 +131,9 @@ const LoginPage = () => {
                         <button className="btn btn-phoenix-secondary w-100 mb-3" onClick={handleGoogleLogin}>
                           <span className="fab fa-google text-danger me-2 fs-9"></span>Đăng nhập với Google
                         </button>
-
-                        <FacebookLogin
-                          appId="YOUR_FACEBOOK_APP_ID"
-                          autoLoad={false}
-                          fields="name,email,picture"
-                          callback={handleFacebookResponse}
-                          render={({ onClick }) => (
-                            <button
-                              className="btn btn-phoenix-secondary w-100"
-                              onClick={onClick}
-                              disabled={loading}
-                            >
-                              <span className="fab fa-facebook text-primary me-2 fs-9"></span>Đăng nhập với Facebook
-                            </button>
-                          )}
-                        />
+                        <button className="btn btn-phoenix-secondary w-100" onClick={handleFacebookLogin}>
+                          <span className="fab fa-facebook text-primary me-2 fs-9"></span>Đăng nhập với Facebook
+                        </button> 
                         <div className="position-relative">
                           <hr className="bg-body-secondary mt-5 mb-4" />
                           <div className="divider-content-center bg-body-emphasis">hoặc sử dụng email</div>
