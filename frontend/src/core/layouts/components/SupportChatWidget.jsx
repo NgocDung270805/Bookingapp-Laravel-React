@@ -303,7 +303,13 @@ const SupportChatWidget = () => {
                     <span className="ping-icon-bg"></span>
                     <span className="fa-solid fa-circle ping-icon"></span>
                 </span>
-                <span className="fa-solid fa-headset text-primary fs-8 d-sm-none"></span>
+                <span className="text-primary fs-8 d-sm-none" style={{ transform: "translateX(90px)" }}>
+                    <DotLottieReact
+                        src="https://lottie.host/b3c296b0-4ee3-44d5-af72-dd9091a410d4/6kxlNEK1rA.lottie"
+                        loop
+                        autoplay style={{ width: "50px", height: "50px ", marginLeft: "-115px" }}
+                    />
+                </span>
                 <span className="fa-solid fa-chevron-down text-primary fs-7"></span>
             </button>
         </div>
