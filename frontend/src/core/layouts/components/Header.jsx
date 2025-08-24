@@ -314,7 +314,7 @@ const Header = () => {
                 <li><Link to={PATHS.BOOKING_POLICY} className="dropdown-item">Chính Sách Đặt Lịch</Link></li>
                 <li><Link to={PATHS.FAQ} className="dropdown-item">Câu Hỏi Thường Gặp</Link></li>
                 <li><Link to={PATHS.CONTACT} className="dropdown-item">Liên Hệ</Link></li>
-                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Chính Sách Bảo Hành</Link></li> */}
+                <li><Link to={PATHS.WARRANTY_POLICY} className="dropdown-item">Chính Sách Bảo Hành</Link></li>
                 {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Điều Khoản</Link></li> */}
               </ul>
             </li>

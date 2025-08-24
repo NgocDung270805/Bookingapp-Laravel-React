@@ -13,6 +13,7 @@ export const PATHS = {
   BOOKING_POLICY: '/booking-policy',
   FAQ: '/faq',
   CONTACT: '/contact',
+  WARRANTY_POLICY: '/warranty-policy',
   LOGIN: '/login',
   AUTH_CALLBACK: '/auth/callback',
   REGISTER: '/register',

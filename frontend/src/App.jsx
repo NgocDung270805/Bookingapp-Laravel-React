@@ -16,6 +16,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy.jsx';
 import BookingPolicy from './pages/BookingPolicy/BookingPolicy.jsx';
 import FAQPage from './pages/FAQ/FAQPage.jsx';
 import ContactPage from './pages/Contact/ContactPage.jsx';
+import WarrantyPolicy from './pages/Warranty/WarrantyPolicy.jsx';
 import ProductsPage from './modules/Products/containers/ProductsPage';
 import LoginPage from './modules/Auth/containers/LoginPage';
 import AuthCallbackPage from './modules/Auth/containers/AuthCallbackPage';
@@ -66,6 +67,7 @@ const App = () => {
                     <Route path={PATHS.BOOKING_POLICY} element={<BookingPolicy />} />
                     <Route path={PATHS.FAQ} element={<FAQPage />} />
                     <Route path={PATHS.CONTACT} element={<ContactPage />} />
+                    <Route path={PATHS.WARRANTY_POLICY} element={<WarrantyPolicy />} />
                     <Route path={PATHS.PRODUCTS} element={<ProtectedProductsPage />} />
                     <Route path={PATHS.PROFILE} element={<ProtectedProfilePage />} />
                     <Route path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProtectedProductsByCategoriesPage />} />

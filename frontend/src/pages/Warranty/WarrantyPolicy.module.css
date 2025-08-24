@@ -1,0 +1,96 @@
+.container {
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.6;
+  background: #fff;
+  color: #000;
+}
+
+.header {
+  position: relative;
+  background: linear-gradient(to right, #000, #333);
+  color: #ffd700;
+  padding: 60px 20px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1500&q=80")
+    center/cover;
+  opacity: 0.25;
+  z-index: 0;
+}
+
+.header h1,
+.header p {
+  position: relative;
+  z-index: 1;
+  animation: fadeDown 1.5s ease;
+}
+
+.header h1 {
+  font-size: 2.6rem;
+  margin: 0;
+  text-transform: uppercase;
+  color: #ffd700;
+}
+
+.header p {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.main {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+h2 {
+  color: #000;
+  margin-bottom: 10px;
+  position: relative;
+  display: inline-block;
+}
+
+h2::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: #ffd700;
+  margin-top: 5px;
+  animation: slideIn 1s ease;
+}
+
+ul, ol {
+  margin: 10px 0 0 25px;
+}
+
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    width: 0;
+  }
+  to {
+    width: 50px;
+  }
+}
