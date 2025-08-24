@@ -14,6 +14,8 @@ export const PATHS = {
   FAQ: '/faq',
   CONTACT: '/contact',
   WARRANTY_POLICY: '/warranty-policy',
+  TERMS: '/terms',
+
   LOGIN: '/login',
   AUTH_CALLBACK: '/auth/callback',
   REGISTER: '/register',
