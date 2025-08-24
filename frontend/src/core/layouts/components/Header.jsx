@@ -310,7 +310,7 @@ const Header = () => {
               <a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Thông tin / Chính sách</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
                 <li><Link to={PATHS.ABOUT} className="dropdown-item">Giới thiệu</Link></li>
-                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Chính Sách Bảo Mật</Link></li> */}
+                <li><Link to={PATHS.PRIVACY_POLICY} className="dropdown-item">Chính Sách Bảo Mật</Link></li>
                 {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Chính Sách Đặt Lịch</Link></li> */}
                 {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Câu Hỏi Thường Gặp</Link></li> */}
                 {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Liên Hệ</Link></li> */}

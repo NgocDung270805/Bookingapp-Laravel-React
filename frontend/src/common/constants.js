@@ -9,6 +9,7 @@ export const USER_INFO_KEY = 'userInfo'; // Key để lưu thông tin user trong
 export const PATHS = {
   HOME: '/',
   ABOUT: '/about',
+  PRIVACY_POLICY: '/privacy-policy',
   LOGIN: '/login',
   AUTH_CALLBACK: '/auth/callback',
   REGISTER: '/register',
