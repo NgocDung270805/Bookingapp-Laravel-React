@@ -68,7 +68,7 @@ const Header = () => {
             )} */}
           </div>
         </Link>
-        <div className="col-auto order-md-1">
+        <div className="col-auto order-md-1" style={{ transform: window.innerWidth < 768 ? "translateX(180px)" : "none", marginTop: window.innerWidth < 768 ? "-50px" : "0px", }}>
           <ul className="navbar-nav navbar-nav-icons flex-row me-n2">
             <li className="nav-item d-flex align-items-center">
               <div className="theme-control-toggle fa-icon-wait px-2">
@@ -277,7 +277,7 @@ const Header = () => {
             </li>
           </ul>
         </div>
-        <button className="navbar-toggler fs-8 ps-1 ps-sm-3 pe-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button className="navbar-toggler fs-8 ps-1 ps-sm-3 pe-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"  style={{ transform: "translateX(360px)", marginTop: "-40px" }}>
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center pb-0" id="navbarSupportedContent">
