@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use App\Models\Users_profiles;
 
 class SocialiteController extends Controller
 {
@@ -52,7 +53,12 @@ class SocialiteController extends Controller
 
             // Nếu là account mới gán mặc định là user
             if ($user->wasRecentlyCreated) {
-                // Giả sử có role `user` thì gán role cho user là user
+                // Tạo một user profile mới
+                $userProfile = Users_profiles::create([
+                    'user_id' => $user->id,
+                ]);
+
+                // Gán role 'user' cho người dùng mới
                 $user->assignRole('user');
             }
 
