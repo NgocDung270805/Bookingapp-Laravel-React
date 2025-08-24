@@ -13,6 +13,7 @@ import AuthLayout from './core/layouts/AuthLayout/AuthLayout';
 import HomePage from './pages/Home/containers/HomePage.jsx';
 import AboutPage from './pages/About/containers/AboutPage.jsx';
 import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy.jsx';
+import BookingPolicy from './pages/BookingPolicy/BookingPolicy.jsx';
 import ProductsPage from './modules/Products/containers/ProductsPage';
 import LoginPage from './modules/Auth/containers/LoginPage';
 import AuthCallbackPage from './modules/Auth/containers/AuthCallbackPage';
@@ -60,6 +61,7 @@ const App = () => {
                     <Route path={PATHS.HOME} element={<HomePage />} />
                     <Route path={PATHS.ABOUT} element={<AboutPage />} />
                     <Route path={PATHS.PRIVACY_POLICY} element={<PrivacyPolicy />} />
+                    <Route path={PATHS.BOOKING_POLICY} element={<BookingPolicy />} />
                     <Route path={PATHS.PRODUCTS} element={<ProtectedProductsPage />} />
                     <Route path={PATHS.PROFILE} element={<ProtectedProfilePage />} />
                     <Route path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProtectedProductsByCategoriesPage />} />

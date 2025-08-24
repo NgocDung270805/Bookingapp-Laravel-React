@@ -311,7 +311,7 @@ const Header = () => {
               <ul className="dropdown-menu navbar-dropdown-caret">
                 <li><Link to={PATHS.ABOUT} className="dropdown-item">Giới thiệu</Link></li>
                 <li><Link to={PATHS.PRIVACY_POLICY} className="dropdown-item">Chính Sách Bảo Mật</Link></li>
-                {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Chính Sách Đặt Lịch</Link></li> */}
+                <li><Link to={PATHS.BOOKING_POLICY} className="dropdown-item">Chính Sách Đặt Lịch</Link></li>
                 {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Câu Hỏi Thường Gặp</Link></li> */}
                 {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Liên Hệ</Link></li> */}
                 {/* <li><Link to={PATHS.ABOUT} className="dropdown-item">Chính Sách Bảo Hành</Link></li> */}

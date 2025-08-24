@@ -10,6 +10,7 @@ export const PATHS = {
   HOME: '/',
   ABOUT: '/about',
   PRIVACY_POLICY: '/privacy-policy',
+  BOOKING_POLICY: '/booking-policy',
   LOGIN: '/login',
   AUTH_CALLBACK: '/auth/callback',
   REGISTER: '/register',
