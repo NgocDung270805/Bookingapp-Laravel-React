@@ -12,6 +12,7 @@ export const PATHS = {
   PRIVACY_POLICY: '/privacy-policy',
   BOOKING_POLICY: '/booking-policy',
   FAQ: '/faq',
+  CONTACT: '/contact',
   LOGIN: '/login',
   AUTH_CALLBACK: '/auth/callback',
   REGISTER: '/register',

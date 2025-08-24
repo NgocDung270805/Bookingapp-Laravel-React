@@ -1,0 +1,126 @@
+.container {
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.6;
+  background: #fff;
+  color: #000;
+}
+
+.header {
+  position: relative;
+  background: linear-gradient(to right, #000, #333);
+  color: #ffd700;
+  padding: 60px 20px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://img.youtube.com/vi/bL15F7rpFJA/maxresdefault.jpg")
+    center/cover;
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.header h1,
+.header p {
+  position: relative;
+  z-index: 1;
+  animation: fadeDown 1.5s ease;
+}
+
+.header h1 {
+  font-size: 2.6rem;
+  margin: 0;
+  text-transform: uppercase;
+    color: #ffd700;
+}
+
+.header p {
+  margin-top: 10px;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.main {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.info {
+  margin-bottom: 40px;
+}
+
+.info h2 {
+  margin-bottom: 15px;
+  color: #000;
+}
+
+.info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.info li {
+  margin-bottom: 10px;
+}
+
+.formSection {
+  margin-bottom: 40px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form input,
+.form textarea {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.form input:focus,
+.form textarea:focus {
+  border: 1px solid #ffd700;
+}
+
+.form button {
+  background: #000;
+  color: #ffd700;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.form button:hover {
+  background: #333;
+  transform: translateY(-2px);
+}
+
+.map h2 {
+  margin-bottom: 15px;
+}
+
+/* Animation */
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
