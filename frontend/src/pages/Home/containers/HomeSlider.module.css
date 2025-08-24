@@ -1,0 +1,14 @@
+.heroBanner {
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Thêm media query cho mobile */
+@media (max-width: 768px) {
+  .heroBanner {
+    height: 23vh; /* Điều chỉnh chiều cao cho mobile nếu cần */
+  }
+}

@@ -12,6 +12,7 @@ import { fetchCategories, selectAllCategories, selectCategoriesLoading, selectCa
 import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading, selectProductsError, selectNewestProducts, fetchNewestProducts } from '../../../modules/Products/slice';
 import categoryStyles from './CategorySlider.module.css'; // Import CSS module cho category
 import customerStyles from './CustomerSlider.module.css';
+import styles from './HomeSlider.module.css';
 
 dayjs.locale('vi')
 const HomePage = () => {
@@ -41,7 +42,6 @@ const HomePage = () => {
   const productsError = useSelector(selectProductsError);
   // Lấy sản phẩm mới nhất theo created_at
   const newestProducts = useSelector(selectNewestProducts);
-
   // ===============================================
   // useEffect để fetch dữ liệu khi component mount
   // ===============================================
@@ -198,28 +198,13 @@ const HomePage = () => {
   return (
     <>
       <div
-        className="booking-hero-header position-relative"
-        style={{ height: '737.41px' }} // wrapper cao, giữ layout
-      >
-        <div
-          className="bg-holder position-absolute top-0 start-0 w-100 h-100"
-          style={{
-            backgroundImage: sliderBanners?.image_path
-              ? `url(${sliderBanners.image_path})`
-              : 'url(../../assets/img/bg/slider.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            imageRendering: 'auto', // hoặc 'crisp-edges' hoặc 'pixelated' nếu ảnh cần
-          }}
-        >
-          {bannersLoading && (
-            <div className="loading-banner text-white text-center pt-5">
-
-            </div>
-          )}
-        </div>
-      </div>
+        className={styles.heroBanner}
+        style={{
+          backgroundImage: sliderBanners?.image_path
+            ? `url(${sliderBanners.image_path})`
+            : "url(../../assets/img/bg/slider.jpg)",
+        }}
+      ></div>
 
       <section className="pt-6 pt-md-10 pb-10" >
         <div className="container-medium">
