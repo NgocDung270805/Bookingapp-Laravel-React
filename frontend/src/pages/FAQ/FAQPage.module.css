@@ -1,0 +1,114 @@
+.container {
+  font-family: "Segoe UI", sans-serif;
+  line-height: 1.6;
+  color: #000;
+  background: #fff;
+}
+
+.header {
+  position: relative;
+  background: linear-gradient(to right, #000, #333);
+  color: #ffd700;
+  padding: 60px 20px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1500&q=80")
+    center/cover;
+  opacity: 0.25;
+  z-index: 0;
+}
+
+.header h1,
+.header p {
+  position: relative;
+  z-index: 1;
+  animation: fadeDown 1.5s ease;
+}
+
+.header h1 {
+  font-size: 2.6rem;
+  margin: 0;
+  text-transform: uppercase;
+  color: #ffd700;
+}
+
+.header p {
+  margin-top: 15px;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.main {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.faqItem {
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.faqItem.active {
+  background: #fffbe6;
+  border-left: 4px solid #ffd700;
+}
+
+.question {
+  padding: 15px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.question:hover {
+  background: #f1f1f1;
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: #ffd700;
+  font-weight: bold;
+}
+
+.answer {
+  padding: 15px 20px;
+  border-top: 1px solid #ddd;
+  animation: fadeUp 0.5s ease;
+}
+
+/* Animation */
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

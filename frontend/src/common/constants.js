@@ -11,6 +11,7 @@ export const PATHS = {
   ABOUT: '/about',
   PRIVACY_POLICY: '/privacy-policy',
   BOOKING_POLICY: '/booking-policy',
+  FAQ: '/faq',
   LOGIN: '/login',
   AUTH_CALLBACK: '/auth/callback',
   REGISTER: '/register',
