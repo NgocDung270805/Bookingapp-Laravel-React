@@ -10,6 +10,7 @@ import {
   selectProductsError,
 } from '../slice';
 import { PATHS } from '../../../common/constants';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const ProductsByCategoriesPage = () => {
   const dispatch = useDispatch();
@@ -32,7 +33,13 @@ const ProductsByCategoriesPage = () => {
 
   // Hiển thị loading
   if (loading) {
-    return <div className="container mt-5 text-info">Đang tải sản phẩm...</div>;
+    return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <DotLottieReact
+        src="https://lottie.host/3722dbdc-d3e0-407e-bf0b-5b6805db01ba/duMhR6ttZz.lottie"
+        loop
+        autoplay
+        style={{ width: "300px", height: "300px" }} />
+    </div>;
   }
 
   // Hiển thị lỗi
@@ -41,65 +48,17 @@ const ProductsByCategoriesPage = () => {
   }
 
   // Không có sản phẩm
-  // if (!products.length) {
-  //   return <div className="container mt-5">Không tìm thấy sản phẩm nào trong danh mục này.</div>;
-  // }
+  if (!products.length) {
+    return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <DotLottieReact
+        src="https://lottie.host/ba54bfa2-2a03-4b70-8524-78b1c56e2bd8/zXqz2dLGow.lottie"
+        loop
+        autoplay
+        style={{ width: "500px", height: "500px" }} />
+    </div>;
+  }
 
   return (
-    // <section className="pb-8 pt-5">
-    //   <div className="container-medium">
-    //     {category && (
-    //       <h2 className="fw-bold mb-4">
-    //         Sản phẩm thuộc danh mục: <span className="text-primary">{category.name}</span>
-    //       </h2>
-    //     )}
-    //     <div className="row g-sm-4 g-3">
-    //       {products.map((product) => (
-    //         <div key={product.id} className="col-12 col-md-6 col-lg-4">
-    //           <div className="card shadow-sm h-100 rounded-3">
-    //             <div className="position-relative">
-    //               <img
-    //                 className="img-fluid rounded-top-3"
-    //                 src={`${BASE_URL_ADMIN}/${product.img}`}
-    //                 alt={product.name}
-    //               />
-    //             </div>
-    //             <div className="card-body">
-    //               <h5 className="fw-bold">{product.name}</h5>
-    //               <a
-    //                 className="stretched-link text-decoration-none fw-bold"
-    //                 href={`${PATHS.PRODUCTS}/${product.slug}`}
-    //               >
-    //                 Xem chi tiết
-    //               </a>
-    //               <p className="mb-2 text-secondary-lighter">
-    //                 <span className="fa-solid fa-car-side me-2"></span>
-    //                 {product.categories?.length
-    //                   ? product.categories.map((cat) => cat.name).join(', ')
-    //                   : 'N/A'}
-    //               </p>
-    //               <div className="d-flex align-items-center gap-3">
-    //                 <span className="badge badge-phoenix badge-phoenix-warning fs-8 fw-normal">
-    //                   <span
-    //                     className="fa-solid fa-star me-1 fs-9"
-    //                     data-fa-transform="up-1"
-    //                   ></span>
-    //                   <span className="badge-label">3.8</span>
-    //                 </span>
-    //                 <h4 className="mb-0 text-white fw-bold text-nowrap">
-    //                   {product.min_price ? `$${product.min_price}` : 'Giá liên hệ'}
-    //                   <span className="text-secondary-lighter fs-8 fw-normal">
-    //                     / sản phẩm
-    //                   </span>
-    //                 </h4>
-    //               </div>
-    //             </div>
-    //           </div>
-    //         </div>
-    //       ))}
-    //     </div>
-    //   </div>
-    // </section>
     <>
       <div className="navbar-responsive-navitems navbar-expand border-y bg-body-emphasis border-translucent py-2">
         <div className="container-medium d-flex flex-between-center" data-navbar="data-navbar">
@@ -189,7 +148,7 @@ const ProductsByCategoriesPage = () => {
               <option>Lượt xem thấp nhất</option>
             </select>
               {/* <button className="btn btn-phoenix-secondary text-nowrap px-3 px-md-4 ms-auto me-2"> */}
-                {/* <span className="fa-solid fa-map me-md-2"></span>
+              {/* <span className="fa-solid fa-map me-md-2"></span>
                 <span className="d-none d-md-inline-block">Show in map</span> */}
               {/* </button> */}
               <button className="btn btn-phoenix-secondary text-nowrap px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#hotelFilterOffcanvas" aria-controls="hotelFilterOffcanvas">
