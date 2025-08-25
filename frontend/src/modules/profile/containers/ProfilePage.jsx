@@ -6,7 +6,7 @@ import { fetchUserProfile, updateUserProfile } from '../slice';
 import { useAuth } from '../../../hooks/useAuth';
 import { GENDER_TYPES } from '../../../common/constants'; // Import GENDER_TYPES nếu cần
 import { PATHS } from '../../../common/constants';
-// import '../../../assets/css/profile.css'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const ProfilePage = () => {
   const dispatch = useAppDispatch();
@@ -66,7 +66,13 @@ const ProfilePage = () => {
   };
 
   if (loading) {
-    return <div>Đang tải hồ sơ...</div>;
+    return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <DotLottieReact
+        src="https://lottie.host/3722dbdc-d3e0-407e-bf0b-5b6805db01ba/duMhR6ttZz.lottie"
+        loop
+        autoplay
+        style={{ width: "300px", height: "300px" }} />
+    </div>;
   }
 
   if (error) {
@@ -79,75 +85,34 @@ const ProfilePage = () => {
   }
 
   return (
-    // <div style={{ width: '100%', height: '100%' }}>
-    //   <h2>Hồ sơ của tôi</h2>
-    //   <form onSubmit={handleSubmit}>
-    //     <div>
-    //       <label htmlFor="name">Tên:</label>
-    //       <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} required />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="email">Email:</label>
-    //       <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-    //     </div>
-    //     {/* Các trường từ users_profiles */}
-    //     <div>
-    //       <label htmlFor="phone">Điện thoại:</label>
-    //       <input type="text" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="address">Địa chỉ:</label>
-    //       <input type="text" id="address" value={address} onChange={(e) => setAddress(e.target.value)} />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="gender">Giới tính:</label>
-    //       <select id="gender" value={gender} onChange={(e) => setGender(e.target.value)}>
-    //         <option value="">Chọn giới tính</option>
-    //         <option value={GENDER_TYPES.MALE}>Nam</option>
-    //         <option value={GENDER_TYPES.FEMALE}>Nữ</option>
-    //         <option value={GENDER_TYPES.OTHER}>Khác</option>
-    //       </select>
-    //     </div>
-    //     <div>
-    //       <label htmlFor="bio">Mô tả bản thân:</label>
-    //       <textarea id="bio" value={bio} onChange={(e) => setBio(e.target.value)} rows="4" />
-    //     </div>
-    //     <div>
-    //       <label htmlFor="avatar">Ảnh đại diện:</label>
-    //       <input type="file" id="avatar" onChange={(e) => setAvatarFile(e.target.files ? e.target.files[0] : null)} />
-    //       {profileData.profile?.avatar && (
-    //         <img src={`http://localhost:8000/storage/${profileData.profile.avatar}`} alt="Avatar hiện tại" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', marginTop: '10px' }} />
-    //       )}
-    //     </div>
-    //     {/* Các trường từ user_details có thể thêm tương tự */}
-
-    //     <button type="submit">Cập nhật hồ sơ</button>
-    //   </form>
-
-    //   {profileData.details && (
-    //     <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '15px' }}>
-    //       <h3>Chi tiết khác</h3>
-    //       <p><strong>Số CCCD:</strong> {profileData.details.id_number}</p>
-    //       <p><strong>Ngày cấp:</strong> {profileData.details.id_issued_date}</p>
-    //       {/* ... các chi tiết khác từ profileData.details */}
-    //     </div>
-    //   )}
-    // </div>
     <div className="container-fluid mt-5">
       <div className="row">
-        {/* Cột trái: Ảnh đại diện và thông tin tóm tắt */}
         <div className="col-lg-4 mb-4">
           <div className="card shadow-sm">
             <div className="card-body text-center">
               <img
                 src=
-                {`${PATHS.ADMIN_DASHBOARD}storage/${profileData.profile.avatar}`}
+                {
+                  profileData?.profile?.avatar
+                    ? `${PATHS.ADMIN_DASHBOARD}storage/${profileData.profile.avatar}`
+                    : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkgjgrCNlnMAjfAJmzC9Q8OGQKwKQpq3HtUQ&s'
+                }
                 // {user.profile?.avatar ? `${BASE_URL_ADMIN}storage/${user.profile.avatar}` : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkgjgrCNlnMAjfAJmzC9Q8OGQKwKQpq3HtUQ&s'}
                 className="rounded-circle mb-3"
-                alt="Avatar"
+                alt=""
                 style={{ width: '150px', height: '150px', objectFit: 'cover' }}
               />
-              <h3 className="card-title">{profileData.name}</h3>
+              <h3 className="card-title">{ profileData.name }
+                <svg viewBox="0 0 12 13" width="16" height="16" fill="currentColor" style={{ color: '#0866ff', marginLeft: "7px" }}
+                  className="x14rh7hd x1lliihq x1tzjh5l x1k90msu x2h7rmj x1qfuztq" >
+
+                  <g fillRule="evenodd" transform="translate(-98 -917)"><title>Tài khoản đã xác minh</title>
+                    <path
+                      d="m106.853 922.354-3.5 3.5a.499.499 0 0 1-.706 0l-1.5-1.5a.5.5 0 1 1 .706-.708l1.147 1.147 3.147-3.147a.5.5 0 1 1 .706.708m3.078 2.295-.589-1.149.588-1.15a.633.633 0 0 0-.219-.82l-1.085-.7-.065-1.287a.627.627 0 0 0-.6-.603l-1.29-.066-.703-1.087a.636.636 0 0 0-.82-.217l-1.148.588-1.15-.588a.631.631 0 0 0-.82.22l-.701 1.085-1.289.065a.626.626 0 0 0-.6.6l-.066 1.29-1.088.702a.634.634 0 0 0-.216.82l.588 1.149-.588 1.15a.632.632 0 0 0 .219.819l1.085.701.065 1.286c.014.33.274.59.6.604l1.29.065.703 1.088c.177.27.53.362.82.216l1.148-.588 1.15.589a.629.629 0 0 0 .82-.22l.701-1.085 1.286-.064a.627.627 0 0 0 .604-.601l.065-1.29 1.088-.703a.633.633 0 0 0 .216-.819">
+                    </path>
+                  </g>
+                </svg>
+              </h3>
               <p className="text-muted">{profileData.email}</p>
               <p className="card-text">
                 <i className="bi bi-geo-alt-fill me-2"></i>
