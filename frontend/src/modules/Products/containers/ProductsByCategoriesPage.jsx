@@ -47,17 +47,6 @@ const ProductsByCategoriesPage = () => {
     return <div className="container mt-5 text-danger">Lỗi: {error}</div>;
   }
 
-  // Không có sản phẩm
-  if (!products.length) {
-    return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <DotLottieReact
-        src="https://lottie.host/ba54bfa2-2a03-4b70-8524-78b1c56e2bd8/zXqz2dLGow.lottie"
-        loop
-        autoplay
-        style={{ width: "500px", height: "500px" }} />
-    </div>;
-  }
-
   return (
     <>
       <div className="navbar-responsive-navitems navbar-expand border-y bg-body-emphasis border-translucent py-2">
@@ -212,7 +201,13 @@ const ProductsByCategoriesPage = () => {
                 </div>
               ))
             ) : (
-              <div className="text-center w-100 py-5 text-muted">Không có sản phẩm thuộc danh mục</div>
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "50vh" }}>
+                <DotLottieReact
+                  src="https://lottie.host/ba54bfa2-2a03-4b70-8524-78b1c56e2bd8/zXqz2dLGow.lottie"
+                  loop
+                  autoplay
+                  style={{ width: "500px", height: "500px" }} />
+              </div>
             )}
           </div>
         </div>
