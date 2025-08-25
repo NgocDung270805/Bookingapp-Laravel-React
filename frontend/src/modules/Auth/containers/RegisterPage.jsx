@@ -31,6 +31,12 @@ const RegisterPage = () => {
     window.location.href = `${PATHS.API_BASE_URL}auth/google/redirect`;
   };
 
+  // Hàm xử lý việc chuyển hướng
+  const handleFacebookLogin = () => {
+    // Chuyển hướng đến endpoint backend để bắt đầu quá trình OAuth
+    window.location.href = `${PATHS.API_BASE_URL}auth/facebook/redirect`;
+  };
+
   // Nếu người dùng đã đăng nhập, chuyển hướng về trang chủ
   if (isAuthenticated) {
     navigate(PATHS.HOME);
@@ -90,7 +96,7 @@ const RegisterPage = () => {
                         <button className="btn btn-phoenix-secondary w-100 mb-3" onClick={handleGoogleLogin}>
                           <span className="fab fa-google text-danger me-2 fs-9"></span>Đăng ký với google
                         </button>
-                        <button className="btn btn-phoenix-secondary w-100">
+                        <button className="btn btn-phoenix-secondary w-100" onClick={handleFacebookLogin}>
                           <span className="fab fa-facebook text-primary me-2 fs-9"></span>Đăng ký với facebook
                         </button>
                         <div className="position-relative mt-4">
