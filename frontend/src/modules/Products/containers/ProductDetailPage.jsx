@@ -11,6 +11,7 @@ import {
 import { PATHS, BASE_URL_ADMIN } from '../../../common/constants';
 import BookingFormModal from '../components/BookingFormModal';
 import CommentFormModal from '../components/CommentFormModal';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 const ProductDetailPage = () => {
     const dispatch = useDispatch();
@@ -43,12 +44,13 @@ const ProductDetailPage = () => {
     };
 
     if (loading) {
-        return (
-            <div className="container mt-5 text-center">
-                <div className="spinner-border text-info" role="status"></div>
-                <p className="mt-2 text-info">Đang tải chi tiết sản phẩm...</p>
-            </div>
-        );
+        return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+            <DotLottieReact
+                src="https://lottie.host/3722dbdc-d3e0-407e-bf0b-5b6805db01ba/duMhR6ttZz.lottie"
+                loop
+                autoplay
+                style={{ width: "300px", height: "300px" }} />
+        </div>;
     }
 
     if (error) {
