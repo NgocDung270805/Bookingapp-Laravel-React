@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^7.0.1",
+    "@fortawesome/free-solid-svg-icons": "^7.0.1",
+    "@fortawesome/react-fontawesome": "^3.0.2",
     "@greatsumini/react-facebook-login": "^3.4.0",
     "@lottiefiles/dotlottie-react": "^0.14.4",
     "@react-oauth/google": "^0.12.2",
@@ -17,6 +20,8 @@
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
     "feather-icons": "^4.29.2",
+    "imagesloaded": "^5.0.0",
+    "isotope-layout": "^3.0.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",

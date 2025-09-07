@@ -13,6 +13,15 @@ import { fetchTopViewedProducts, selectTopViewedProducts, selectProductsLoading,
 import categoryStyles from './CategorySlider.module.css'; // Import CSS module cho category
 import customerStyles from './CustomerSlider.module.css';
 import styles from './HomeSlider.module.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faHeart } from '@fortawesome/free-regular-svg-icons';
+
+// Import Isotope và imagesLoaded
+import Isotope from 'isotope-layout';
+import imagesLoaded from 'imagesloaded';
+
+import { faVolumeMute, faVolumeUp, faPause, faPlay } from "@fortawesome/free-solid-svg-icons"; // Import icon âm thanh
 
 dayjs.locale('vi')
 const HomePage = () => {
@@ -42,6 +51,69 @@ const HomePage = () => {
   const productsError = useSelector(selectProductsError);
   // Lấy sản phẩm mới nhất theo created_at
   const newestProducts = useSelector(selectNewestProducts);
+
+  // ===============================================
+  // STATE & REFS CHO PHẦN VIDEO
+  // ===============================================
+  const videoRef1 = useRef(null);
+  const videoRef2 = useRef(null);
+  const videoRef3 = useRef(null);
+
+  const [activeVideo, setActiveVideo] = useState(null); // video đang bật tiếng
+  const [playingVideo, setPlayingVideo] = useState({ 1: true, 2: true, 3: true }); // mặc định autoplay
+
+  // Toggle mute/unmute
+  const toggleMute = (id) => {
+    const videos = {
+      1: videoRef1.current,
+      2: videoRef2.current,
+      3: videoRef3.current,
+    };
+
+    if (activeVideo === id) {
+      videos[id].muted = true;
+      setActiveVideo(null);
+      return;
+    }
+
+    Object.values(videos).forEach((v) => v && (v.muted = true));
+    if (videos[id]) {
+      videos[id].muted = false;
+      setActiveVideo(id);
+    }
+  };
+
+  // Toggle play/pause
+  const togglePlay = (id) => {
+    const videos = {
+      1: videoRef1.current,
+      2: videoRef2.current,
+      3: videoRef3.current,
+    };
+
+    const video = videos[id];
+    if (!video) return;
+
+    if (video.paused) {
+      // Pause tất cả video khác trước
+      Object.keys(videos).forEach((key) => {
+        if (Number(key) !== id && videos[key]) {
+          videos[key].pause();
+          setPlayingVideo((prev) => ({ ...prev, [key]: false }));
+        }
+      });
+
+      // Play video hiện tại
+      video.play();
+      setPlayingVideo((prev) => ({ ...prev, [id]: true }));
+    } else {
+      // Nếu đang play thì pause
+      video.pause();
+      setPlayingVideo((prev) => ({ ...prev, [id]: false }));
+    }
+  };
+
+
   // ===============================================
   // useEffect để fetch dữ liệu khi component mount
   // ===============================================
@@ -93,7 +165,7 @@ const HomePage = () => {
         setTimeout(() => { // Giữ setTimeout để ổn định DOM
           // console.log("Initializing Isotope for Gallery:", galleryRef.current.children);
           const iso = new window.Isotope(galleryRef.current, {
-            itemSelector: '.isotope-item',
+            itemSelector: '',
             layoutMode: 'packery',
             filter: activeFilter
           });
@@ -376,102 +448,444 @@ const HomePage = () => {
       </section>
 
       <section className="py-10 overflow-hidden">
-        <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-left-30.png)", backgroundSize: "40%", backgroundPosition: "left", zIndex: 1 }}></div>
-        <div className="bg-holder d-none d-xl-block" style={{ backgroundImage: "url(../../assets/img/bg/bg-right-30.png)", backgroundSize: "26%", backgroundPosition: "right 25px", zIndex: 1 }}></div>
+        <div
+          className="bg-holder d-none d-xl-block"
+          style={{
+            backgroundImage: 'url(../../assets/img/bg/bg-left-30.png)',
+            backgroundSize: '40%',
+            backgroundPosition: 'left',
+            zIndex: 1,
+          }}
+        ></div>
+        <div
+          className="bg-holder d-none d-xl-block"
+          style={{
+            backgroundImage: 'url(../../assets/img/bg/bg-right-30.png)',
+            backgroundSize: '26%',
+            backgroundPosition: 'right 25px',
+            zIndex: 1,
+          }}
+        ></div>
         <div className="bg-booking-gallery"></div>
-        {/* <div className="container-medium position-relative z-2">
-          <h3 className="mb-2 text-body-emphasis text-center">Popular Attractions</h3>
-          <p className="mb-0 text-body-tertiary text-center mb-5">Explore the most popular and frequently visited destinations around the world</p>
-          <ul className="nav mb-6 justify-content-center flex-wrap mx-auto w-max-content" data-filter-nav="data-filter-nav">
-            <li className="nav-item"><a className="isotope-nav cursor-pointer active" data-filter=".tokyo">Tokyo</a></li>
-            <li className="nav-item"><a className="isotope-nav cursor-pointer" data-filter=".bali">Bali</a></li>
-            <li className="nav-item"><a className="isotope-nav cursor-pointer" data-filter=".sydney">Sydney</a></li>
-            <li className="nav-item"> <a className="isotope-nav cursor-pointer" data-filter=".paris">Paris</a></li>
+        <div className="container-medium position-relative z-2">
+          <h3 className="mb-2 text-body-emphasis text-center">
+            🚗 Trải Nghiệm Xe Thực Tế Qua Video
+          </h3>
+          <p className="mb-0 text-body-tertiary text-center mb-5">
+            Khám phá mọi chi tiết, nội thất và trải nghiệm lái thử qua những thước phim chân thực nhất.
+          </p>
+          <ul
+            className="nav mb-6 justify-content-center flex-wrap mx-auto w-max-content"
+            data-filter-nav="data-filter-nav"
+            onClick={handleFilterClick}
+          >
+            <li className="nav-item">
+              <a className={`isotope-nav cursor-pointer ${activeFilter === '.tokyo' ? 'active' : ''}`} data-filter=".tokyo">
+                Tất cả
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className={`isotope-nav cursor-pointer ${activeFilter === '.bali' ? 'active' : ''}`} data-filter=".bali">
+                Sedan
+              </a>
+            </li>
+            <li className="nav-item">
+              <a className={`isotope-nav cursor-pointer ${activeFilter === '.sydney' ? 'active' : ''}`} data-filter=".sydney">
+                SUV
+              </a>
+            </li>
+            <li className="nav-item">
+              {' '}
+              <a className={`isotope-nav cursor-pointer ${activeFilter === '.paris' ? 'active' : ''}`} data-filter=".paris">
+                Xe điện
+              </a>
+            </li>
           </ul>
           <div className="row g-0 justify-content-center">
-            <div className="col-md-9 col-lg-7 col-xl-5">
-              <div className="row gx-0 gy-3" id="image_gallery" data-sl-isotope='{"layoutMode":"packery","filter":".tokyo"}'>
-                <div className="col-12 isotope-item w-100 tokyo">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/tokyo-1.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">King Power Mahanakhon</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>4.8<span className="fs-10">/5 </span>(1.4k review)</h5>
+            <div className="col-md-12 col-lg-10 col-xl-9 mx-auto">
+              <div className="row g-3 justify-content-center" id="image_gallery" ref={galleryRef}>
+                {/* Tokyo */}
+                <div className="col-12 col-md-6 col-lg-4 tokyo">
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden position-relative">
+                    <video
+                      ref={videoRef1}
+                      src="../../assets/video/capnhatmauxemoinhat.mp4"
+                      className="w-100 object-fit-cover"
+                      style={{ aspectRatio: "9/16", objectFit: "cover" }}
+                      poster="https://marketplace.canva.com/EAGRB58BnmI/2/0/1600w/canva-b%C3%A0i-%C4%91%C4%83ng-instagram-qu%E1%BA%A3ng-c%C3%A1o-xe-h%C6%A1i-hi%E1%BB%87n-%C4%91%E1%BA%A1i-tr%E1%BA%BB-trung-xanh-d%C6%B0%C6%A1ng-f3rvclAtsus.jpg"   // ảnh giới thiệu trước khi chạy
+                      muted
+                      // autoPlay
+                      loop
+                      playsInline
+                      onClick={() => togglePlay(1)}
+                    />
+
+                    {/* Nút Play chỉ hiện khi video đang pause */}
+                    {!playingVideo[1] && (
+                      <button
+                        onClick={() => togglePlay(1)}
+                        className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          borderRadius: "50%",
+                          backgroundColor: "rgba(0,0,0,0.6)",
+                          color: "#fff",
+                          border: "none"
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faPlay} size="lg" />
+                      </button>
+                    )}
+
+                    {/* Nút mute/unmute góc phải dưới */}
+                    <button
+                      onClick={() => toggleMute(1)}
+                      className="position-absolute bottom-0 end-0 mb-2 me-2 d-flex align-items-center justify-content-center"
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "50%",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        color: "#fff",
+                        border: "none"
+                      }}
+                    >
+                      <FontAwesomeIcon icon={activeVideo === 1 ? faVolumeUp : faVolumeMute} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Tổng hợp xem xe mới nhất
+                      </a>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 tokyo">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/tokyo-2.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Meiji Jingu</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>5<span className="fs-10">/5 </span>(2.2k review)</h5>
+                <div className="col-12 col-md-6 col-lg-4 tokyo">
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden position-relative">
+                    <video
+                      ref={videoRef2}
+                      src="../../assets/video/mazda3.mp4"
+                      className="w-100 object-fit-cover"
+                      style={{ aspectRatio: "9/16", objectFit: "cover" }}
+                      poster="https://i1-vnexpress.vnecdn.net/2021/09/18/Mazda32020VnE993047211573621051jpg-1631963909.jpg?w=750&h=450&q=100&dpr=1&fit=crop&s=Ksi2dIeIocGk9Pke5aGnRQ"   // ảnh giới thiệu trước khi chạy
+                      muted
+                      // autoPlay
+                      loop
+                      playsInline
+                      onClick={() => togglePlay(2)}
+                    />
+
+                    {/* Nút Play chỉ hiện khi video đang pause */}
+                    {!playingVideo[2] && (
+                      <button
+                        onClick={() => togglePlay(2)}
+                        className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          borderRadius: "50%",
+                          backgroundColor: "rgba(0,0,0,0.6)",
+                          color: "#fff",
+                          border: "none"
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faPlay} size="lg" />
+                      </button>
+                    )}
+
+                    {/* Nút mute/unmute góc phải dưới */}
+                    <button
+                      onClick={() => toggleMute(2)}
+                      className="position-absolute bottom-0 end-0 mb-2 me-2 d-flex align-items-center justify-content-center"
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "50%",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        color: "#fff",
+                        border: "none"
+                      }}
+                    >
+                      <FontAwesomeIcon icon={activeVideo === 2 ? faVolumeUp : faVolumeMute} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Mazda 3 2024 - Chi tiết và trải nghiệm
+                      </a>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 tokyo">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/tokyo-3.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Imperial Palace</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>4.5<span className="fs-10">/5 </span>(1.2k review)</h5>
+                <div className="col-12 col-md-6 col-lg-4 tokyo">
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden position-relative">
+                    <video
+                      ref={videoRef3}
+                      src="../../assets/video/MPV7cho.mp4"
+                      className="w-100 object-fit-cover"
+                      style={{ aspectRatio: "9/16", objectFit: "cover" }}
+                      poster="https://image.made-in-china.com/2f0j00TeBbyKdliskS/2021-KIA-Carnival-2-0t-Luxury-2WD-MPV-7-Seats-Car-Left-Hand-Drive-Gasoline-Car-Made-in-China-0km-Used-Car.webp"   // ảnh giới thiệu trước khi chạy
+                      muted
+                      // autoPlay
+                      loop
+                      playsInline
+                      onClick={() => togglePlay(3)}
+                    />
+
+                    {/* Nút Play chỉ hiện khi video đang pause */}
+                    {!playingVideo[3] && (
+                      <button
+                        onClick={() => togglePlay(3)}
+                        className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          borderRadius: "50%",
+                          backgroundColor: "rgba(0,0,0,0.6)",
+                          color: "#fff",
+                          border: "none"
+                        }}
+                      >
+                        <FontAwesomeIcon icon={faPlay} size="lg" />
+                      </button>
+                    )}
+
+                    {/* Nút mute/unmute góc phải dưới */}
+                    <button
+                      onClick={() => toggleMute(3)}
+                      className="position-absolute bottom-0 end-0 mb-2 me-2 d-flex align-items-center justify-content-center"
+                      style={{
+                        width: "36px",
+                        height: "36px",
+                        borderRadius: "50%",
+                        backgroundColor: "rgba(0,0,0,0.5)",
+                        color: "#fff",
+                        border: "none"
+                      }}
+                    >
+                      <FontAwesomeIcon icon={activeVideo === 3 ? faVolumeUp : faVolumeMute} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        MPV 7 chỗ - Lựa chọn hoàn hảo cho gia đình
+                      </a>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 bali">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/bali-1.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Nusa Lembongan</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>4.7<span className="fs-10">/5 </span>(1.2k review)</h5>
+                {/* Bali */}
+                <div className="col-12 col-md-6 col-lg-4 bali" style={{ display: activeFilter === '.bali' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-1.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }}
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Nusa Lembongan
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        4.7<span className="fs-10">/5 </span>(1.2k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 bali">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/bali-2.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Waterbom Bali</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>4.5<span className="fs-10">/5 </span>(1.8k review)</h5>
+                <div className="col-12 col-md-6 col-lg-4 bali" style={{ display: activeFilter === '.bali' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-2.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }}
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Waterbom Bali
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        4.5<span className="fs-10">/5 </span>(1.8k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 bali">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/bali-3.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Kuta Beach</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>5<span className="fs-10">/5 </span>(4.1k review)</h5>
+                <div className="col-12 col-md-6 col-lg-4 bali" style={{ display: activeFilter === '.bali' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-3.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Kuta Beach
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        5<span className="fs-10">/5 </span>(4.1k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 sydney">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/sydney-1.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">The Rocks</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>4.8<span className="fs-10">/5 </span>(1.9k review)</h5>
+                {/* Sydney */}
+                <div className="col-12 col-md-6 col-lg-4 sydney" style={{ display: activeFilter === '.sydney' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-3.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Kuta Beach
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        5<span className="fs-10">/5 </span>(4.1k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 sydney">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/sydney-2.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Manly Beach</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>4.7<span className="fs-10">/5 </span>(1.1k review)</h5>
+                <div className="col-12 col-md-6 col-lg-4 sydney" style={{ display: activeFilter === '.sydney' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-3.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Kuta Beach
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        5<span className="fs-10">/5 </span>(4.1k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 sydney">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/sydney-3.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Darling Harbour</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>5<span className="fs-10">/5 </span>(3.2k review)</h5>
+                <div className="col-12 col-md-6 col-lg-4 sydney" style={{ display: activeFilter === '.sydney' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-3.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Kuta Beach
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        5<span className="fs-10">/5 </span>(4.1k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 paris">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/paris-1.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Louvre Museum</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>4.4<span className="fs-10">/5 </span>(4.3k review)</h5>
+                {/* Paris */}
+                <div className="col-12 col-md-6 col-lg-4 paris" style={{ display: activeFilter === '.paris' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-3.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Kuta Beach
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        5<span className="fs-10">/5 </span>(4.1k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 paris">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/paris-2.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Montmartre</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>5<span className="fs-10">/5 </span>(5k review)</h5>
+                <div className="col-12 col-md-6 col-lg-4 paris" style={{ display: activeFilter === '.paris' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-3.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Kuta Beach
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        5<span className="fs-10">/5 </span>(4.1k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
-                <div className="col-12 isotope-item w-100 paris">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden"><a href="#!"> <img className="w-100 object-fit-cover" src="../../assets/img/gallery/paris-3.png" alt="" height="220" /></a><button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4"><span className="far fa-heart"></span></button>
-                    <div className="backdrop-faded"><a className="text-white fw-bolder fs-7 stretched-link" href="#!">Tuileries Garden</a>
-                      <h5 className="text-light mb-0"><span className="fa-solid fa-star text-warning me-1" data-fa-transform="shrink-2"></span>4.1<span className="fs-10">/5 </span>(4.5k review)</h5>
+                <div className="col-12 col-md-6 col-lg-4 paris" style={{ display: activeFilter === '.paris' || activeFilter === '*' ? 'block' : 'none' }}>
+                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
+                    <a href="#!">
+                      <img
+                        className="w-100 object-fit-cover"
+                        src="../../assets/img/gallery/bali-3.png"
+                        alt=""
+                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
+                      />
+                    </a>
+                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
+                      <FontAwesomeIcon icon={faHeart} />
+                    </button>
+                    <div className="backdrop-faded">
+                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
+                        Kuta Beach
+                      </a>
+                      <h5 className="text-light mb-0">
+                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
+                        5<span className="fs-10">/5 </span>(4.1k review)
+                      </h5>
                     </div>
                   </div>
                 </div>
@@ -479,12 +893,15 @@ const HomePage = () => {
             </div>
           </div>
           <div className="d-flex align-items-center justify-content-center gap-3 mt-4">
-            <h5 className="mb-0">Explore more popular destination</h5>
+            <h5 className="mb-0">Xem thêm</h5>
             <div className="btn-ping">
-              <div className="btn-ping-bg"></div><button className="btn border p-0 fs-8 text-primary d-flex align-items-center justify-content-center"><span className="fa-solid fa-arrow-right"></span></button>
+              <div className="btn-ping-bg"></div>
+              <button className="btn border p-0 fs-8 text-primary d-flex align-items-center justify-content-center">
+                <FontAwesomeIcon icon={faArrowRight} />
+              </button>
             </div>
           </div>
-        </div> */}
+        </div>
       </section>
 
       <section className="pb-7 pt-0 overflow-x-hidden">
