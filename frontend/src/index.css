@@ -1,22 +1,20 @@
 /* Trong file index.css của bạn */
 
-/* Sử dụng @media query để chỉ áp dụng các quy tắc này trên màn hình nhỏ */
+/* BỎ HOẶC COMMENT ĐOẠN NÀY LẠI */
+/*
 @media (max-width: 1400px) {
-  /* Ghi đè các class container để chúng có thể co giãn 100% */
   .container-medium, .container, [class*="col-"] {
     max-width: 100% !important;
     width: 100% !important;
-    /* Bạn có thể cần thêm margin hoặc padding tùy theo theme */
   }
 
-  /* Đảm bảo các phần tử trong flexbox không bị giãn quá mức */
   [class*="d-flex"] > * {
     min-width: 0 !important;
     flex-shrink: 1 !important;
   }
 }
-
-/* Đảm bảo tất cả hình ảnh có thể co giãn */
+*/
+/* Giữ lại đoạn CSS này */
 img {
   max-width: 100%;
   height: auto;

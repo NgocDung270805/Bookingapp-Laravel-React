@@ -548,7 +548,8 @@ const HomePage = () => {
                         borderRadius: "50%",
                         backgroundColor: "rgba(0,0,0,0.5)",
                         color: "#fff",
-                        border: "none"
+                        border: "none",
+                        zIndex: 9999
                       }}
                     >
                       <FontAwesomeIcon icon={activeVideo === 1 ? faVolumeUp : faVolumeMute} />
@@ -603,7 +604,8 @@ const HomePage = () => {
                         borderRadius: "50%",
                         backgroundColor: "rgba(0,0,0,0.5)",
                         color: "#fff",
-                        border: "none"
+                        border: "none",
+                        zIndex: 9999
                       }}
                     >
                       <FontAwesomeIcon icon={activeVideo === 2 ? faVolumeUp : faVolumeMute} />
@@ -658,7 +660,8 @@ const HomePage = () => {
                         borderRadius: "50%",
                         backgroundColor: "rgba(0,0,0,0.5)",
                         color: "#fff",
-                        border: "none"
+                        border: "none",
+                        zIndex: 9999
                       }}
                     >
                       <FontAwesomeIcon icon={activeVideo === 3 ? faVolumeUp : faVolumeMute} />

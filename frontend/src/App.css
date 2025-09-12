@@ -40,3 +40,30 @@
 .read-the-docs {
   color: #888;
 }
+
+/* CSS mới để tối ưu cho Swiper */
+
+/* Đảm bảo thumbnail Swiper có chiều cao linh hoạt trên desktop */
+.swiper-products-thumb {
+  height: 300px;
+}
+
+/* Trên mobile, chuyển sang chiều ngang và tự động điều chỉnh chiều cao */
+@media (max-width: 767px) {
+  .swiper-products-thumb {
+    height: auto;
+  }
+}
+
+/* Đảm bảo hình ảnh thumbnail vừa khít với container */
+.product-thumb-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-thumb-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Cực kỳ quan trọng để hình ảnh không bị méo khi co giãn */
+}
