@@ -16,15 +16,30 @@
                 </div>
             </div>
             <ul class="nav nav-links mb-3 mb-lg-2 mx-n3">
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="#"><span>All </span><span
-                            class="text-body-tertiary fw-semibold" id="total-products">({{ count($products) }})</span></a>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{ route('product.index') }}">
+                        <span>All </span>
+                        <span class="text-body-tertiary fw-semibold" id="total-products">({{ count($products) }})</span>
+                    </a>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="#"><span>Published </span><span
-                            class="text-body-tertiary fw-semibold">(70348)</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><span>Drafts </span><span
-                            class="text-body-tertiary fw-semibold">(17)</span></a></li>
-                <li class="nav-item"><a class="nav-link" href="#"><span>On discount </span><span
-                            class="text-body-tertiary fw-semibold">(810)</span></a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span>Đã xuất bản </span>
+                        <span class="text-body-tertiary fw-semibold">(70348)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span>
+                            Bản nháp </span>
+                        <span class="text-body-tertiary fw-semibold">(17)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span>Giảm giá </span><span class="text-body-tertiary fw-semibold">(810)</span>
+                    </a>
+                </li>
             </ul>
             <div id="products-list"
                 data-list='{"valueNames":["product-name","product-categories","product-price","product-tags"],"page":10,"pagination":true}'>
@@ -265,6 +280,19 @@
                             <div class="text-danger" id="imgError"></div>
                             <img id="currentProductImage" src="" alt="Current Image" class="img-thumbnail mt-2"
                                 style="max-width: 100px; display: none;">
+                        </div>
+
+                        <!-- Additional Product Images -->
+                        <div class="mb-3">
+                            <label for="productImages" class="form-label">Additional Product Images</label>
+                            <input type="file" class="form-control" id="productImages" name="images[]" multiple>
+                            <div id="multipleImagesPreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+                            <div class="text-danger" id="imagesError"></div>
+                        </div>
+
+                        <!-- Existing Product Images -->
+                        <div id="existingImages" class="mb-3 d-flex flex-wrap gap-2">
+                            <!-- Existing images will be loaded here via JavaScript -->
                         </div>
 
                         <div class="mb-3">
@@ -600,7 +628,96 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Define URLs for AJAX calls
+        const productStoreUrl = "{{ route('product.store') }}";
+    </script>
+    <script src="/assets/js/product.js"></script>
+    <script>
+        // Preview main image
+        function previewMainImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#currentProductImage')
+                        .attr('src', e.target.result)
+                        .css('display', 'block');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Preview multiple images
+        function previewMultipleImages(input) {
+            $('#multipleImagesPreview').empty();
+            if (input.files) {
+                for (let i = 0; i < input.files.length; i++) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#multipleImagesPreview').append(`
+                            <div class="position-relative">
+                                <img src="${e.target.result}" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: cover;">
+                            </div>
+                        `);
+                    }
+                    reader.readAsDataURL(input.files[i]);
+                }
+            }
+        }
+
+        // Load existing product images
+        function loadExistingProductImages(images) {
+            $('#multipleImagesPreview').empty();
+            console.log('Loading existing images:', images);
+            if (images && images.length > 0) {
+                images.forEach(image => {
+                    $('#multipleImagesPreview').append(`
+                        <div class="position-relative">
+                            <img src="/storage/${image.image_path}" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: cover;">
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        // Load existing images
+        function loadExistingImages(product) {
+            $('#existingImages').empty();
+            if (product.images && product.images.length > 0) {
+                product.images.forEach(image => {
+                    $('#existingImages').append(`
+                        <div class="position-relative" data-image-id="${image.id}">
+                            <img src="/storage/${image.image_path}" 
+                                 class="img-thumbnail" 
+                                 style="height: 100px; width: 100px; object-fit: cover;">
+                            <button type="button" 
+                                    class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                                    onclick="deleteProductImage(${image.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <input type="hidden" name="deleted_image_ids[]" value="${image.id}" disabled>
+                        </div>
+                    `);
+                });
+            }
+        }
+
+        // Delete product image
+        function deleteProductImage(imageId) {
+            const imageDiv = $(`#existingImages div[data-image-id="${imageId}"]`);
+            imageDiv.addClass('opacity-50');
+            imageDiv.find('input[name="deleted_image_ids[]"]').prop('disabled', false);
+        }
+
         $(document).ready(function() {
+            // Image preview event listeners
+            $('#productImage').on('change', function() {
+                previewMainImage(this);
+            });
+
+            $('#productImages').on('change', function() {
+                previewMultipleImages(this);
+            });
+
             let currentEditingProductId = null;
             let currentProductName = '';
             let allProductVariants = []; // Lưu trữ tất cả biến thể của sản phẩm hiện tại để tìm kiếm
@@ -615,6 +732,7 @@
                 let totalProducts = 0;
 
                 products.forEach(product => {
+                    console.log('Processing product:', product); // Debug log
                     totalProducts++;
                     let generalStatus = product.status ? 'Active' : 'Inactive';
                     let generalFeatured = product.is_featured ? 'Yes' : 'No';
