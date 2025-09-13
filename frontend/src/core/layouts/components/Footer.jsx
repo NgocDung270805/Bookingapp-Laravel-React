@@ -19,7 +19,7 @@ const Footer = () => {
         if (!bannersLoading && allBanners.length === 0) {
             dispatch(fetchBanners(2));
         }
-    }, [dispatch, bannersLoading, allBanners.length]); // Thêm allBanners.length vào dependency array {{ backgroundImage: "url(../../assets/img/bg/bg-left-27.png)"}}
+    }, [dispatch, bannersLoading, allBanners.length]); 
     return (
         <div className="container-medium">
             <div className="d-flex align-items-center justify-content-between mb-3">
@@ -32,14 +32,13 @@ const Footer = () => {
                         ) : (
                             <img src="../../assets/img/icons/logo.png" alt="" style={{ height: '40px', marginRight: '10px' }} />
                         )}
-                        {/* <h5 className="logo-text ms-2">phoenix</h5> */}
                     </div>
                 </Link>
                 <div className="dropdown"><button className="btn btn-sm p-0 d-md-none fs-8" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h"></span></button>
                     <ul className="dropdown-menu dropdown-menu-end" style={{ zIndex: 9999 }}>
                         <li><Link to={PATHS.HOME} className="dropdown-item">Home</Link></li>
                         <li><a className="dropdown-item" href="#!">Bài viết</a></li>
-                        {/* <li><a className="dropdown-item" href="#!">Career</a></li> */}
+                        <li><Link className="lh-1 text-body-tertiary fw-semibold fs-9" to={PATHS.ABOUT}>Giới thiệu </Link></li>
                         <li><a className="dropdown-item" href="mailto:phungdung2708@gmail.com">Hỗ trợ</a></li>
                         <li><a className="dropdown-item" href="tel:+84965336741">+84.965.336.741</a></li>
                     </ul>
@@ -47,7 +46,7 @@ const Footer = () => {
                 <ul className="d-none d-md-flex gap-5 list-unstyled mb-0">
                     <li><Link to={PATHS.HOME} className="lh-1 text-body-tertiary fw-semibold fs-9">Home</Link></li>
                     <li><a className="lh-1 text-body-tertiary fw-semibold fs-9" href="#!">Bài viết</a></li>
-                    {/* <li><a className="lh-1 text-body-tertiary fw-semibold fs-9" href="#!">Career</a></li> */}
+                    <li><Link className="lh-1 text-body-tertiary fw-semibold fs-9" to={PATHS.ABOUT}>Giới thiệu </Link></li>
                     <li><a className="lh-1 text-body-tertiary fw-semibold fs-9" href="mailto:phungdung2708@gmail.com"> <span className="fa-regular fa-envelope me-2" data-fa-transform="down-1"></span>Hỗ Trợ</a></li>
                     <li><a className="lh-1 text-body-tertiary fw-semibold fs-9" href="tel:+84965336741"> <span className="fa-brands fa-whatsapp me-2"></span>+84.965.336.741</a></li>
                 </ul>
@@ -55,11 +54,14 @@ const Footer = () => {
             <footer className="footer position-relative px-0">
                 <div className="row g-0 justify-content-between align-items-center h-100">
                     <div className="col-12 col-sm-auto text-center">
-                        <p className="mb-0 text-black">Developed & Designed by
-                            <a className="mx-1" href="https://www.facebook.com/phung.ngoc.dung.164568">Phùng Ngọc Dũng</a>. All rights reserved
+                        <p className="mb-0 text-black">{new Date().getFullYear()} &copy;
+                            <Link className="mx-1" to={PATHS.HOME}>Vandaicar</Link>
+                            . All rights reserved
                             <span className="d-none d-sm-inline-block"></span>
-                            <span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />2025 &copy;
-                            <a className="mx-1" href="https://www.facebook.com/phung.ngoc.dung.164568"></a>
+                            <span className="d-none d-sm-inline-block mx-1">|</span><br className="d-sm-none" />Privacy 
+                            <Link className="mx-1" to={PATHS.PRIVACY_POLICY}>Policy </Link> |
+                            Terms
+                            <Link className="mx-1" to={PATHS.TERMS}>of </Link>Service
                         </p>
                     </div>
                     <div className="col-12 col-sm-auto text-center">
