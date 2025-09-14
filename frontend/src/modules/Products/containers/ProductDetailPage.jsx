@@ -177,50 +177,50 @@ const ProductDetailPage = () => {
                             </p>
 
                             {(type.display_type === 'color_picker' ||
-                              type.display_type === 'dropdown' ||
-                              type.display_type === 'radio' ||
-                              type.display_type === 'text') && (
-                                <div className="d-flex flex-row flex-wrap product-color-variants">
-                                    {valueArray.map(attr => {
-                                        // Chỉ biến thể được chọn mới active
-                                        const isActive = selectedAttributes[slug]?.id === attr.id;
-                                        const config = selectedProduct.attribute_value_configs.find(
-                                            c => c.product_attribute_value_id === attr.id
-                                        );
+                                type.display_type === 'dropdown' ||
+                                type.display_type === 'radio' ||
+                                type.display_type === 'text') && (
+                                    <div className="d-flex flex-row flex-wrap product-color-variants">
+                                        {valueArray.map(attr => {
+                                            // Chỉ biến thể được chọn mới active
+                                            const isActive = selectedAttributes[slug]?.id === attr.id;
+                                            const config = selectedProduct.attribute_value_configs.find(
+                                                c => c.product_attribute_value_id === attr.id
+                                            );
 
-                                        return (
-                                            <div
-                                                key={attr.id}
-                                                className={`rounded-1 border border-translucent me-2 ${isActive ? "active border-primary" : ""}`}
-                                                onClick={() => handleAttributeChange(type, attr)}
-                                                style={{
-                                                    cursor: "pointer",
-                                                    backgroundColor: attr.metadata?.hex_code || '#ccc'
-                                                }}
-                                            >
-                                                {config?.img_path ? (
-                                                    <img
-                                                        src={`${BASE_URL_ADMIN}storage/${config.img_path}`}
-                                                        alt={attr.value}
-                                                        width="38"
-                                                        height="38"
-                                                        className="rounded"
-                                                    />
-                                                ) : (
-                                                    <div
-                                                        style={{
-                                                            width: '38px',
-                                                            height: '38px',
-                                                            backgroundColor: attr.metadata?.hex_code || '#ccc',
-                                                            borderRadius: '4px'
-                                                        }}
-                                                    ></div>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            )}
+                                            return (
+                                                <div
+                                                    key={attr.id}
+                                                    className={`rounded-1 border border-translucent me-2 ${isActive ? "active border-primary" : ""}`}
+                                                    onClick={() => handleAttributeChange(type, attr)}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        backgroundColor: attr.metadata?.hex_code || '#ccc'
+                                                    }}
+                                                >
+                                                    {config?.img_path ? (
+                                                        <img
+                                                            src={`${BASE_URL_ADMIN}storage/${config.img_path}`}
+                                                            alt={attr.value}
+                                                            width="38"
+                                                            height="38"
+                                                            className="rounded"
+                                                        />
+                                                    ) : (
+                                                        <div
+                                                            style={{
+                                                                width: '38px',
+                                                                height: '38px',
+                                                                backgroundColor: attr.metadata?.hex_code || '#ccc',
+                                                                borderRadius: '4px'
+                                                            }}
+                                                        ></div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                         </div>
                     );
                 })}
@@ -266,7 +266,15 @@ const ProductDetailPage = () => {
     }
 
     const product = selectedProduct;
-    const discountPercent = currentDiscountPrice > 0 ? Math.round((currentDiscountPrice / currentPrice) * 100) : 0;
+
+    // Giá gốc
+    const originalPrice = currentPrice;
+    // Giá đã giảm
+    const discountedPrice = currentDiscountPrice;
+    // Số tiền giảm
+    const discountAmount = originalPrice - discountedPrice;
+    // Tỷ lệ giảm
+    const discountPercent = discountedPrice > 0 ? Number(((discountAmount / originalPrice) * 100).toFixed(2)) : 0;
 
     return (
         <>
@@ -371,11 +379,12 @@ const ProductDetailPage = () => {
                                         )}
 
                                         <div className="d-flex flex-wrap align-items-center">
+                                            {/* Hiển thị giá giảm */}
                                             <h1 className="me-3">
                                                 {new Intl.NumberFormat('vi-VN', {
                                                     style: 'currency',
                                                     currency: 'VND'
-                                                }).format(currentPrice - currentDiscountPrice)}
+                                                }).format(currentDiscountPrice)}
                                             </h1>
                                             {currentDiscountPrice > 0 && (
                                                 <>
