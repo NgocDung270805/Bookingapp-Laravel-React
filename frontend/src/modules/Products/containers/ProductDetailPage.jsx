@@ -10,15 +10,21 @@ import LoadingIndicator from '../../../core/components/LoadingIndicator';
 import ErrorIndicator from '../../../core/components/ErrorIndicator';
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Thumbs, Controller, A11y } from "swiper/modules";
+import { Thumbs, Navigation, Pagination, Controller, A11y, FreeMode } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/free-mode";
 
 const ProductDetailPage = () => {
     const dispatch = useDispatch();
     const isDesktop = useMediaQuery({ minWidth: 1024 });
     const isMobile = useMediaQuery({ maxWidth: 767 });
     const { productSlug } = useParams();
+    
+    // Lấy thông tin user hiện tại từ auth slice
+    const currentUser = useSelector((state) => state.auth.user);
 
     const selectedProduct = useSelector((state) => state.products.selectedProduct);
     const loading = useSelector(selectProductsLoading);
@@ -256,6 +262,12 @@ const ProductDetailPage = () => {
         return <ErrorIndicator />;
     }
 
+    // Kiểm tra xem sản phẩm có được yêu thích bởi user hiện tại không
+    const isProductFavorited = (product) => {
+        if (!product || !currentUser) return false;
+        return product.favorited_by_users?.some(user => user.user_id === currentUser.id) || false;
+    };
+
     if (!selectedProduct) {
         return (
             <div className="container mt-5 text-center">
@@ -266,6 +278,7 @@ const ProductDetailPage = () => {
     }
 
     const product = selectedProduct;
+    const isFavorited = isProductFavorited(product);
 
     // Giá gốc
     const originalPrice = currentPrice;
@@ -324,16 +337,27 @@ const ProductDetailPage = () => {
                                     <div className="col-12 col-md-10 col-lg-12 col-xl-10">
                                         <div className="d-flex align-items-center border border-translucent rounded-3 text-center p-5 h-100">
                                             <Swiper
+                                                style={{
+                                                    '--swiper-navigation-color': '#fff',
+                                                    '--swiper-pagination-color': '#fff',
+                                                }}
                                                 slidesPerView={1}
                                                 spaceBetween={16}
-                                                thumbs={{ swiper: thumbsSwiper }}
-                                                modules={[Thumbs, Controller, A11y]}
-                                                className="swiper theme-slider swiper-initialized swiper-horizontal swiper-backface-hidden"
+                                                navigation={true}
+                                                pagination={{
+                                                    clickable: true,
+                                                }}
+                                                thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
+                                                modules={[Navigation, Pagination, Thumbs]}
                                                 onSwiper={setMainSwiper}
                                             >
                                                 {images.map((src, i) => (
-                                                    <SwiperSlide key={`slide-${i}`} className="swiper-slide">
-                                                        <img className="w-100" src={src} alt={`slide-${i}`} />
+                                                    <SwiperSlide key={`slide-${i}`}>
+                                                        <img
+                                                            src={src}
+                                                            alt={`slide-${i}`}
+                                                            style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
+                                                        />
                                                     </SwiperSlide>
                                                 ))}
                                             </Swiper>
@@ -341,11 +365,10 @@ const ProductDetailPage = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex">
-                                    <button
-                                        className="btn btn-lg btn-outline-warning rounded-pill w-100 me-3 px-2 px-sm-4 fs-9 fs-sm-8"
-                                        onClick={() => handleToggleFavorite(product.id)}
-                                    >
-                                        <span className="me-2 far fa-heart"></span>Thêm vào yêu thích
+                                    <button className={`btn btn-lg ${isFavorited ? 'btn-warning' : 'btn-outline-warning'} rounded-pill w-100 me-3 px-2 px-sm-4 fs-9 fs-sm-8`}
+                                        onClick={() => handleToggleFavorite(product.id)}>
+                                        <span className={`me-2 ${isFavorited ? 'fas' : 'far'} fa-heart`}></span>
+                                        {isFavorited ? 'Đã yêu thích' : 'Thêm vào yêu thích'}
                                     </button>
                                     <button className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8">
                                         <span className="fas fa-shopping-cart me-2"></span>Thêm vào giỏ
