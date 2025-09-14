@@ -469,7 +469,7 @@ const ProductDetailPage = () => {
                                 <div className="tab-content" id="productTabContent">
                                     <div className="tab-pane pe-lg-6 pe-xl-12 fade show active text-body-emphasis"
                                         id="tab-description" role="tabpanel" aria-labelledby="description-tab">
-                                        <p className="mb-5">{product.description}</p>
+                                        <p className="mb-5" style={{ whiteSpace: 'pre-wrap' }}>{product.description}</p>
                                     </div>
                                     <div className="tab-pane pe-lg-6 pe-xl-12 fade" id="tab-specification" role="tabpanel"
                                         aria-labelledby="specification-tab">
