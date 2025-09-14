@@ -22,7 +22,7 @@ const ProductDetailPage = () => {
     const isDesktop = useMediaQuery({ minWidth: 1024 });
     const isMobile = useMediaQuery({ maxWidth: 767 });
     const { productSlug } = useParams();
-    
+
     // Lấy thông tin user hiện tại từ auth slice
     const currentUser = useSelector((state) => state.auth.user);
 
@@ -512,32 +512,32 @@ const ProductDetailPage = () => {
                                                     <tr>
                                                         <td className="bg-body-highlight align-middle">
                                                             <h6 className="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
-                                                                SKU
-                                                            </h6>
-                                                        </td>
-                                                        <td className="px-5 mb-0">{currentVariant.sku}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td className="bg-body-highlight align-middle">
-                                                            <h6 className="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
-                                                                Giá
+                                                                Dòng xe
                                                             </h6>
                                                         </td>
                                                         <td className="px-5 mb-0">
-                                                            {new Intl.NumberFormat('vi-VN', {
-                                                                style: 'currency',
-                                                                currency: 'VND'
-                                                            }).format(currentVariant.price)}
+                                                            {product.categories?.map((cat, index) => (
+                                                                <span key={cat.id}>
+                                                                    {cat.name}
+                                                                    {index < product.categories.length - 1 && " , "}
+                                                                </span>
+                                                            ))}
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td className="bg-body-highlight align-middle">
-                                                            <h6 className="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
-                                                                Số lượng
-                                                            </h6>
-                                                        </td>
-                                                        <td className="px-5 mb-0">{currentVariant.quantity}</td>
-                                                    </tr>
+                                                    {product.variants?.map((variant, index) => (
+                                                        variant.attribute_values.map(attr => (
+                                                            <tr>
+                                                                <td className="bg-body-highlight align-middle">
+                                                                    <h6 className="mb-0 text-body text-uppercase fw-bolder px-4 fs-9 lh-sm">
+                                                                        {attr.attribute_type.name}
+                                                                    </h6>
+                                                                </td>
+                                                                <td className="px-5 mb-0">
+                                                                    {attr.value}
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    ))}
                                                 </tbody>
                                             </table>
                                         )}
