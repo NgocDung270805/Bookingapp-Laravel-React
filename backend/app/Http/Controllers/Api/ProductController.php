@@ -106,7 +106,7 @@ class ProductController extends Controller
     {
         try {
             $product = Product::where('slug', $product_slug)
-                                ->with('images', 'categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs.attributeValue.attributeType', 'favoritedByUsers', 'comments', 'bookings') 
+                                ->with('images', 'categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs.attributeValue.attributeType', 'favoritedByUsers', 'comments.user', 'bookings') 
                                 // ->with('comments.user', 'variants.attributeValues')
                                 ->first();
 
