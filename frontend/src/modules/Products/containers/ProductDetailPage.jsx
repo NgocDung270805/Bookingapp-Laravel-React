@@ -32,6 +32,26 @@ const ProductDetailPage = () => {
 
     const [showBookingModal, setShowBookingModal] = useState(false);
     const [showCommentModal, setShowCommentModal] = useState(false);
+    const [commentSort, setCommentSort] = useState('newest'); // newest, oldest
+    const [ratingFilter, setRatingFilter] = useState(0); // 0 = all, 1-5 = filter by stars
+
+    // Xử lý sắp xếp và lọc comments
+    const getFilteredAndSortedComments = (comments) => {
+        if (!comments) return [];
+        
+        // Lọc theo rating nếu có
+        let filtered = comments;
+        if (ratingFilter > 0) {
+            filtered = comments.filter(comment => comment.rating === ratingFilter);
+        }
+
+        // Sắp xếp theo thời gian
+        return [...filtered].sort((a, b) => {
+            const dateA = new Date(a.created_at);
+            const dateB = new Date(b.created_at);
+            return commentSort === 'newest' ? dateB - dateA : dateA - dateB;
+        });
+    };
 
     // ===============================================
     // States cho Swiper và variant management
@@ -559,9 +579,39 @@ const ProductDetailPage = () => {
                                             </button>
                                         </div>
 
+                                        {/* Phần lọc và sắp xếp */}
+                                        <div className="mb-4">
+                                            <div className="row g-3">
+                                                <div className="col-12 col-sm-6">
+                                                    <select 
+                                                        className="form-select"
+                                                        value={commentSort}
+                                                        onChange={(e) => setCommentSort(e.target.value)}
+                                                    >
+                                                        <option value="newest">Mới nhất</option>
+                                                        <option value="oldest">Cũ nhất</option>
+                                                    </select>
+                                                </div>
+                                                <div className="col-12 col-sm-6">
+                                                    <select 
+                                                        className="form-select"
+                                                        value={ratingFilter}
+                                                        onChange={(e) => setRatingFilter(Number(e.target.value))}
+                                                    >
+                                                        <option value="0">Tất cả đánh giá</option>
+                                                        <option value="5">5 sao</option>
+                                                        <option value="4">4 sao</option>
+                                                        <option value="3">3 sao</option>
+                                                        <option value="2">2 sao</option>
+                                                        <option value="1">1 sao</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         {product.comments && product.comments.length > 0 ? (
                                             <div className="comments-list">
-                                                {product.comments.map((comment) => (
+                                                {getFilteredAndSortedComments(product.comments).map((comment) => (
                                                     <div key={comment.id} className="comment-item border-bottom py-4">
                                                         <div className="d-flex justify-content-between mb-2">
                                                             <div className="d-flex align-items-center">
