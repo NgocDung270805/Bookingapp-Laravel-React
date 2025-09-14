@@ -17,6 +17,8 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->text('content'); // Nội dung bình luận
             $table->tinyInteger('rating')->nullable(); // Đánh giá (ví dụ: 1-5 sao)
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->foreign('parent_id')->references('id')->on('comments')->onDelete('cascade');
             $table->timestamps();
         });
     }

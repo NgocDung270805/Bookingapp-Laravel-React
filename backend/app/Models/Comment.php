@@ -14,6 +14,7 @@ class Comment extends Model
         'product_id',
         'content',
         'rating',
+        'parent_id', // Added to fillable
     ];
 
     protected $casts = [
@@ -28,5 +29,17 @@ class Comment extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    // Relationship with replies
+    public function replies()
+    {
+        return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    // Relationship with parent comment
+    public function parent()
+    {
+        return $this->belongsTo(Comment::class, 'parent_id');
     }
 }
