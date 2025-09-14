@@ -152,5 +152,11 @@ export const addCommentApi = async (productId, commentData) => {
 // Đảm bảo hàm này được EXPORT
 export const getGeminiChatResponse = async (message) => { // Dòng này phải có 'export'
     const response = await api.post('/chat/gemini', { message });
-    return response.data; // Mong đợi { ai_response: "...", suggested_products: [...] }
+    return response.data;
+};
+
+// API lấy danh sách comments của sản phẩm
+export const fetchProductCommentsApi = async (productId) => {
+  const response = await api.get(`/products/${productId}/comments`);
+  return response.data;
 };

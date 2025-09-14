@@ -2,7 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { fetchProductBySlug, toggleFavorite, selectProductsLoading, selectProductsError, clearSelectedProduct } from '../slice';
+import { fetchProductBySlug, toggleFavorite, selectProductsLoading, selectProductsError, clearSelectedProduct, addComment, fetchProductComments, selectProductComments } from '../slice';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { PATHS, BASE_URL_ADMIN } from '../../../common/constants';
 import BookingFormModal from '../components/BookingFormModal';
 import CommentFormModal from '../components/CommentFormModal';
@@ -27,6 +29,7 @@ const ProductDetailPage = () => {
     const currentUser = useSelector((state) => state.auth.user);
 
     const selectedProduct = useSelector((state) => state.products.selectedProduct);
+    const comments = useSelector(selectProductComments);
     const loading = useSelector(selectProductsLoading);
     const error = useSelector(selectProductsError);
 
@@ -34,23 +37,38 @@ const ProductDetailPage = () => {
     const [showCommentModal, setShowCommentModal] = useState(false);
     const [commentSort, setCommentSort] = useState('newest'); // newest, oldest
     const [ratingFilter, setRatingFilter] = useState(0); // 0 = all, 1-5 = filter by stars
+    const [replyTo, setReplyTo] = useState(null); // Comment đang được trả lời
+    const [replyContent, setReplyContent] = useState(''); // Nội dung trả lời
+    const [showReplyForm, setShowReplyForm] = useState(false); // Hiển thị form trả lời
 
     // Xử lý sắp xếp và lọc comments
     const getFilteredAndSortedComments = (comments) => {
         if (!comments) return [];
         
-        // Lọc theo rating nếu có
-        let filtered = comments;
+        // Tách comments cha và con
+        const parentComments = comments.filter(comment => !comment.parent_id);
+        const childComments = comments.filter(comment => comment.parent_id);
+
+        // Lọc theo rating cho comments cha
+        let filteredParents = parentComments;
         if (ratingFilter > 0) {
-            filtered = comments.filter(comment => comment.rating === ratingFilter);
+            filteredParents = parentComments.filter(comment => comment.rating === ratingFilter);
         }
 
-        // Sắp xếp theo thời gian
-        return [...filtered].sort((a, b) => {
+        // Sắp xếp comments cha theo thời gian
+        const sortedParents = [...filteredParents].sort((a, b) => {
             const dateA = new Date(a.created_at);
             const dateB = new Date(b.created_at);
             return commentSort === 'newest' ? dateB - dateA : dateA - dateB;
         });
+
+        // Gắn các replies vào comment cha tương ứng
+        return sortedParents.map(parent => ({
+            ...parent,
+            replies: childComments
+                .filter(child => child.parent_id === parent.id)
+                .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+        }));
     };
 
     // ===============================================
@@ -274,6 +292,55 @@ const ProductDetailPage = () => {
         }
     };
 
+    // Xử lý khi click nút trả lời
+    const handleReplyClick = (comment) => {
+        if (!currentUser) {
+            toast.error('Vui lòng đăng nhập để trả lời bình luận');
+            return;
+        }
+        console.log('Comment being replied to:', comment); // Thêm log để debug
+        setReplyTo(comment);
+        setShowReplyForm(true);
+    };
+
+    // Xử lý khi gửi trả lời
+    const handleSubmitReply = async () => {
+        if (!replyContent.trim()) {
+            toast.error('Vui lòng nhập nội dung bình luận!');
+            return;
+        }
+
+        if (!replyTo) {
+            toast.error('Không tìm thấy bình luận để trả lời');
+            return;
+        }
+
+        try {
+            const commentData = {
+                content: replyContent,
+                parent_id: replyTo.id
+            };
+
+            const result = await dispatch(addComment({
+                productId: product.id,
+                commentData
+            })).unwrap();
+
+            // Đợi fetchProductComments hoàn thành trước khi reset form
+            await dispatch(fetchProductComments(product.id)).unwrap();
+            
+            // Reset form sau khi đã cập nhật comments thành công
+            setReplyContent('');
+            setReplyTo(null);
+            setShowReplyForm(false);
+            
+            toast.success('Đã gửi phản hồi thành công!');
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error(error.message || 'Có lỗi xảy ra khi gửi phản hồi');
+        }
+    };
+
     if (loading) {
         return <LoadingIndicator />;
     }
@@ -281,6 +348,17 @@ const ProductDetailPage = () => {
     if (error) {
         return <ErrorIndicator />;
     }
+
+    // Cấu hình Toast thông báo 
+    const ToastConfig = {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+    };
 
     // Kiểm tra xem sản phẩm có được yêu thích bởi user hiện tại không
     const isProductFavorited = (product) => {
@@ -299,16 +377,10 @@ const ProductDetailPage = () => {
 
     const product = selectedProduct;
     const isFavorited = isProductFavorited(product);
-
-    // Giá gốc
-    const originalPrice = currentPrice;
-    // Giá đã giảm
-    const discountedPrice = currentDiscountPrice;
-    // Số tiền giảm
-    const discountAmount = originalPrice - discountedPrice;
-    // Tỷ lệ giảm
-    const discountPercent = discountedPrice > 0 ? Number(((discountAmount / originalPrice) * 100).toFixed(2)) : 0;
-
+    const originalPrice = currentPrice;// Giá gốc
+    const discountedPrice = currentDiscountPrice;// Giá đã giảm
+    const discountAmount = originalPrice - discountedPrice;// Số tiền giảm
+    const discountPercent = discountedPrice > 0 ? Number(((discountAmount / originalPrice) * 100).toFixed(2)) : 0;// Tỷ lệ giảm
     return (
         <>
             <div className="pt-5 pb-9">
@@ -611,7 +683,7 @@ const ProductDetailPage = () => {
 
                                         {product.comments && product.comments.length > 0 ? (
                                             <div className="comments-list">
-                                                {getFilteredAndSortedComments(product.comments).map((comment) => (
+                                                {getFilteredAndSortedComments(comments).map((comment) => (
                                                     <div key={comment.id} className="comment-item border-bottom py-4">
                                                         <div className="d-flex justify-content-between mb-2">
                                                             <div className="d-flex align-items-center">
@@ -626,20 +698,99 @@ const ProductDetailPage = () => {
                                                                 </div>
                                                                 <div>
                                                                     <h6 className="mb-1 fw-bold">{comment.user?.name}</h6>
-                                                                    <div className="text-warning">
-                                                                        {[...Array(5)].map((_, index) => (
-                                                                            <i key={index}
-                                                                                className={`fa${index < comment.rating ? 's' : 'r'} fa-star`}
-                                                                            ></i>
-                                                                        ))}
-                                                                    </div>
+                                                                    {!comment.parent_id && (
+                                                                        <div className="text-warning">
+                                                                            {[...Array(5)].map((_, index) => (
+                                                                                <i key={index}
+                                                                                    className={`fa${index < comment.rating ? 's' : 'r'} fa-star`}
+                                                                                ></i>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                             <small className="text-muted">
                                                                 {new Date(comment.created_at).toLocaleDateString('vi-VN')}
                                                             </small>
                                                         </div>
-                                                        <p className="mb-0">{comment.content}</p>
+                                                        <p className="mb-3">{comment.content}</p>
+                                                        
+                                                        {/* Nút trả lời */}
+                                                        <div className="d-flex align-items-center mb-3">
+                                                            <button 
+                                                                className="btn btn-sm btn-light"
+                                                                onClick={() => handleReplyClick(comment)}
+                                                            >
+                                                                <i className="fas fa-reply me-1"></i>
+                                                                Trả lời
+                                                            </button>
+                                                        </div>
+
+                                                        {/* Form trả lời */}
+                                                        {showReplyForm && replyTo?.id === comment.id && (
+                                                            <div className="reply-form mb-3">
+                                                                <div className="d-flex">
+                                                                    <div className="flex-grow-1">
+                                                                        <textarea 
+                                                                            className="form-control"
+                                                                            rows="2"
+                                                                            placeholder="Viết trả lời của bạn..."
+                                                                            value={replyContent}
+                                                                            onChange={(e) => setReplyContent(e.target.value)}
+                                                                        ></textarea>
+                                                                    </div>
+                                                                    <div className="ms-2">
+                                                                        <button 
+                                                                            className="btn btn-primary mb-2"
+                                                                            onClick={handleSubmitReply}
+                                                                            disabled={!replyContent.trim()}
+                                                                        >
+                                                                            Gửi
+                                                                        </button>
+                                                                        <button 
+                                                                            className="btn btn-light"
+                                                                            onClick={() => {
+                                                                                setShowReplyForm(false);
+                                                                                setReplyTo(null);
+                                                                                setReplyContent('');
+                                                                            }}
+                                                                        >
+                                                                            Hủy
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Hiển thị các reply */}
+                                                        {comment.replies && comment.replies.length > 0 && (
+                                                            <div className="replies-list ms-4 mt-3">
+                                                                {comment.replies.map(reply => (
+                                                                    <div key={reply.id} className="reply-item py-3 border-top">
+                                                                        <div className="d-flex justify-content-between mb-2">
+                                                                            <div className="d-flex align-items-center">
+                                                                                <div className="avatar avatar-s me-2">
+                                                                                    {reply.user?.profile?.avatar ? (
+                                                                                        <img src={`${BASE_URL_ADMIN}storage/${reply.user?.profile?.avatar}`} alt="" className="rounded-circle" />
+                                                                                    ) : (
+                                                                                        <div className="avatar-name rounded-circle bg-primary text-white">
+                                                                                            <span>{reply.user?.name?.charAt(0)?.toUpperCase() || '?'}</span>
+                                                                                        </div>
+                                                                                    )}
+                                                                                </div>
+                                                                                <div>
+                                                                                    <h6 className="mb-1 fw-bold">{reply.user?.name}</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                            <small className="text-muted">
+                                                                                {new Date(reply.created_at).toLocaleDateString('vi-VN')}
+                                                                            </small>
+                                                                        </div>
+                                                                        <p className="mb-0">{reply.content}</p>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
@@ -689,6 +840,7 @@ const ProductDetailPage = () => {
                     </div>
                 </section>
             </div>
+            <ToastContainer {...ToastConfig} />
         </>
     );
 };
