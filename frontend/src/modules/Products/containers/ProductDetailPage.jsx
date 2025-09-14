@@ -492,7 +492,7 @@ const ProductDetailPage = () => {
                             <li className="nav-item">
                                 <a className="nav-link" id="reviews-tab" data-bs-toggle="tab"
                                     href="#tab-reviews" role="tab" aria-controls="tab-reviews"
-                                    aria-selected="false">Đánh giá</a>
+                                    aria-selected="false">Bình luận</a>
                             </li>
                         </ul>
 
@@ -540,6 +540,79 @@ const ProductDetailPage = () => {
                                                     ))}
                                                 </tbody>
                                             </table>
+                                        )}
+                                    </div>
+                                    <div
+                                        className="tab-pane pe-lg-6 pe-xl-12 fade"
+                                        id="tab-reviews"
+                                        role="tabpanel"
+                                        aria-labelledby="reviews-tab"
+                                    >
+                                        <div className="d-flex justify-content-between align-items-center mb-4">
+                                            <h3 className="mb-0 fw-bold">Bình luận</h3>
+                                            <button
+                                                className="btn btn-warning"
+                                                onClick={() => setShowCommentModal(true)}
+                                            >
+                                                <i className="fas fa-comment-alt me-2"></i>
+                                                Viết bình luận
+                                            </button>
+                                        </div>
+
+                                        {product.comments && product.comments.length > 0 ? (
+                                            <div className="comments-list">
+                                                {product.comments.map((comment) => (
+                                                    <div key={comment.id} className="comment-item border-bottom py-4">
+                                                        <div className="d-flex justify-content-between mb-2">
+                                                            <div className="d-flex align-items-center">
+                                                                <div className="avatar avatar-m me-2">
+                                                                    {comment.user?.profile?.avatar ? (
+                                                                        <img src={`${BASE_URL_ADMIN}storage/${comment.user?.profile?.avatar}`} alt="" className="rounded-circle" />
+                                                                    ) : (
+                                                                        <div className="avatar-name rounded-circle bg-primary text-white">
+                                                                            <span>{comment.user?.name?.charAt(0)?.toUpperCase() || '?'}</span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                                <div>
+                                                                    <h6 className="mb-1 fw-bold">{comment.user?.name}</h6>
+                                                                    <div className="text-warning">
+                                                                        {[...Array(5)].map((_, index) => (
+                                                                            <i key={index}
+                                                                                className={`fa${index < comment.rating ? 's' : 'r'} fa-star`}
+                                                                            ></i>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <small className="text-muted">
+                                                                {new Date(comment.created_at).toLocaleDateString('vi-VN')}
+                                                            </small>
+                                                        </div>
+                                                        <p className="mb-0">{comment.content}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="text-center py-5">
+                                                <div className="mb-3">
+                                                    <i className="far fa-comments fa-3x text-muted"></i>
+                                                </div>
+                                                <p className="text-muted">Chưa có đánh giá nào cho sản phẩm này</p>
+                                                <button
+                                                    className="btn btn-warning"
+                                                    onClick={() => setShowCommentModal(true)}
+                                                >
+                                                    Trở thành người đầu tiên đánh giá
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {showCommentModal && (
+                                            <CommentFormModal
+                                                productId={product.id}
+                                                onClose={() => setShowCommentModal(false)}
+                                            />
                                         )}
                                     </div>
                                 </div>
