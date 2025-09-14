@@ -27,15 +27,17 @@ class CommentController extends Controller
         $request->validate([
             'content' => 'required|string|max:500',
             'rating' => 'nullable|integer|min:1|max:5',
+            'parent_id' => 'nullable|exists:comments,id', 
         ]);
 
         $comment = $product->comments()->create([
             'user_id' => Auth::id(),
             'content' => $request->content,
             'rating' => $request->rating,
+            'parent_id' => $request->parent_id, 
         ]);
 
-        $comment->load('user'); // Tải thông tin người dùng để trả về
+        $comment->load('user'); 
         return response()->json(['message' => 'Bình luận đã được thêm.', 'comment' => $comment], 201);
     }
 
