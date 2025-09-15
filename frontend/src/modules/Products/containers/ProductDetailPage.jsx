@@ -285,9 +285,8 @@ const ProductDetailPage = () => {
 
     // Hàm xử lý yêu thích
     const handleToggleFavorite = async (e, productId) => {
-        e.preventDefault(); // Ngăn chặn việc reload trang
+        e.preventDefault();
         
-        // Kiểm tra đăng nhập
         if (!currentUser) {
             toast.error('Vui lòng đăng nhập để yêu thích sản phẩm');
             return;
@@ -296,17 +295,12 @@ const ProductDetailPage = () => {
         try {
             const resultAction = await dispatch(toggleFavorite(productId));
             
-            if (toggleFavorite.fulfilled.match(resultAction)) {
+            // Chỉ cần kiểm tra có message là đủ
+            if (resultAction.payload?.message) {
                 toast.success(resultAction.payload.message);
-                // Cập nhật UI ngay lập tức
-                setSelectedProduct(prev => ({
-                    ...prev,
-                    is_favorited: !prev.is_favorited
-                }));
-            } else {
-                toast.error('Có lỗi xảy ra khi thực hiện yêu thích');
             }
         } catch (error) {
+            console.error('Toggle favorite error:', error);
             toast.error('Có lỗi xảy ra khi thực hiện yêu thích');
         }
     };

@@ -136,13 +136,16 @@ export const deleteProduct = createAsyncThunk(
 
 export const toggleFavorite = createAsyncThunk(
   'products/toggleFavorite',
-  async (productId, { rejectWithValue, dispatch }) => {
+  async (productId, { rejectWithValue }) => {
     try {
       const response = await toggleFavoriteApi(productId);
-      dispatch(fetchProducts());
-      return { productId, ...response };
+      // Kiểm tra cả status và message
+      if (response.status === 200 && response.message) {
+        return response;
+      }
+      return rejectWithValue(response.message || 'Không thể cập nhật yêu thích');
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Không thể cập nhật yêu thích.');
+      return rejectWithValue(error.response?.data?.message || 'Có lỗi xảy ra');
     }
   }
 );
