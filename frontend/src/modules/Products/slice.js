@@ -320,13 +320,18 @@ const productsSlice = createSlice({
         toast.error('Xóa sản phẩm thất bại: ' + action.payload);
       })
       .addCase(toggleFavorite.fulfilled, (state, action) => {
-        const { productId, isFavorited } = action.payload;
+        // Giải nén response từ API
+        const { productId, is_favorited } = action.payload;
+        
+        // Cập nhật trạng thái trong danh sách products
         const productToUpdate = state.products.find((p) => p.id === productId);
         if (productToUpdate) {
-          productToUpdate.is_favorited = isFavorited;
+          productToUpdate.is_favorited = is_favorited;
         }
+        
+        // Cập nhật trạng thái trong selectedProduct nếu đang xem chi tiết
         if (state.selectedProduct && state.selectedProduct.id === productId) {
-          state.selectedProduct.is_favorited = isFavorited;
+          state.selectedProduct.is_favorited = is_favorited;
         }
       })
       .addCase(createBooking.pending, (state) => {
