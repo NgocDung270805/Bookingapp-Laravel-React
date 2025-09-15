@@ -14,15 +14,31 @@ class FavoriteController extends Controller
      */
     public function toggle(Product $product)
     {
-        $user = Auth::user();
+        try {
+            $user = auth()->user();
+            $favorite = $user->favorites()->where('product_id', $product->id)->first();
 
-        // Kiểm tra xem sản phẩm đã được yêu thích chưa
-        if ($user->favorites()->where('product_id', $product->id)->exists()) {
-            $user->favorites()->detach($product->id);
-            return response()->json(['message' => 'Sản phẩm đã được xóa khỏi danh sách yêu thích.', 'is_favorited' => false]);
-        } else {
-            $user->favorites()->attach($product->id);
-            return response()->json(['message' => 'Sản phẩm đã được thêm vào danh sách yêu thích.', 'is_favorited' => true]);
+            if ($favorite) {
+                $user->favorites()->detach($product->id);
+                $message = 'Đã xóa khỏi danh sách yêu thích';
+                $is_favorited = false;
+            } else {
+                $user->favorites()->attach($product->id);
+                $message = 'Đã thêm vào danh sách yêu thích';
+                $is_favorited = true;
+            }
+
+            return response()->json([
+                'status' => 200,  // Thêm status vào đây
+                'message' => $message,
+                'is_favorited' => $is_favorited
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => 'Server Error',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -34,7 +50,11 @@ class FavoriteController extends Controller
     {
         $user = Auth::user();
         $isFavorited = $user->favorites()->where('product_id', $product->id)->exists();
-        return response()->json(['is_favorited' => $isFavorited]);
+        return response()->json([
+            'status' => 200,
+            'message' => 'Lấy trạng thái yêu thích thành công',
+            'is_favorited' => $isFavorited
+        ]);
     }
 
     /**
@@ -44,6 +64,10 @@ class FavoriteController extends Controller
     {
         $user = Auth::user();
         $favoritedProducts = $user->favorites()->get(); // Lấy tất cả sản phẩm mà user đã yêu thích
-        return response()->json(['favorited_products' => $favoritedProducts]);
+        return response()->json([
+            'status' => 200,
+            'message' => 'Lấy danh sách sản phẩm yêu thích thành công',
+            'favorited_products' => $favoritedProducts
+        ]);
     }
 }
