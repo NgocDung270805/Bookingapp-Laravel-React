@@ -10,7 +10,7 @@ import BookingFormModal from '../components/BookingFormModal';
 import CommentFormModal from '../components/CommentFormModal';
 import LoadingIndicator from '../../../core/components/LoadingIndicator';
 import ErrorIndicator from '../../../core/components/ErrorIndicator';
-
+import VerifiedBadge from '../../../core/components/VerifiedBadge';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, Navigation, Pagination, Controller, A11y, FreeMode } from "swiper/modules";
 import "swiper/css";
@@ -707,8 +707,7 @@ const ProductDetailPage = () => {
                                                                     )}
                                                                 </div>
                                                                 <div>
-                                                                    {/* Tên người dùng */}
-                                                                    <h6 className="mb-1 fw-bold">{comment.user?.name}</h6>
+                                                                    <h6 className="mb-1 fw-bold">{comment.user?.name}{comment.user?.is_verified === 1 && <VerifiedBadge />}</h6>
                                                                     {/* Hiển thị sao nếu không phải là reply */}
                                                                     {/* {!comment.parent_id && (
                                                                         <div className="text-warning">
@@ -793,7 +792,7 @@ const ProductDetailPage = () => {
                                                                                     )}
                                                                                 </div>
                                                                                 <div>
-                                                                                    <h6 className="mb-1 fw-bold">{reply.user?.name}</h6>
+                                                                                    <h6 className="mb-1 fw-bold">{reply.user?.name}{reply.user?.is_verified === 1 && <VerifiedBadge />}</h6>
                                                                                 </div>
                                                                             </div>
                                                                             <small className="text-muted">
