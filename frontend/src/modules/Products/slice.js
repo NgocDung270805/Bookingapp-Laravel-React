@@ -171,14 +171,30 @@ export const createBooking = createAsyncThunk(
   }
 );
 
+// Thay thế action addComment
 export const addComment = createAsyncThunk(
   'products/addComment',
-  async ({ productId, commentData }, { rejectWithValue }) => {
+  async ({ productId, commentData }, { rejectWithValue, getState }) => {
     try {
       const response = await addCommentApi(productId, commentData);
-      return response.comment;
+      
+      // Lấy thông tin user hiện tại
+      const currentUser = getState().auth.user;
+      
+      // Tạo đối tượng comment đầy đủ
+      const newComment = {
+        ...response.comment,
+        user: currentUser,
+        created_at: new Date().toISOString(),
+        rating: commentData.rating,
+        content: commentData.content,
+        // Thêm các trường khác nếu cần
+        replies: [] // Khởi tạo mảng replies rỗng
+      };
+      
+      return newComment;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.errors || error.response?.data?.message || 'Bình luận thất bại.');
+      return rejectWithValue(error.response?.data?.message || 'Bình luận thất bại.');
     }
   }
 );
@@ -383,7 +399,14 @@ const productsSlice = createSlice({
       .addCase(addComment.pending, (state) => {
         state.error = null;
       })
-      .addCase(addComment.fulfilled, (state) => {
+      .addCase(addComment.fulfilled, (state, action) => {
+        // Thêm comment mới vào đầu danh sách
+        if (state.selectedProduct) {
+          if (!state.selectedProduct.comments) {
+            state.selectedProduct.comments = [];
+          }
+          state.selectedProduct.comments.unshift(action.payload);
+        }
         toast.success('Bình luận đã được gửi!');
       })
       .addCase(addComment.rejected, (state, action) => {

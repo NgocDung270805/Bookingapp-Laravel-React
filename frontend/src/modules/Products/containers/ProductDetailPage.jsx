@@ -691,7 +691,7 @@ const ProductDetailPage = () => {
                                             </div>
                                         </div>
 
-                                        {product.comments && product.comments.length > 0 ? (
+                                        {comments && comments.length > 0 ? (
                                             <div className="comments-list">
                                                 {getFilteredAndSortedComments(comments).map((comment) => (
                                                     <div key={comment.id} className="comment-item border-bottom py-4">
@@ -707,8 +707,10 @@ const ProductDetailPage = () => {
                                                                     )}
                                                                 </div>
                                                                 <div>
+                                                                    {/* Tên người dùng */}
                                                                     <h6 className="mb-1 fw-bold">{comment.user?.name}</h6>
-                                                                    {!comment.parent_id && (
+                                                                    {/* Hiển thị sao nếu không phải là reply */}
+                                                                    {/* {!comment.parent_id && (
                                                                         <div className="text-warning">
                                                                             {[...Array(5)].map((_, index) => (
                                                                                 <i key={index}
@@ -716,7 +718,7 @@ const ProductDetailPage = () => {
                                                                                 ></i>
                                                                             ))}
                                                                         </div>
-                                                                    )}
+                                                                    )} */}
                                                                 </div>
                                                             </div>
                                                             <small className="text-muted">
