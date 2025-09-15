@@ -6,7 +6,11 @@ import { fetchUserProfile, updateUserProfile } from '../slice';
 import { useAuth } from '../../../hooks/useAuth';
 import { GENDER_TYPES } from '../../../common/constants'; // Import GENDER_TYPES nếu cần
 import { PATHS } from '../../../common/constants';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import VerifiedBadge from '../../../core/components/VerifiedBadge';
+import LoadingIndicator from '../../../core/components/LoadingIndicator';
+import ErrorIndicator from '../../../core/components/ErrorIndicator';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ProfilePage = () => {
   const dispatch = useAppDispatch();
@@ -60,23 +64,17 @@ const ProfilePage = () => {
 
     const resultAction = await dispatch(updateUserProfile(updateData));
     if (updateUserProfile.fulfilled.match(resultAction)) {
-      alert('Cập nhật hồ sơ thành công!'); // Hoặc dùng notification UI
+      toast.success('Cập nhật hồ sơ thành công!');
     }
     // Lỗi sẽ được hiển thị qua `error` state từ Redux
   };
 
   if (loading) {
-    return <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-      <DotLottieReact
-        src="https://lottie.host/3722dbdc-d3e0-407e-bf0b-5b6805db01ba/duMhR6ttZz.lottie"
-        loop
-        autoplay
-        style={{ width: "300px", height: "300px" }} />
-    </div>;
+    return <LoadingIndicator />;
   }
 
   if (error) {
-    return <div style={{ color: 'red' }}>Lỗi: {error}</div>;
+    return <ErrorIndicator />;
   }
 
   // Nếu user hoặc profileData chưa load xong
@@ -97,22 +95,11 @@ const ProfilePage = () => {
                     ? `${PATHS.ADMIN_DASHBOARD}storage/${profileData.profile.avatar}`
                     : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkgjgrCNlnMAjfAJmzC9Q8OGQKwKQpq3HtUQ&s'
                 }
-                // {user.profile?.avatar ? `${BASE_URL_ADMIN}storage/${user.profile.avatar}` : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkgjgrCNlnMAjfAJmzC9Q8OGQKwKQpq3HtUQ&s'}
                 className="rounded-circle mb-3"
                 alt=""
                 style={{ width: '150px', height: '150px', objectFit: 'cover' }}
               />
-              <h3 className="card-title">{ profileData.name }
-                <svg viewBox="0 0 12 13" width="16" height="16" fill="currentColor" style={{ color: '#0866ff', marginLeft: "7px" }}
-                  className="x14rh7hd x1lliihq x1tzjh5l x1k90msu x2h7rmj x1qfuztq" >
-
-                  <g fillRule="evenodd" transform="translate(-98 -917)"><title>Tài khoản đã xác minh</title>
-                    <path
-                      d="m106.853 922.354-3.5 3.5a.499.499 0 0 1-.706 0l-1.5-1.5a.5.5 0 1 1 .706-.708l1.147 1.147 3.147-3.147a.5.5 0 1 1 .706.708m3.078 2.295-.589-1.149.588-1.15a.633.633 0 0 0-.219-.82l-1.085-.7-.065-1.287a.627.627 0 0 0-.6-.603l-1.29-.066-.703-1.087a.636.636 0 0 0-.82-.217l-1.148.588-1.15-.588a.631.631 0 0 0-.82.22l-.701 1.085-1.289.065a.626.626 0 0 0-.6.6l-.066 1.29-1.088.702a.634.634 0 0 0-.216.82l.588 1.149-.588 1.15a.632.632 0 0 0 .219.819l1.085.701.065 1.286c.014.33.274.59.6.604l1.29.065.703 1.088c.177.27.53.362.82.216l1.148-.588 1.15.589a.629.629 0 0 0 .82-.22l.701-1.085 1.286-.064a.627.627 0 0 0 .604-.601l.065-1.29 1.088-.703a.633.633 0 0 0 .216-.819">
-                    </path>
-                  </g>
-                </svg>
-              </h3>
+              <h3 className="card-title">{profileData.name}{profileData.is_verified === 1 && <VerifiedBadge />}</h3>
               <p className="text-muted">{profileData.email}</p>
               <p className="card-text">
                 <i className="bi bi-geo-alt-fill me-2"></i>
@@ -161,11 +148,10 @@ const ProfilePage = () => {
                       type="email"
                       id="input-email"
                       className="form-control"
-                      placeholder="email@example.com"
+                      placeholder="email@gmail.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                      disabled // Email thường không cho phép sửa trực tiếp
                     />
                   </div>
                 </div>
