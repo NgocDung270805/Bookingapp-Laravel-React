@@ -136,13 +136,22 @@ export const deleteProduct = createAsyncThunk(
 
 export const toggleFavorite = createAsyncThunk(
   'products/toggleFavorite',
-  async (productId, { rejectWithValue }) => {
+  async (productId, { rejectWithValue, getState }) => {
     try {
       const response = await toggleFavoriteApi(productId);
-      // Kiểm tra cả status và message
-      if (response.status === 200 && response.message) {
-        return response;
+      
+      if (response.status === 200) {
+        // Lấy user ID từ state
+        const userId = getState().auth.user?.id;
+        
+        return {
+          productId,
+          is_favorited: response.is_favorited,
+          message: response.message,
+          user_id: userId
+        };
       }
+      
       return rejectWithValue(response.message || 'Không thể cập nhật yêu thích');
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Có lỗi xảy ra');
@@ -320,18 +329,45 @@ const productsSlice = createSlice({
         toast.error('Xóa sản phẩm thất bại: ' + action.payload);
       })
       .addCase(toggleFavorite.fulfilled, (state, action) => {
-        // Giải nén response từ API
         const { productId, is_favorited } = action.payload;
         
-        // Cập nhật trạng thái trong danh sách products
-        const productToUpdate = state.products.find((p) => p.id === productId);
-        if (productToUpdate) {
-          productToUpdate.is_favorited = is_favorited;
-        }
-        
-        // Cập nhật trạng thái trong selectedProduct nếu đang xem chi tiết
+        // Cập nhật trạng thái yêu thích trong selectedProduct
         if (state.selectedProduct && state.selectedProduct.id === productId) {
-          state.selectedProduct.is_favorited = is_favorited;
+          if (!state.selectedProduct.favorited_by_users) {
+            state.selectedProduct.favorited_by_users = [];
+          }
+          
+          if (is_favorited) {
+            // Thêm user hiện tại vào danh sách yêu thích
+            if (!state.selectedProduct.favorited_by_users.some(u => u.id === action.payload.user_id)) {
+              state.selectedProduct.favorited_by_users.push({ id: action.payload.user_id });
+            }
+          } else {
+            // Xóa user hiện tại khỏi danh sách yêu thích
+            state.selectedProduct.favorited_by_users = state.selectedProduct.favorited_by_users.filter(
+              u => u.id !== action.payload.user_id
+            );
+          }
+        }
+
+        // Cập nhật trong danh sách products nếu có
+        if (state.products && Array.isArray(state.products)) {
+          const productToUpdate = state.products.find(p => p.id === productId);
+          if (productToUpdate) {
+            if (!productToUpdate.favorited_by_users) {
+              productToUpdate.favorited_by_users = [];
+            }
+            
+            if (is_favorited) {
+              if (!productToUpdate.favorited_by_users.some(u => u.id === action.payload.user_id)) {
+                productToUpdate.favorited_by_users.push({ id: action.payload.user_id });
+              }
+            } else {
+              productToUpdate.favorited_by_users = productToUpdate.favorited_by_users.filter(
+                u => u.id !== action.payload.user_id
+              );
+            }
+          }
         }
       })
       .addCase(createBooking.pending, (state) => {

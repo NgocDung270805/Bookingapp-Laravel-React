@@ -287,22 +287,13 @@ const ProductDetailPage = () => {
     const handleToggleFavorite = async (e, productId) => {
         e.preventDefault();
         try {
-            // Gọi action toggleFavorite
             const result = await dispatch(toggleFavorite(productId)).unwrap();
-            
-            // Hiển thị thông báo thành công
             toast.success(result.message, ToastConfig);
-            
+            // Không cần fetch lại dữ liệu vì reducer đã cập nhật state
         } catch (error) {
-            // Xử lý lỗi và hiển thị thông báo
             toast.error(error || 'Có lỗi xảy ra khi thay đổi trạng thái yêu thích', ToastConfig);
         }
     };
-
-    // // Kiểm tra trạng thái yêu thích
-    // const isProductFavorited = (product) => {
-    //     return product.is_favorited;
-    // };
 
     // Xử lý khi click nút trả lời
     const handleReplyClick = (comment) => {
@@ -310,7 +301,6 @@ const ProductDetailPage = () => {
             toast.error('Vui lòng đăng nhập để trả lời bình luận');
             return;
         }
-        console.log('Comment being replied to:', comment); // Thêm log để debug
         setReplyTo(comment);
         setShowReplyForm(true);
     };
@@ -376,8 +366,14 @@ const ProductDetailPage = () => {
 
     // Kiểm tra xem sản phẩm có được yêu thích bởi user hiện tại không
     const isProductFavorited = (product) => {
-        if (!product || !currentUser) return false;
-        return product.favorited_by_users?.some(user => user.user_id === currentUser.id) || false;
+        // Kiểm tra nếu product hoặc favorited_by_users không tồn tại
+        if (!product || !product.favorited_by_users) {
+            return false;
+        }
+        
+        // Kiểm tra xem user hiện tại có trong danh sách favorited_by_users không
+        const isFavorited = product.favorited_by_users.some(user => user.id === currentUser?.id);
+        return isFavorited;
     };
 
     if (!selectedProduct) {
