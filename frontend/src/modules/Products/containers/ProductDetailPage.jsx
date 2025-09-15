@@ -3,7 +3,7 @@ import { useMediaQuery } from 'react-responsive';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { fetchProductBySlug, toggleFavorite, selectProductsLoading, selectProductsError, clearSelectedProduct, addComment, fetchProductComments, selectProductComments } from '../slice';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PATHS, BASE_URL_ADMIN } from '../../../common/constants';
 import BookingFormModal from '../components/BookingFormModal';
@@ -283,14 +283,38 @@ const ProductDetailPage = () => {
         }
     };
 
-    const handleToggleFavorite = async (productId) => {
-        const resultAction = await dispatch(toggleFavorite(productId));
-        if (toggleFavorite.fulfilled.match(resultAction)) {
-            alert(resultAction.payload.message);
-        } else {
-            alert(`Lỗi yêu thích: ${JSON.stringify(resultAction.payload)}`);
+    // Hàm xử lý yêu thích
+    const handleToggleFavorite = async (e, productId) => {
+        e.preventDefault(); // Ngăn chặn việc reload trang
+        
+        // Kiểm tra đăng nhập
+        if (!currentUser) {
+            toast.error('Vui lòng đăng nhập để yêu thích sản phẩm');
+            return;
+        }
+
+        try {
+            const resultAction = await dispatch(toggleFavorite(productId));
+            
+            if (toggleFavorite.fulfilled.match(resultAction)) {
+                toast.success(resultAction.payload.message);
+                // Cập nhật UI ngay lập tức
+                setSelectedProduct(prev => ({
+                    ...prev,
+                    is_favorited: !prev.is_favorited
+                }));
+            } else {
+                toast.error('Có lỗi xảy ra khi thực hiện yêu thích');
+            }
+        } catch (error) {
+            toast.error('Có lỗi xảy ra khi thực hiện yêu thích');
         }
     };
+
+    // // Kiểm tra trạng thái yêu thích
+    // const isProductFavorited = (product) => {
+    //     return product.is_favorited;
+    // };
 
     // Xử lý khi click nút trả lời
     const handleReplyClick = (comment) => {
@@ -304,7 +328,9 @@ const ProductDetailPage = () => {
     };
 
     // Xử lý khi gửi trả lời
-    const handleSubmitReply = async () => {
+    const handleSubmitReply = async (e) => {
+        e.preventDefault(); // Ngăn form reload trang
+    
         if (!replyContent.trim()) {
             toast.error('Vui lòng nhập nội dung bình luận!');
             return;
@@ -321,7 +347,7 @@ const ProductDetailPage = () => {
                 parent_id: replyTo.id
             };
 
-            const result = await dispatch(addComment({
+            await dispatch(addComment({
                 productId: product.id,
                 commentData
             })).unwrap();
@@ -458,7 +484,7 @@ const ProductDetailPage = () => {
                                 </div>
                                 <div className="d-flex">
                                     <button className={`btn btn-lg ${isFavorited ? 'btn-warning' : 'btn-outline-warning'} rounded-pill w-100 me-3 px-2 px-sm-4 fs-9 fs-sm-8`}
-                                        onClick={() => handleToggleFavorite(product.id)}>
+                                        onClick={(e) => handleToggleFavorite(e, product.id)}>
                                         <span className={`me-2 ${isFavorited ? 'fas' : 'far'} fa-heart`}></span>
                                         {isFavorited ? 'Đã yêu thích' : 'Thêm vào yêu thích'}
                                     </button>
@@ -729,7 +755,7 @@ const ProductDetailPage = () => {
                                                         {/* Form trả lời */}
                                                         {showReplyForm && replyTo?.id === comment.id && (
                                                             <div className="reply-form mb-3">
-                                                                <div className="d-flex">
+                                                                <form onSubmit={handleSubmitReply} className="d-flex">
                                                                     <div className="flex-grow-1">
                                                                         <textarea 
                                                                             className="form-control"
@@ -737,17 +763,19 @@ const ProductDetailPage = () => {
                                                                             placeholder="Viết trả lời của bạn..."
                                                                             value={replyContent}
                                                                             onChange={(e) => setReplyContent(e.target.value)}
+                                                                            required
                                                                         ></textarea>
                                                                     </div>
                                                                     <div className="ms-2">
                                                                         <button 
+                                                                            type="submit"
                                                                             className="btn btn-primary mb-2"
-                                                                            onClick={handleSubmitReply}
                                                                             disabled={!replyContent.trim()}
                                                                         >
                                                                             Gửi
                                                                         </button>
                                                                         <button 
+                                                                            type="button"
                                                                             className="btn btn-light"
                                                                             onClick={() => {
                                                                                 setShowReplyForm(false);
@@ -758,7 +786,7 @@ const ProductDetailPage = () => {
                                                                             Hủy
                                                                         </button>
                                                                     </div>
-                                                                </div>
+                                                                </form>
                                                             </div>
                                                         )}
 
@@ -840,7 +868,6 @@ const ProductDetailPage = () => {
                     </div>
                 </section>
             </div>
-            <ToastContainer {...ToastConfig} />
         </>
     );
 };
