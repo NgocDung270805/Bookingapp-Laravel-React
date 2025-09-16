@@ -348,23 +348,23 @@ const ProductDetailPage = () => {
     };
 
     useEffect(() => {
-      const fetchUserBooking = async () => {
-        try {
-          const res = await fetchBookingsApi();
-          // Nếu API trả về mảng bookings
-          if (res && Array.isArray(res.bookings)) {
-            const booking = res.bookings.find(b => b.product_id === selectedProduct.id);
-            if (booking) {
-              setUserBooking(booking);
+        const fetchUserBooking = async () => {
+            try {
+                const res = await fetchBookingsApi();
+                // Nếu API trả về mảng bookings
+                if (res && Array.isArray(res.bookings)) {
+                    const booking = res.bookings.find(b => b.product_id === selectedProduct.id);
+                    if (booking) {
+                        setUserBooking(booking);
+                    }
+                }
+            } catch (err) {
+
             }
-          }
-        } catch (err) {
-          
+        };
+        if (selectedProduct && selectedProduct.id && currentUser) {
+            fetchUserBooking();
         }
-      };
-      if (selectedProduct && selectedProduct.id && currentUser) {
-        fetchUserBooking();
-      }
     }, [selectedProduct, currentUser]);
 
     if (loading) {
@@ -439,16 +439,7 @@ const ProductDetailPage = () => {
                             <div className="col-12 col-lg-6">
                                 <div className="row g-3 mb-3">
                                     <div className="col-12 col-md-2 col-lg-12 col-xl-2">
-                                        <Swiper
-                                            className="swiper-products-thumb"
-                                            onSwiper={setThumbsSwiper}
-                                            direction={isMobile ? "horizontal" : "vertical"}
-                                            slidesPerView={3}
-                                            spaceBetween={16}
-                                            watchSlidesProgress
-                                            modules={[Thumbs]}
-                                            style={isDesktop ? { height: "300px" } : {}}
-                                        >
+                                        <Swiper className="swiper-products-thumb" onSwiper={setThumbsSwiper} direction={isMobile ? "horizontal" : "vertical"} slidesPerView={3} spaceBetween={16} watchSlidesProgress modules={[Thumbs]} style={isDesktop ? { height: "300px" } : {}} >
                                             {images.map((src, i) => (
                                                 <SwiperSlide key={`thumb-${i}`}>
                                                     <div className="product-thumb-container p-2 p-sm-3 p-xl-2">
@@ -459,43 +450,23 @@ const ProductDetailPage = () => {
                                         </Swiper>
                                     </div>
                                     <div className="col-12 col-md-10 col-lg-12 col-xl-10">
-                                        <div className="d-flex align-items-center border border-translucent rounded-3 text-center p-5 h-100">
-                                            <Swiper
-                                                style={{
-                                                    '--swiper-navigation-color': '#fff',
-                                                    '--swiper-pagination-color': '#fff',
-                                                }}
-                                                slidesPerView={1}
-                                                spaceBetween={16}
-                                                navigation={true}
-                                                pagination={{
-                                                    clickable: true,
-                                                }}
-                                                thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
-                                                modules={[Navigation, Pagination, Thumbs]}
-                                                onSwiper={setMainSwiper}
-                                            >
+                                        <div className="d-flex align-items-center  rounded-3 text-center position-relative">
+                                            <Swiper style={{ '--swiper-navigation-color': '#fff', '--swiper-pagination-color': '#fff', }} slidesPerView={1} spaceBetween={16} navigation={true} pagination={{ clickable: true, }} thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }} modules={[Navigation, Pagination, Thumbs]} onSwiper={setMainSwiper}>
                                                 {images.map((src, i) => (
                                                     <SwiperSlide key={`slide-${i}`}>
-                                                        <img
-                                                            src={src}
-                                                            alt={`slide-${i}`}
-                                                            style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
-                                                        />
+                                                        <img src={src} alt={`slide-${i}`} style={{ width: '1000px', height: '290px', objectFit: 'cover' }} />
                                                     </SwiperSlide>
                                                 ))}
                                             </Swiper>
+                                            <button className={`btn btn-lg btn-favorite position-absolute top-0 end-0 m-3 ${isFavorited ? 'btn-warning' : 'btn-outline-warning'} rounded-circle shadow`}
+                                                style={{ zIndex: 2, width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem' }}
+                                                onClick={(e) => handleToggleFavorite(e, product.id)}>
+                                                <span className={`fa${isFavorited ? 's' : 'r'} fa-heart`}></span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="d-flex">
-                                    <button
-                                        className={`btn btn-lg ${isFavorited ? 'btn-warning' : 'btn-outline-warning'} rounded-pill w-100 me-3 px-2 px-sm-4 fs-9 fs-sm-8`}
-                                        onClick={(e) => handleToggleFavorite(e, product.id)}
-                                    >
-                                        <span className={`me-2 ${isFavorited ? 'fas' : 'far'} fa-heart`}></span>
-                                        {isFavorited ? 'Đã yêu thích' : 'Thêm vào yêu thích'}
-                                    </button>
                                     {userBooking ? (
                                         <div className="w-100 d-flex flex-column align-items-center justify-content-center bg-success bg-opacity-10 rounded-4 py-3 px-2">
                                             <span className="text-success fw-bold mb-1">
@@ -509,10 +480,7 @@ const ProductDetailPage = () => {
                                             </span>
                                         </div>
                                     ) : (
-                                        <button
-                                            className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8"
-                                            onClick={() => setShowBookingModal(true)}
-                                        >
+                                        <button className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8" onClick={() => setShowBookingModal(true)}>
                                             <span className="fas fa-calendar-alt me-2"></span>Đặt lịch xem xe
                                         </button>
                                     )}
@@ -569,8 +537,14 @@ const ProductDetailPage = () => {
                                                     )}
                                                 </>
                                             ) : (
-                                                <span className="badge bg-secondary fs-7">Giá liên hệ</span>
+                                                // <button className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8" onClick={() => setShowBookingModal(true)}>
+                                                    // <span className="fas fa-calendar-alt me-2"></span>Nhận báo giá
+                                                // </button>
+                                                <span className="badge bg-info bg-opacity-10 text-info fs-6 rounded-pill fw-semibold">
+                                                    <Link to={PATHS.CONTACT} className="">Liên hệ</Link> để nhận báo giá
+                                                </span>
                                             )}
+                                            <hr />
                                         </div>
 
                                         <p className="text-success fw-semibold fs-7 mb-2">
@@ -584,40 +558,6 @@ const ProductDetailPage = () => {
                                     <div>
                                         {/* Render attribute controls */}
                                         {/* {renderAttributeControls()} */}
-
-                                        <div className="row g-3 g-sm-5 align-items-end">
-                                            <div className="col-12 col-sm">
-                                                <p className="fw-semibold mb-2 text-body">Số lượng:</p>
-                                                <div className="d-flex justify-content-between align-items-end">
-                                                    <div className="d-flex flex-between-center" data-quantity="data-quantity">
-                                                        <button
-                                                            className="btn btn-phoenix-primary px-3"
-                                                            onClick={() => handleQuantityChange('minus')}
-                                                            disabled={quantity <= 1}
-                                                        >
-                                                            <span className="fas fa-minus"></span>
-                                                        </button>
-                                                        <input
-                                                            className="form-control text-center input-spin-none bg-transparent border-0 outline-none"
-                                                            style={{ width: "50px" }}
-                                                            type="number"
-                                                            min="1"
-                                                            value={quantity}
-                                                            onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                                                        />
-                                                        <button
-                                                            className="btn btn-phoenix-primary px-3"
-                                                            onClick={() => handleQuantityChange('plus')}
-                                                        >
-                                                            <span className="fas fa-plus"></span>
-                                                        </button>
-                                                    </div>
-                                                    <button className="btn btn-phoenix-primary px-3 border-0">
-                                                        <span className="fas fa-share-alt fs-7"></span>
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -900,17 +840,17 @@ const ProductDetailPage = () => {
                     </div>
                 </section>
             </div>
-            
+
             {/* SHOW POPUP Booking */}
             {showBookingModal && (
-              <BookingFormModal
-                productId={product.id}
-                onClose={() => setShowBookingModal(false)}
-                onBooked={(bookingInfo) => {
-                  setUserBooking(bookingInfo);
-                  setShowBookingModal(false);
-                }}
-              />
+                <BookingFormModal
+                    productId={product.id}
+                    onClose={() => setShowBookingModal(false)}
+                    onBooked={(bookingInfo) => {
+                        setUserBooking(bookingInfo);
+                        setShowBookingModal(false);
+                    }}
+                />
             )}
         </>
     );
