@@ -18,6 +18,7 @@ import "swiper/css/thumbs";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/free-mode";
+import { fetchBookingsApi } from '../api'; // Đảm bảo đã import
 
 const ProductDetailPage = () => {
     const dispatch = useDispatch();
@@ -40,6 +41,7 @@ const ProductDetailPage = () => {
     const [replyTo, setReplyTo] = useState(null); // Comment đang được trả lời
     const [replyContent, setReplyContent] = useState(''); // Nội dung trả lời
     const [showReplyForm, setShowReplyForm] = useState(false); // Hiển thị form trả lời
+    const [userBooking, setUserBooking] = useState(null);
 
     // Xử lý sắp xếp và lọc comments
     const getFilteredAndSortedComments = (comments) => {
@@ -345,6 +347,26 @@ const ProductDetailPage = () => {
         }
     };
 
+    useEffect(() => {
+      const fetchUserBooking = async () => {
+        try {
+          const res = await fetchBookingsApi();
+          // Nếu API trả về mảng bookings
+          if (res && Array.isArray(res.bookings)) {
+            const booking = res.bookings.find(b => b.product_id === selectedProduct.id);
+            if (booking) {
+              setUserBooking(booking);
+            }
+          }
+        } catch (err) {
+          
+        }
+      };
+      if (selectedProduct && selectedProduct.id && currentUser) {
+        fetchUserBooking();
+      }
+    }, [selectedProduct, currentUser]);
+
     if (loading) {
         return <LoadingIndicator />;
     }
@@ -467,16 +489,33 @@ const ProductDetailPage = () => {
                                     </div>
                                 </div>
                                 <div className="d-flex">
-                                    <button className={`btn btn-lg ${isFavorited ? 'btn-warning' : 'btn-outline-warning'} rounded-pill w-100 me-3 px-2 px-sm-4 fs-9 fs-sm-8`}
-                                        onClick={(e) => handleToggleFavorite(e, product.id)}>
+                                    <button
+                                        className={`btn btn-lg ${isFavorited ? 'btn-warning' : 'btn-outline-warning'} rounded-pill w-100 me-3 px-2 px-sm-4 fs-9 fs-sm-8`}
+                                        onClick={(e) => handleToggleFavorite(e, product.id)}
+                                    >
                                         <span className={`me-2 ${isFavorited ? 'fas' : 'far'} fa-heart`}></span>
                                         {isFavorited ? 'Đã yêu thích' : 'Thêm vào yêu thích'}
                                     </button>
-                                    <button className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8"
-                                        onClick={() => setShowBookingModal(true)}
-                                    >
-                                        <span className="fas fa-calendar-alt me-2"></span>Đặt lịch xem xe
-                                    </button>
+                                    {userBooking ? (
+                                        <div className="w-100 d-flex flex-column align-items-center justify-content-center bg-success bg-opacity-10 rounded-4 py-3 px-2">
+                                            <span className="text-success fw-bold mb-1">
+                                                <span className="fas fa-check-circle me-2"></span>Bạn đã có lịch hẹn!
+                                            </span>
+                                            <span className="text-dark fw-semibold">
+                                                <span className="fas fa-calendar-alt me-2"></span>
+                                                {userBooking.booking_date && userBooking.booking_time
+                                                    ? `${new Date(userBooking.booking_date).toLocaleDateString('vi-VN')} lúc ${userBooking.booking_time}`
+                                                    : 'Thời gian chưa xác định'}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8"
+                                            onClick={() => setShowBookingModal(true)}
+                                        >
+                                            <span className="fas fa-calendar-alt me-2"></span>Đặt lịch xem xe
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 
@@ -861,12 +900,17 @@ const ProductDetailPage = () => {
                     </div>
                 </section>
             </div>
-
+            
+            {/* SHOW POPUP Booking */}
             {showBookingModal && (
-                <BookingFormModal
-                    productId={product.id}
-                    onClose={() => setShowBookingModal(false)}
-                />
+              <BookingFormModal
+                productId={product.id}
+                onClose={() => setShowBookingModal(false)}
+                onBooked={(bookingInfo) => {
+                  setUserBooking(bookingInfo);
+                  setShowBookingModal(false);
+                }}
+              />
             )}
         </>
     );

@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../../appRedux';
 import { createBooking } from '../slice';
 import { toast } from 'react-toastify';
 
-const BookingFormModal = ({ productId, onClose }) => {
+const BookingFormModal = ({ productId, onClose, onBooked }) => {
   const dispatch = useAppDispatch();
   const { loading, error } = useAppSelector((state) => state.products);
 
@@ -46,14 +46,7 @@ const BookingFormModal = ({ productId, onClose }) => {
       const resultAction = await dispatch(createBooking({ productId, bookingData }));
 
       if (createBooking.fulfilled.match(resultAction)) {
-        toast.success('🎉 Đặt lịch thành công!', {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        onBooked(resultAction.payload);
         onClose();
       } else {
         toast.error(`❌ Lỗi khi đặt lịch: ${resultAction.payload?.message || 'Đã có lỗi xảy ra'}`, {
