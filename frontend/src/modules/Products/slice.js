@@ -15,6 +15,7 @@ import {
   getGeminiChatResponse,
   fetchTopViewedProductsApi,
   fetchNewestProductsApi,
+  fetchBookingsApi, // Thêm import này
 } from './api';
 
 // Selector cơ bản
@@ -29,6 +30,9 @@ const initialState = {
   error: null,
   commentLoading: false,
   commentError: null,
+  bookings: [], // Thêm state cho bookings
+  bookingsLoading: false,
+  bookingsError: null,
 };
 
 // Async Thunk để lấy 3 sản phẩm có lượt xem cao nhất
@@ -215,6 +219,18 @@ export const sendGeminiMessage = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Lỗi kết nối AI.');
+    }
+  }
+);
+
+export const fetchBookings = createAsyncThunk(
+  'products/fetchBookings',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetchBookingsApi();
+      return response.bookings;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Không thể tải lịch sử đặt chỗ.');
     }
   }
 );
@@ -435,6 +451,18 @@ const productsSlice = createSlice({
       .addCase(fetchProductComments.rejected, (state, action) => {
         state.commentLoading = false;
         state.commentError = action.error.message;
+      })
+      .addCase(fetchBookings.pending, (state) => {
+        state.bookingsLoading = true;
+        state.bookingsError = null;
+      })
+      .addCase(fetchBookings.fulfilled, (state, action) => {
+        state.bookingsLoading = false;
+        state.bookings = action.payload;
+      })
+      .addCase(fetchBookings.rejected, (state, action) => {
+        state.bookingsLoading = false;
+        state.bookingsError = action.payload;
       });
   },
 });
@@ -476,6 +504,22 @@ export const selectProductsError = createSelector(
 export const selectProductComments = createSelector(
   [selectSelectedProduct],
   (product) => product?.comments || []
+);
+
+// Selectors cho Bookings
+export const selectAllBookings = createSelector(
+  [selectProductsState],
+  (products) => products.bookings
+);
+
+export const selectBookingsLoading = createSelector(
+  [selectProductsState],
+  (products) => products.bookingsLoading
+);
+
+export const selectBookingsError = createSelector(
+  [selectProductsState],
+  (products) => products.bookingsError
 );
 
 export default productsSlice.reducer;

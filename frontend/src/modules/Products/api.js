@@ -160,3 +160,9 @@ export const fetchProductCommentsApi = async (productId) => {
   const response = await api.get(`/products/${productId}/comments`);
   return response.data;
 };
+
+// Lấy danh sách các lịch đã đặt của người dùng
+export const fetchBookingsApi = async () => {
+  const response = await api.get('/bookings');
+  return response.data;
+};

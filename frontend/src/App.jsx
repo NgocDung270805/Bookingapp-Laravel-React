@@ -26,6 +26,7 @@ import RegisterPage from './modules/Auth/containers/RegisterPage';
 import ProfilePage from './modules/profile/containers/ProfilePage';
 import ProductsByCategoriesPage from './modules/Products/containers/ProductsByCategoriesPage';
 import ProductDetailPage from './modules/Products/containers/ProductDetailPage.jsx';
+import BookingsPage from './pages/Bookings/BookingsPage.jsx'; // Import trang mới
 
 // HOCs
 import withAuth from './hoc/withAuth.jsx';
@@ -38,6 +39,7 @@ const ProtectedProfilePage = withAuth(ProfilePage);
 const ProtectedProductsPage = withAuth(ProductsPage);
 const ProtectedProductsByCategoriesPage = withAuth(ProductsByCategoriesPage);
 const ProtectedProductDetailPage = withAuth(ProductDetailPage);
+const ProtectedBookingsPage = withAuth(BookingsPage); // Bọc trang mới bằng HOC
 
 const App = () => {
     const location = useLocation();
@@ -76,6 +78,7 @@ const App = () => {
                     <Route path={PATHS.PROFILE} element={<ProtectedProfilePage />} />
                     <Route path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProtectedProductsByCategoriesPage />} />
                     <Route path={PATHS.PRODUCT_DETAIL_BY_SLUG} element={<ProtectedProductDetailPage />} />
+                    <Route path={PATHS.MY_BOOKINGS} element={<ProtectedBookingsPage />} /> {/* Đường dẫn tới trang mới */}
                 </Route>
             </Routes>
             <ToastContainer />

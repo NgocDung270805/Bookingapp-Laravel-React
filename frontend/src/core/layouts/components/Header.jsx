@@ -232,6 +232,11 @@ const Header = () => {
                             <span className="me-2 text-body align-bottom" data-feather="user"></span>
                             <span>Hồ sơ cá nhân</span>
                           </Link>
+                          {/* Thêm Link mới ở đây */}
+                          <Link to={PATHS.MY_BOOKINGS} className="nav-link px-3 d-block">
+                            <span className="me-2 text-body align-bottom" data-feather="calendar"></span>
+                            <span>Lịch đã đặt</span>
+                          </Link>
                           <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"><span className="me-2 text-body align-bottom" data-feather="pie-chart"></span>Dashboard</a></li>
                           <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="lock"></span>Posts &amp; Activity</a></li>
                           <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="settings"></span>Settings &amp; Privacy </a></li>
