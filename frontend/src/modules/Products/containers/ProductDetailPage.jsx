@@ -43,6 +43,10 @@ const ProductDetailPage = () => {
     const [showReplyForm, setShowReplyForm] = useState(false); // Hiển thị form trả lời
     const [userBooking, setUserBooking] = useState(null);
 
+    // State
+    const [showImageModal, setShowImageModal] = useState(false);
+    const [modalImageIndex, setModalImageIndex] = useState(0);
+
     // Xử lý sắp xếp và lọc comments
     const getFilteredAndSortedComments = (comments) => {
         if (!comments) return [];
@@ -347,6 +351,12 @@ const ProductDetailPage = () => {
         }
     };
 
+    // Khi click vào ảnh
+    const handleImageClick = (idx) => {
+        setModalImageIndex(idx);
+        setShowImageModal(true);
+    };
+
     useEffect(() => {
         const fetchUserBooking = async () => {
             try {
@@ -454,7 +464,12 @@ const ProductDetailPage = () => {
                                             <Swiper style={{ '--swiper-navigation-color': '#fff', '--swiper-pagination-color': '#fff', }} slidesPerView={1} spaceBetween={16} navigation={true} pagination={{ clickable: true, }} thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }} modules={[Navigation, Pagination, Thumbs]} onSwiper={setMainSwiper}>
                                                 {images.map((src, i) => (
                                                     <SwiperSlide key={`slide-${i}`}>
-                                                        <img src={src} alt={`slide-${i}`} style={{ width: '1000px', height: '290px', objectFit: 'cover' }} />
+                                                        <img
+                                                            src={src}
+                                                            alt={`slide-${i}`}
+                                                            style={{ width: '1000px', height: '290px', objectFit: 'cover', cursor: 'pointer' }}
+                                                            onClick={() => handleImageClick(i)}
+                                                        />
                                                     </SwiperSlide>
                                                 ))}
                                             </Swiper>
@@ -851,6 +866,54 @@ const ProductDetailPage = () => {
                         setShowBookingModal(false);
                     }}
                 />
+            )}
+
+            {/* Popup modal ảnh lớn */}
+            {showImageModal && (
+                <div className="modal fade show" style={{ display: 'block', background: 'rgba(0,0,0,0.7)' }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered modal-xl">
+                        <div className="modal-content bg-transparent border-0 position-relative">
+                            <button
+                                type="button"
+                                className="btn position-absolute top-0 end-0 m-4"
+                                style={{
+                                    zIndex: 2,
+                                    background: '#fff',
+                                    borderRadius: '50%',
+                                    width: '48px',
+                                    height: '48px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    border: '1px solid #ddd',
+                                    fontSize: '1.5rem'
+                                }}
+                                onClick={() => setShowImageModal(false)}
+                                aria-label="Close"
+                            >
+                                <span className="fa fa-times" style={{ color: '#333' }}></span>
+                            </button>
+                            <button
+                                className="btn btn-light position-absolute top-50 start-0 translate-middle-y ms-3"
+                                style={{ zIndex: 2 }}
+                                disabled={modalImageIndex === 0}
+                                onClick={() => setModalImageIndex(modalImageIndex - 1)}
+                            >
+                                &lt;
+                            </button>
+                            <img src={images[modalImageIndex]} alt="Xem ảnh lớn" style={{ width: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: '1rem' }} />
+                            <button
+                                className="btn btn-light position-absolute top-50 end-0 translate-middle-y me-3"
+                                style={{ zIndex: 2 }}
+                                disabled={modalImageIndex === images.length - 1}
+                                onClick={() => setModalImageIndex(modalImageIndex + 1)}
+                            >
+                                &gt;
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </>
     );
