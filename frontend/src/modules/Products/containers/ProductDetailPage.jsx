@@ -44,7 +44,7 @@ const ProductDetailPage = () => {
     // Xử lý sắp xếp và lọc comments
     const getFilteredAndSortedComments = (comments) => {
         if (!comments) return [];
-        
+
         // Tách comments cha và con
         const parentComments = comments.filter(comment => !comment.parent_id);
         const childComments = comments.filter(comment => comment.parent_id);
@@ -308,7 +308,7 @@ const ProductDetailPage = () => {
     // Xử lý khi gửi trả lời
     const handleSubmitReply = async (e) => {
         e.preventDefault(); // Ngăn form reload trang
-    
+
         if (!replyContent.trim()) {
             toast.error('Vui lòng nhập nội dung bình luận!');
             return;
@@ -332,12 +332,12 @@ const ProductDetailPage = () => {
 
             // Đợi fetchProductComments hoàn thành trước khi reset form
             await dispatch(fetchProductComments(product.id)).unwrap();
-            
+
             // Reset form sau khi đã cập nhật comments thành công
             setReplyContent('');
             setReplyTo(null);
             setShowReplyForm(false);
-            
+
             toast.success('Đã gửi phản hồi thành công!');
         } catch (error) {
             console.error('Error:', error);
@@ -370,7 +370,7 @@ const ProductDetailPage = () => {
         if (!product || !product.favorited_by_users) {
             return false;
         }
-        
+
         // Kiểm tra xem user hiện tại có trong danh sách favorited_by_users không
         const isFavorited = product.favorited_by_users.some(user => user.id === currentUser?.id);
         return isFavorited;
@@ -472,8 +472,10 @@ const ProductDetailPage = () => {
                                         <span className={`me-2 ${isFavorited ? 'fas' : 'far'} fa-heart`}></span>
                                         {isFavorited ? 'Đã yêu thích' : 'Thêm vào yêu thích'}
                                     </button>
-                                    <button className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8">
-                                        <span className="fas fa-shopping-cart me-2"></span>Thêm vào giỏ
+                                    <button className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8"
+                                        onClick={() => setShowBookingModal(true)}
+                                    >
+                                        <span className="fas fa-calendar-alt me-2"></span>Đặt lịch xem xe
                                     </button>
                                 </div>
                             </div>
@@ -504,25 +506,31 @@ const ProductDetailPage = () => {
                                         )}
 
                                         <div className="d-flex flex-wrap align-items-center">
-                                            {/* Hiển thị giá giảm */}
-                                            <h1 className="me-3">
-                                                {new Intl.NumberFormat('vi-VN', {
-                                                    style: 'currency',
-                                                    currency: 'VND'
-                                                }).format(currentDiscountPrice)}
-                                            </h1>
-                                            {currentDiscountPrice > 0 && (
+                                            {currentVariant?.pricing_type === 'public_price' ? (
                                                 <>
-                                                    <p className="text-body-quaternary text-decoration-line-through fs-6 mb-0 me-3">
+                                                    <h1 className="me-3">
                                                         {new Intl.NumberFormat('vi-VN', {
                                                             style: 'currency',
                                                             currency: 'VND'
-                                                        }).format(currentPrice)}
-                                                    </p>
-                                                    <p className="text-warning fw-bolder fs-6 mb-0">
-                                                        -{discountPercent}%
-                                                    </p>
+                                                        }).format(currentDiscountPrice)}
+                                                    </h1>
+
+                                                    {currentDiscountPrice > 0 && (
+                                                        <>
+                                                            <p className="text-body-quaternary text-decoration-line-through fs-6 mb-0 me-3">
+                                                                {new Intl.NumberFormat('vi-VN', {
+                                                                    style: 'currency',
+                                                                    currency: 'VND'
+                                                                }).format(currentPrice)}
+                                                            </p>
+                                                            <p className="text-warning fw-bolder fs-6 mb-0">
+                                                                -{discountPercent}%
+                                                            </p>
+                                                        </>
+                                                    )}
                                                 </>
+                                            ) : (
+                                                <span className="badge bg-secondary fs-7">Giá liên hệ</span>
                                             )}
                                         </div>
 
@@ -665,7 +673,7 @@ const ProductDetailPage = () => {
                                         <div className="mb-4">
                                             <div className="row g-3">
                                                 <div className="col-12 col-sm-6">
-                                                    <select 
+                                                    <select
                                                         className="form-select"
                                                         value={commentSort}
                                                         onChange={(e) => setCommentSort(e.target.value)}
@@ -675,7 +683,7 @@ const ProductDetailPage = () => {
                                                     </select>
                                                 </div>
                                                 <div className="col-12 col-sm-6">
-                                                    <select 
+                                                    <select
                                                         className="form-select"
                                                         value={ratingFilter}
                                                         onChange={(e) => setRatingFilter(Number(e.target.value))}
@@ -725,10 +733,10 @@ const ProductDetailPage = () => {
                                                             </small>
                                                         </div>
                                                         <p className="mb-3">{comment.content}</p>
-                                                        
+
                                                         {/* Nút trả lời */}
                                                         <div className="d-flex align-items-center mb-3">
-                                                            <button 
+                                                            <button
                                                                 className="btn btn-sm btn-light"
                                                                 onClick={() => handleReplyClick(comment)}
                                                             >
@@ -742,7 +750,7 @@ const ProductDetailPage = () => {
                                                             <div className="reply-form mb-3">
                                                                 <form onSubmit={handleSubmitReply} className="d-flex">
                                                                     <div className="flex-grow-1">
-                                                                        <textarea 
+                                                                        <textarea
                                                                             className="form-control"
                                                                             rows="2"
                                                                             placeholder="Viết trả lời của bạn..."
@@ -752,14 +760,14 @@ const ProductDetailPage = () => {
                                                                         ></textarea>
                                                                     </div>
                                                                     <div className="ms-2">
-                                                                        <button 
+                                                                        <button
                                                                             type="submit"
                                                                             className="btn btn-primary mb-2"
                                                                             disabled={!replyContent.trim()}
                                                                         >
                                                                             Gửi
                                                                         </button>
-                                                                        <button 
+                                                                        <button
                                                                             type="button"
                                                                             className="btn btn-light"
                                                                             onClick={() => {
@@ -853,6 +861,13 @@ const ProductDetailPage = () => {
                     </div>
                 </section>
             </div>
+
+            {showBookingModal && (
+                <BookingFormModal
+                    productId={product.id}
+                    onClose={() => setShowBookingModal(false)}
+                />
+            )}
         </>
     );
 };

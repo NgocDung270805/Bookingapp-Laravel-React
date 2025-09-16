@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../appRedux';
 import { createBooking } from '../slice';
+import { toast } from 'react-toastify';
 
 const BookingFormModal = ({ productId, onClose }) => {
   const dispatch = useAppDispatch();
@@ -12,126 +13,166 @@ const BookingFormModal = ({ productId, onClose }) => {
   const [bookingTime, setBookingTime] = useState('');
   const [notes, setNotes] = useState('');
 
+  // Lấy ngày hiện tại để giới hạn không cho chọn ngày trong quá khứ
+  const today = new Date().toISOString().split('T')[0];
+
+  // Danh sách các khung giờ làm việc
+  const availableTimeSlots = [
+    '08:00', '09:00', '10:00', '11:00',
+    '13:30', '14:30', '15:30', '16:30'
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate dữ liệu
+    if (!bookingDate) {
+      toast.error('Vui lòng chọn ngày đặt lịch!');
+      return;
+    }
+
+    if (!bookingTime) {
+      toast.error('Vui lòng chọn giờ đặt lịch!');
+      return;
+    }
+
     const bookingData = {
       booking_date: bookingDate,
-      booking_time: bookingTime || null, // Gửi null nếu không nhập
-      notes: notes || null,
-      // total_price: X, // Bạn có thể thêm trường này nếu muốn người dùng nhập hoặc tính toán
+      booking_time: bookingTime,
+      notes: notes.trim() || null,
     };
 
-    const resultAction = await dispatch(createBooking({ productId, bookingData }));
+    try {
+      const resultAction = await dispatch(createBooking({ productId, bookingData }));
 
-    if (createBooking.fulfilled.match(resultAction)) {
-      alert('Đặt lịch thành công!'); // Giữ alert đơn giản hoặc thay bằng Toast
-      onClose(); // Đóng modal sau khi gửi thành công
-    } else {
-      alert(`Lỗi khi đặt lịch: ${JSON.stringify(resultAction.payload)}`);
+      if (createBooking.fulfilled.match(resultAction)) {
+        toast.success('🎉 Đặt lịch thành công!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        onClose();
+      } else {
+        toast.error(`❌ Lỗi khi đặt lịch: ${resultAction.payload?.message || 'Đã có lỗi xảy ra'}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      toast.error('❌ Đã có lỗi xảy ra khi xử lý yêu cầu!');
     }
   };
 
   return (
-    <div style={modalOverlayStyle}>
-      <div style={modalContentStyle}>
-        <h3>Đặt lịch cho Sản phẩm #{productId}</h3>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '10px' }}>
-            <label htmlFor="bookingDate" style={labelStyle}>Ngày đặt lịch:</label>
-            <input
-              type="date"
-              id="bookingDate"
-              value={bookingDate}
-              onChange={(e) => setBookingDate(e.target.value)}
-              required
-              style={inputStyle}
-            />
+    <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Đặt lịch xem xe</h5>
+            <button 
+              type="button" 
+              className="btn-close" 
+              onClick={onClose}
+              aria-label="Close"
+            ></button>
           </div>
-          <div style={{ marginBottom: '10px' }}>
-            <label htmlFor="bookingTime" style={labelStyle}>Giờ đặt lịch (HH:MM):</label>
-            <input
-              type="time"
-              id="bookingTime"
-              value={bookingTime}
-              onChange={(e) => setBookingTime(e.target.value)}
-              style={inputStyle}
-            />
+          
+          <div className="modal-body">
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label htmlFor="bookingDate" className="form-label">
+                  Ngày xem xe <span className="text-danger">*</span>
+                </label>
+                <input
+                  type="date"
+                  className="form-control"
+                  id="bookingDate"
+                  min={today}
+                  value={bookingDate}
+                  onChange={(e) => setBookingDate(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="bookingTime" className="form-label">
+                  Thời gian <span className="text-danger">*</span>
+                </label>
+                <select
+                  className="form-select"
+                  id="bookingTime"
+                  value={bookingTime}
+                  onChange={(e) => setBookingTime(e.target.value)}
+                  required
+                >
+                  <option value="">Chọn thời gian</option>
+                  {availableTimeSlots.map((time) => (
+                    <option key={time} value={time}>
+                      {time}
+                    </option>
+                  ))}
+                </select>
+                <small className="text-muted">
+                  Vui lòng chọn thời gian trong giờ làm việc
+                </small>
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="notes" className="form-label">
+                  Ghi chú
+                </label>
+                <textarea
+                  className="form-control"
+                  id="notes"
+                  rows="3"
+                  placeholder="Nhập yêu cầu đặc biệt nếu có..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                ></textarea>
+              </div>
+
+              {error && (
+                <div className="alert alert-danger" role="alert">
+                  {error}
+                </div>
+              )}
+
+              <div className="modal-footer px-0 pb-0">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={onClose}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-warning"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Đang xử lý...
+                    </>
+                  ) : (
+                    'Đặt lịch'
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-          <div style={{ marginBottom: '10px' }}>
-            <label htmlFor="bookingNotes" style={labelStyle}>Ghi chú:</label>
-            <textarea
-              id="bookingNotes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows="3"
-              style={inputStyle}
-            ></textarea>
-          </div>
-          {error && <p style={{ color: 'red' }}>Lỗi: {error}</p>}
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-            <button type="button" onClick={onClose} style={cancelButtonStyle}>Hủy</button>
-            <button type="submit" disabled={loading} style={submitButtonStyle}>
-              {loading ? 'Đang gửi...' : 'Đặt lịch'}
-            </button>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
 export default BookingFormModal;
-
-// Reuse the same basic inline styles for modal components
-const modalOverlayStyle = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  zIndex: 1000,
-};
-
-const modalContentStyle = {
-  backgroundColor: 'white',
-  padding: '25px',
-  borderRadius: '8px',
-  width: '400px',
-  maxWidth: '90%',
-  boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-};
-
-const labelStyle = {
-  display: 'block',
-  marginBottom: '5px',
-  fontWeight: 'bold',
-};
-
-const inputStyle = {
-  width: 'calc(100% - 16px)', // Trừ padding
-  padding: '8px',
-  border: '1px solid #ccc',
-  borderRadius: '4px',
-};
-
-const submitButtonStyle = {
-  padding: '10px 15px',
-  backgroundColor: '#007bff',
-  color: 'white',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-};
-
-const cancelButtonStyle = {
-  padding: '10px 15px',
-  backgroundColor: '#6c757d',
-  color: 'white',
-  border: 'none',
-  borderRadius: '4px',
-  cursor: 'pointer',
-};
