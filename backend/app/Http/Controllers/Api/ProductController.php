@@ -117,6 +117,22 @@ class ProductController extends Controller
                 ], 404);
             }
 
+            // Lấy sản phẩm liên quan
+            $related_products = Product::where('id', '!=', $product->id)
+                ->whereHas('categories', function($query) use ($product) {
+                    $query->whereIn('categories.id', $product->categories->pluck('id'));
+                })
+                ->orWhereHas('tags', function($query) use ($product) {
+                    $query->whereIn('tags.id', $product->tags->pluck('id'));
+                })
+                ->with('images', 'variants.attributeValues.attributeType', 'favoritedByUsers', 'tags')
+                ->inRandomOrder()
+                ->take(8)
+                ->get();
+
+            // Gán related_products vào product
+            $product->related_products = $related_products;
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Lấy chi tiết sản phẩm thành công',
