@@ -512,7 +512,7 @@ const ProductDetailPage = () => {
                                                 ))}
                                             </div>
                                             <p className="text-primary fw-semibold mb-2">
-                                                {product.views} lượt xem • {product.sold || 0} đã bán
+                                                {product.views} lượt xem • {(product.favorited_by_users ? product.favorited_by_users.length : 0)} yêu thích
                                             </p>
                                         </div>
                                         <h3 className="mb-3 lh-sm">{product.name}</h3>
@@ -553,7 +553,7 @@ const ProductDetailPage = () => {
                                                 </>
                                             ) : (
                                                 // <button className="btn btn-lg btn-warning rounded-pill w-100 fs-9 fs-sm-8" onClick={() => setShowBookingModal(true)}>
-                                                    // <span className="fas fa-calendar-alt me-2"></span>Nhận báo giá
+                                                // <span className="fas fa-calendar-alt me-2"></span>Nhận báo giá
                                                 // </button>
                                                 <span className="badge bg-info bg-opacity-10 text-info fs-6 rounded-pill fw-semibold">
                                                     <Link to={PATHS.CONTACT} className="">Liên hệ</Link> để nhận báo giá
@@ -846,7 +846,7 @@ const ProductDetailPage = () => {
                                                 {product.tags?.map(tag => tag.name).join(', ')}
                                             </p>
                                             <p><strong>Lượt xem:</strong> {product.views}</p>
-                                            <p><strong>Đã bán:</strong> {product.sold || 0}</p>
+                                            <p><strong>Yêu thích:</strong> {product.favorited_by_users ? product.favorited_by_users.length : 0}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -855,6 +855,117 @@ const ProductDetailPage = () => {
                     </div>
                 </section>
             </div>
+
+            <section className="py-0 mb-9">
+                <div className="container-small">
+                    <div className="row">
+                        <div className="col-12">
+                            <h3 className="mb-4">Xe bạn có thể quan tâm</h3>
+                            {product.related_products && product.related_products.length > 0 ? (
+                                <Swiper
+                                    slidesPerView={1}
+                                    spaceBetween={16}
+                                    navigation={true}
+                                    breakpoints={{
+                                        640: {
+                                            slidesPerView: 2,
+                                        },
+                                        768: {
+                                            slidesPerView: 3,
+                                        },
+                                        1024: {
+                                            slidesPerView: 4,
+                                        },
+                                    }}
+                                    modules={[Navigation]}
+                                    className="related-products-swiper"
+                                >
+                                    {product.related_products.map((relatedProduct) => (
+                                        <SwiperSlide key={relatedProduct.id}>
+                                            <div className="product-card h-100">
+                                                <div className="position-relative">
+                                                    <Link to={`${PATHS.PRODUCTS}/${relatedProduct.slug}`} className="d-block">
+                                                        <img
+                                                            src={`${BASE_URL_ADMIN}storage/${relatedProduct.img}`}
+                                                            alt={relatedProduct.name}
+                                                            className="w-100 rounded-3"
+                                                            style={{ aspectRatio: '1/1', objectFit: 'cover' }}
+                                                        />
+                                                    </Link>
+                                                    <button
+                                                        className={`btn btn-favorite position-absolute top-0 end-0 m-2 ${isProductFavorited(relatedProduct) ? 'btn-warning' : 'btn-outline-warning'
+                                                            } rounded-circle`}
+                                                        onClick={(e) => handleToggleFavorite(e, relatedProduct.id)}
+                                                        style={{
+                                                            width: '32px',
+                                                            height: '32px',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            fontSize: '1rem'
+                                                        }}
+                                                    >
+                                                        <span className={`fa${isProductFavorited(relatedProduct) ? 's' : 'r'} fa-heart`} />
+                                                    </button>
+                                                </div>
+                                                <div className="p-3">
+                                                    <h5 className="mb-2 text-truncate">
+                                                        <Link to={`${PATHS.PRODUCTS}/${relatedProduct.slug}`} className="text-decoration-none">
+                                                            {relatedProduct.name}
+                                                        </Link>
+                                                    </h5>
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        <div className="text-warning">
+                                                            {/* Hiện tags của sản phẩm */}
+                                                            {relatedProduct.tags?.map((tag) => (
+                                                                <span key={tag.id} className="badge bg-light text-dark">
+                                                                    {tag.name}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                        <span className="text-muted small">
+                                                            ♥️{relatedProduct.favorited_by_users?.length || 0}
+                                                        </span>
+                                                    </div>
+                                                    {relatedProduct.variants?.[0]?.pricing_type === 'public_price' ? (
+                                                        <div className="d-flex align-items-center gap-2 mt-2">
+                                                            <h6 className="mb-0">
+                                                                {new Intl.NumberFormat('vi-VN', {
+                                                                    style: 'currency',
+                                                                    currency: 'VND'
+                                                                }).format(relatedProduct.variants[0].discount_price || relatedProduct.variants[0].price)}
+                                                            </h6>
+                                                            {relatedProduct.variants[0].discount_price && (
+                                                                <small className="text-decoration-line-through text-muted">
+                                                                    {new Intl.NumberFormat('vi-VN', {
+                                                                        style: 'currency',
+                                                                        currency: 'VND'
+                                                                    }).format(relatedProduct.variants[0].price)}
+                                                                </small>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <span className="badge bg-info bg-opacity-10 text-info mt-2">
+                                                            Liên hệ báo giá
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
+                            ) : (
+                                <div className="text-center py-5">
+                                    <div className="mb-3">
+                                        <i className="far fa-folder-open fa-3x text-muted" />
+                                    </div>
+                                    <p className="text-muted">Không có sản phẩm liên quan</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* SHOW POPUP Booking */}
             {showBookingModal && (
