@@ -289,7 +289,7 @@ const HomePage = () => {
                   <h4 className="fw-semibold mb-3">Xe mới</h4>
                   <h2 className="fs-4 fw-semibold mb-3 mb-md-4">Cảm xúc mới - <span className="text-primary-light fw-bold">Đặt lịch lái thử ngay</span></h2>
                   <p className="mb-3 mb-md-0 text-body-tertiary">Đây là nơi lý tưởng để bạn khám phá các dòng xe mới nhất và đặt lịch lái thử trực tiếp. Với hệ thống đặt lịch thông minh, bạn dễ dàng lựa chọn thời gian, địa điểm và mẫu xe phù hợp với nhu cầu của mình.
-                    Hãy bắt đầu hành trình trải nghiệm xe theo cách riêng của bạn!<span className="d-none d-lg-inline-block d-xl-none">... </span><span className="d-lg-none d-xl-inline">This will help you with the pricing that you’ll need, the accommodation facilities, food and beverages, and water rides.</span></p>
+                    Hãy bắt đầu hành trình trải nghiệm xe theo cách riêng của bạn!<span className="d-none d-lg-inline-block d-xl-none">... </span></p>
                 </div>
                 <div className="col-6 col-md-5">
                   <div className="img-zoom-hover position-relative h-100 rounded-3 overflow-hidden">

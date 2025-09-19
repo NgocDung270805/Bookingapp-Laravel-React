@@ -26,25 +26,21 @@ export const fetchProductsApi = async (param = '') => {
   return response.data;
 };
 
-// Lấy 3 sản phẩm có View cao nhất
-export const fetchTopViewedProductsApi = async (limit = 3) => {
+// Lấy 6 sản phẩm có View cao nhất
+export const fetchTopViewedProductsApi = async () => {
   const response = await api.get('/products', {
     params: {
-      sortBy: 'views', // Trường sắp xếp theo lượt xem
-      order: 'desc',   // Sắp xếp giảm dần (cao nhất đến thấp nhất)
-      limit: limit     // Giới hạn số lượng sản phẩm trả về
+      most_viewed: 1
     }
   });
   return response.data; // Giả sử API trả về { products: [...] }
 };
 
 // Lấy 4 sản phẩm mới nhất theo created_at
-export const fetchNewestProductsApi = async (limit = 4) => {
+export const fetchNewestProductsApi = async () => {
   const response = await api.get('/products', {
-    params : {
-      sortBy: 'created_at',
-      order: 'desc',
-      limit: limit
+    params: {
+      latest: 1
     }
   });
   return response.data;
