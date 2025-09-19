@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
-import { fetchProductBySlug, toggleFavorite, selectProductsLoading, selectProductsError, clearSelectedProduct, addComment, fetchProductComments, selectProductComments } from '../slice';
+import { fetchProductBySlug, toggleFavorite, updateSelectedProduct, updateRelatedProductsFavorite, selectProductsLoading, selectProductsError, clearSelectedProduct, addComment, fetchProductComments, selectProductComments } from '../slice';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PATHS, BASE_URL_ADMIN } from '../../../common/constants';
@@ -293,10 +293,32 @@ const ProductDetailPage = () => {
     const handleToggleFavorite = async (e, productId) => {
         e.preventDefault();
         try {
+            console.log('Toggle favorite - Start', {
+                productId,
+                currentUserId: currentUser?.id,
+                isMainProduct: productId === selectedProduct?.id
+            });
             const result = await dispatch(toggleFavorite(productId)).unwrap();
+            console.log('Toggle favorite - Success', {
+                result,
+                updatedProduct: result.product
+            });
+
+            // Cập nhật related products nếu cần
+            if (result.product && selectedProduct?.related_products) {
+                dispatch(updateRelatedProductsFavorite(
+                    productId,
+                    result.product.favorited_by_users
+                ));
+            }
+
             toast.success(result.message, ToastConfig);
-            // Không cần fetch lại dữ liệu vì reducer đã cập nhật state
         } catch (error) {
+            console.error('Toggle favorite - Error:', {
+                error,
+                productId,
+                userId: currentUser?.id
+            });
             toast.error(error || 'Có lỗi xảy ra khi thay đổi trạng thái yêu thích', ToastConfig);
         }
     };
@@ -398,14 +420,18 @@ const ProductDetailPage = () => {
 
     // Kiểm tra xem sản phẩm có được yêu thích bởi user hiện tại không
     const isProductFavorited = (product) => {
-        // Kiểm tra nếu product hoặc favorited_by_users không tồn tại
-        if (!product || !product.favorited_by_users) {
+        // Debug log
+        console.log('isProductFavorited check:', {
+            product: product?.id,
+            currentUser: currentUser?.id,
+            favorited_by_users: product?.favorited_by_users
+        });
+
+        if (!currentUser || !product || !Array.isArray(product.favorited_by_users)) {
             return false;
         }
 
-        // Kiểm tra xem user hiện tại có trong danh sách favorited_by_users không
-        const isFavorited = product.favorited_by_users.some(user => user.id === currentUser?.id);
-        return isFavorited;
+        return product.favorited_by_users.some(user => user.id === currentUser.id);
     };
 
     if (!selectedProduct) {
@@ -856,112 +882,90 @@ const ProductDetailPage = () => {
                 </section>
             </div>
 
-            <section className="py-0 mb-9">
-                <div className="container-small">
-                    <div className="row">
-                        <div className="col-12">
-                            <h3 className="mb-4">Xe bạn có thể quan tâm</h3>
-                            {product.related_products && product.related_products.length > 0 ? (
-                                <Swiper
-                                    slidesPerView={1}
-                                    spaceBetween={16}
-                                    navigation={true}
-                                    breakpoints={{
-                                        640: {
-                                            slidesPerView: 2,
-                                        },
-                                        768: {
-                                            slidesPerView: 3,
-                                        },
-                                        1024: {
-                                            slidesPerView: 4,
-                                        },
-                                    }}
-                                    modules={[Navigation]}
-                                    className="related-products-swiper"
-                                >
-                                    {product.related_products.map((relatedProduct) => (
-                                        <SwiperSlide key={relatedProduct.id}>
-                                            <div className="product-card h-100">
-                                                <div className="position-relative">
-                                                    <Link to={`${PATHS.PRODUCTS}/${relatedProduct.slug}`} className="d-block">
-                                                        <img
-                                                            src={`${BASE_URL_ADMIN}storage/${relatedProduct.img}`}
-                                                            alt={relatedProduct.name}
-                                                            className="w-100 rounded-3"
-                                                            style={{ aspectRatio: '1/1', objectFit: 'cover' }}
-                                                        />
-                                                    </Link>
-                                                    <button
-                                                        className={`btn btn-favorite position-absolute top-0 end-0 m-2 ${isProductFavorited(relatedProduct) ? 'btn-warning' : 'btn-outline-warning'
-                                                            } rounded-circle`}
-                                                        onClick={(e) => handleToggleFavorite(e, relatedProduct.id)}
-                                                        style={{
-                                                            width: '32px',
-                                                            height: '32px',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            fontSize: '1rem'
-                                                        }}
-                                                    >
-                                                        <span className={`fa${isProductFavorited(relatedProduct) ? 's' : 'r'} fa-heart`} />
-                                                    </button>
-                                                </div>
-                                                <div className="p-3">
-                                                    <h5 className="mb-2 text-truncate">
-                                                        <Link to={`${PATHS.PRODUCTS}/${relatedProduct.slug}`} className="text-decoration-none">
-                                                            {relatedProduct.name}
-                                                        </Link>
-                                                    </h5>
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <div className="text-warning">
-                                                            {/* Hiện tags của sản phẩm */}
-                                                            {relatedProduct.tags?.map((tag) => (
-                                                                <span key={tag.id} className="badge bg-light text-dark">
-                                                                    {tag.name}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                        <span className="text-muted small">
-                                                            ♥️{relatedProduct.favorited_by_users?.length || 0}
-                                                        </span>
+            <section class="py-0 mb-9">
+                <div class="container">
+                    <div class="d-flex flex-between-center mb-3">
+                        <div>
+                            <h3>Xe bạn có thể quan tâm</h3>
+                            <p class="mb-0 text-body-tertiary fw-semibold">Gợi ý xe theo sở thích của bạn</p>
+                        </div>
+                        {/* Trên 6 Sp hiện Btn All */}
+                        {product.related_products.length > 6 && (
+                            <button class="btn btn-sm btn-phoenix-primary">Xem tất cả</button>
+                        )}
+                    </div>
+                    <div class="swiper-theme-container products-slider">
+
+                        <Swiper className="swiper swiper theme-slider" slidesPerView={1} spaceBetween={16} navigation={{ nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }} breakpoints={{ 640: { slidesPerView: 2 }, 768: { slidesPerView: 3 }, 1024: { slidesPerView: 6 } }} modules={[Navigation]} >
+                            <div class="swiper-wrapper">
+                                {product.related_products.map((relatedProduct) => (
+                                    <SwiperSlide className="swiper-slide" key={relatedProduct.id} >
+                                        <div class="position-relative text-decoration-none product-card h-100">
+                                            <div class="d-flex flex-column justify-content-between h-100">
+                                                <div>
+                                                    <div class="border border-1 border-translucent rounded-3 position-relative mb-3 d-flex justify-content-center align-items-center">
+                                                        <button className={`btn btn-wish btn-wish-danger position-absolute top-0 end-0 m-2 ${isProductFavorited(relatedProduct) ? 'btn-danger' : 'btn-outline-danger'} `}
+                                                            onClick={(e) => handleToggleFavorite(e, relatedProduct.id)}
+                                                            style={{
+                                                                zIndex: 2,
+                                                                width: '32px',
+                                                                height: '32px',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                fontSize: '1rem',
+                                                                padding: 0
+                                                            }}>
+                                                            <span className={`fa${isProductFavorited(relatedProduct) ? 's' : 'r'} fa-heart`}></span>
+                                                        </button>
+                                                        <img class="img-fluid w-100" src={`${BASE_URL_ADMIN}storage/${relatedProduct.img}`} alt="" style={{ aspectRatio: '1/1', objectFit: 'cover' }} />
                                                     </div>
+                                                    <Link to={`${PATHS.PRODUCTS}/${relatedProduct.slug}`} className="stretched-link">
+                                                        <h6 class="mb-2 lh-sm line-clamp-3 product-name">{relatedProduct.name}</h6>
+                                                    </Link>
+                                                    <p class="fs-9">
+                                                        {relatedProduct.tags?.map((tag) => (
+                                                            <span key={tag.id} className="badge bg-light text-dark">
+                                                                {tag.name}
+                                                            </span>
+                                                        ))}
+                                                    </p>
+                                                </div>
+                                                <div>
                                                     {relatedProduct.variants?.[0]?.pricing_type === 'public_price' ? (
-                                                        <div className="d-flex align-items-center gap-2 mt-2">
-                                                            <h6 className="mb-0">
+                                                        <div class="d-flex align-items-center gap-2 mt-2">
+                                                            <p class="me-2 text-body text-decoration-line-through mb-0">
+                                                                {relatedProduct.variants[0].discount_price && (
+                                                                    new Intl.NumberFormat('vi-VN', {
+                                                                        style: 'currency',
+                                                                        currency: 'VND'
+                                                                    }).format(relatedProduct.variants[0].price)
+                                                                )}
+                                                            </p><br />
+                                                            <h5 class="text-body-emphasis mb-0">
                                                                 {new Intl.NumberFormat('vi-VN', {
                                                                     style: 'currency',
                                                                     currency: 'VND'
                                                                 }).format(relatedProduct.variants[0].discount_price || relatedProduct.variants[0].price)}
-                                                            </h6>
-                                                            {relatedProduct.variants[0].discount_price && (
-                                                                <small className="text-decoration-line-through text-muted">
-                                                                    {new Intl.NumberFormat('vi-VN', {
-                                                                        style: 'currency',
-                                                                        currency: 'VND'
-                                                                    }).format(relatedProduct.variants[0].price)}
-                                                                </small>
-                                                            )}
+                                                            </h5>
                                                         </div>
                                                     ) : (
                                                         <span className="badge bg-info bg-opacity-10 text-info mt-2">
                                                             Liên hệ báo giá
                                                         </span>
                                                     )}
+                                                    <p class="text-body-tertiary fw-semibold fs-9 lh-1 mb-0">2 colors</p>
                                                 </div>
                                             </div>
-                                        </SwiperSlide>
-                                    ))}
-                                </Swiper>
-                            ) : (
-                                <div className="text-center py-5">
-                                    <div className="mb-3">
-                                        <i className="far fa-folder-open fa-3x text-muted" />
-                                    </div>
-                                    <p className="text-muted">Không có sản phẩm liên quan</p>
-                                </div>
-                            )}
+                                        </div>
+                                    </SwiperSlide>
+                                ))}
+                            </div>
+                        </Swiper>
+
+                        <div class="swiper-nav">
+                            <div class="swiper-button-next"><span class="fas fa-chevron-right nav-icon"></span></div>
+                            <div class="swiper-button-prev"><span class="fas fa-chevron-left nav-icon"></span></div>
                         </div>
                     </div>
                 </div>

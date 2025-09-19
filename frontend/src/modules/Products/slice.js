@@ -1,5 +1,5 @@
 // src/modules/Products/slice.js
-import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector, createAction } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import {
   fetchProductsApi,
@@ -143,11 +143,11 @@ export const toggleFavorite = createAsyncThunk(
   async (productId, { rejectWithValue, getState }) => {
     try {
       const response = await toggleFavoriteApi(productId);
-      
+
       if (response.status === 200) {
         // Lấy user ID từ state
         const userId = getState().auth.user?.id;
-        
+
         return {
           productId,
           is_favorited: response.is_favorited,
@@ -155,7 +155,7 @@ export const toggleFavorite = createAsyncThunk(
           user_id: userId
         };
       }
-      
+
       return rejectWithValue(response.message || 'Không thể cập nhật yêu thích');
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Có lỗi xảy ra');
@@ -181,10 +181,10 @@ export const addComment = createAsyncThunk(
   async ({ productId, commentData }, { rejectWithValue, getState }) => {
     try {
       const response = await addCommentApi(productId, commentData);
-      
+
       // Lấy thông tin user hiện tại
       const currentUser = getState().auth.user;
-      
+
       // Tạo đối tượng comment đầy đủ
       const newComment = {
         ...response.comment,
@@ -195,7 +195,7 @@ export const addComment = createAsyncThunk(
         // Thêm các trường khác nếu cần
         replies: [] // Khởi tạo mảng replies rỗng
       };
-      
+
       return newComment;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Bình luận thất bại.');
@@ -245,6 +245,9 @@ const productsSlice = createSlice({
     setProductsError: (state, action) => {
       state.error = action.payload;
     },
+    updateSelectedProduct: (state, action) => {
+      state.selectedProduct = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -362,44 +365,64 @@ const productsSlice = createSlice({
       })
       .addCase(toggleFavorite.fulfilled, (state, action) => {
         const { productId, is_favorited } = action.payload;
-        
-        // Cập nhật trạng thái yêu thích trong selectedProduct
+
+        // Cập nhật trạng thái yêu thích trong selectedProduct (giữ nguyên phần này)
         if (state.selectedProduct && state.selectedProduct.id === productId) {
-          if (!state.selectedProduct.favorited_by_users) {
-            state.selectedProduct.favorited_by_users = [];
-          }
-          
-          if (is_favorited) {
-            // Thêm user hiện tại vào danh sách yêu thích
-            if (!state.selectedProduct.favorited_by_users.some(u => u.id === action.payload.user_id)) {
-              state.selectedProduct.favorited_by_users.push({ id: action.payload.user_id });
+            if (!state.selectedProduct.favorited_by_users) {
+                state.selectedProduct.favorited_by_users = [];
             }
-          } else {
-            // Xóa user hiện tại khỏi danh sách yêu thích
-            state.selectedProduct.favorited_by_users = state.selectedProduct.favorited_by_users.filter(
-              u => u.id !== action.payload.user_id
-            );
-          }
+
+            if (is_favorited) {
+                // Thêm user hiện tại vào danh sách yêu thích
+                if (!state.selectedProduct.favorited_by_users.some(u => u.id === action.payload.user_id)) {
+                    state.selectedProduct.favorited_by_users.push({ id: action.payload.user_id });
+                }
+            } else {
+                // Xóa user hiện tại khỏi danh sách yêu thích
+                state.selectedProduct.favorited_by_users = state.selectedProduct.favorited_by_users.filter(
+                    u => u.id !== action.payload.user_id
+                );
+            }
         }
 
-        // Cập nhật trong danh sách products nếu có
+        // Cập nhật trong danh sách products nếu có (giữ nguyên phần này)
         if (state.products && Array.isArray(state.products)) {
-          const productToUpdate = state.products.find(p => p.id === productId);
-          if (productToUpdate) {
-            if (!productToUpdate.favorited_by_users) {
-              productToUpdate.favorited_by_users = [];
+            const productToUpdate = state.products.find(p => p.id === productId);
+            if (productToUpdate) {
+                if (!productToUpdate.favorited_by_users) {
+                    productToUpdate.favorited_by_users = [];
+                }
+
+                if (is_favorited) {
+                    if (!productToUpdate.favorited_by_users.some(u => u.id === action.payload.user_id)) {
+                        productToUpdate.favorited_by_users.push({ id: action.payload.user_id });
+                    }
+                } else {
+                    productToUpdate.favorited_by_users = productToUpdate.favorited_by_users.filter(
+                        u => u.id !== action.payload.user_id
+                    );
+                }
             }
-            
-            if (is_favorited) {
-              if (!productToUpdate.favorited_by_users.some(u => u.id === action.payload.user_id)) {
-                productToUpdate.favorited_by_users.push({ id: action.payload.user_id });
-              }
-            } else {
-              productToUpdate.favorited_by_users = productToUpdate.favorited_by_users.filter(
-                u => u.id !== action.payload.user_id
-              );
+        }
+
+        // THÊM PHẦN NÀY: Cập nhật trong danh sách related products nếu có
+        if (state.selectedProduct?.related_products) {
+            const relatedProductToUpdate = state.selectedProduct.related_products.find(p => p.id === productId);
+            if (relatedProductToUpdate) {
+                if (!relatedProductToUpdate.favorited_by_users) {
+                    relatedProductToUpdate.favorited_by_users = [];
+                }
+
+                if (is_favorited) {
+                    if (!relatedProductToUpdate.favorited_by_users.some(u => u.id === action.payload.user_id)) {
+                        relatedProductToUpdate.favorited_by_users.push({ id: action.payload.user_id });
+                    }
+                } else {
+                    relatedProductToUpdate.favorited_by_users = relatedProductToUpdate.favorited_by_users.filter(
+                        u => u.id !== action.payload.user_id
+                    );
+                }
             }
-          }
         }
       })
       .addCase(createBooking.pending, (state) => {
@@ -463,12 +486,35 @@ const productsSlice = createSlice({
       .addCase(fetchBookings.rejected, (state, action) => {
         state.bookingsLoading = false;
         state.bookingsError = action.payload;
+      })
+      .addCase(updateRelatedProductsFavorite, (state, action) => {
+        const { productId, favorited_by_users } = action.payload;
+        
+        // Cập nhật trong danh sách related products nếu có
+        if (state.selectedProduct?.related_products) {
+          state.selectedProduct = {
+            ...state.selectedProduct,
+            related_products: state.selectedProduct.related_products.map(rp =>
+              rp.id === productId
+                ? { ...rp, favorited_by_users }
+                : rp
+            )
+          };
+        }
       });
   },
 });
 
-// Exports
-export const { clearSelectedProduct, setProductsError } = productsSlice.actions;
+// Action để cập nhật trạng thái yêu thích trong related products
+const updateRelatedProductsFavorite = createAction(
+  'products/updateRelatedProductsFavorite',
+  (productId, favorited_by_users) => ({
+    payload: { productId, favorited_by_users }
+  })
+);
+
+export const { clearSelectedProduct, setProductsError, updateSelectedProduct } = productsSlice.actions;
+export { updateRelatedProductsFavorite };
 
 // Selectors
 export const selectSelectedProduct = createSelector(
