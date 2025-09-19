@@ -7,6 +7,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -106,9 +107,8 @@ class ProductController extends Controller
     {
         try {
             $product = Product::where('slug', $product_slug)
-                                ->with('images', 'categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs.attributeValue.attributeType', 'favoritedByUsers', 'comments.user', 'bookings') 
-                                // ->with('comments.user', 'variants.attributeValues')
-                                ->first();
+                ->with('images', 'categories', 'tags', 'variants.attributeValues.attributeType', 'attributeValueConfigs.attributeValue.attributeType', 'favoritedByUsers', 'comments.user', 'bookings')
+                ->first();
 
             if (!$product) {
                 return response()->json([
@@ -119,16 +119,19 @@ class ProductController extends Controller
 
             // Lấy sản phẩm liên quan
             $related_products = Product::where('id', '!=', $product->id)
-                ->whereHas('categories', function($query) use ($product) {
-                    $query->whereIn('categories.id', $product->categories->pluck('id'));
-                })
-                ->orWhereHas('tags', function($query) use ($product) {
-                    $query->whereIn('tags.id', $product->tags->pluck('id'));
+                ->where(function ($query) use ($product) {
+                    $query->whereHas('categories', function ($q) use ($product) {
+                        $q->whereIn('categories.id', $product->categories->pluck('id'));
+                    })
+                        ->orWhereHas('tags', function ($q) use ($product) {
+                            $q->whereIn('tags.id', $product->tags->pluck('id'));
+                        });
                 })
                 ->with('images', 'variants.attributeValues.attributeType', 'favoritedByUsers', 'tags')
                 ->inRandomOrder()
                 ->take(8)
                 ->get();
+
 
             // Gán related_products vào product
             $product->related_products = $related_products;
@@ -245,10 +248,10 @@ class ProductController extends Controller
 
             // ĐIỀU CHỈNH: Sử dụng whereHas để lọc sản phẩm thuộc danh mục qua bảng trung gian
             $products = Product::whereHas('categories', function ($query) use ($category) {
-                                    $query->where('categories.id', $category->id);
-                                })
-                                ->with('images', 'categories') // Đã sửa từ 'category' thành 'categories'
-                                ->paginate(10);
+                $query->where('categories.id', $category->id);
+            })
+                ->with('images', 'categories') // Đã sửa từ 'category' thành 'categories'
+                ->paginate(10);
 
             return response()->json([
                 'status' => 'success',
@@ -265,6 +268,46 @@ class ProductController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Không thể tải sản phẩm theo danh mục: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Toggle favorite status for a product.
+     *
+     * @param int $productId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleFavorite($productId)  
+    {
+        try {
+            $user = auth()->user();
+            $product = Product::findOrFail($productId);
+            
+            $isFavorited = $product->favoritedByUsers()->where('user_id', $user->id)->exists();
+            
+            if ($isFavorited) {
+                $product->favoritedByUsers()->detach($user->id);
+                $message = "Đã xóa khỏi danh sách yêu thích";
+                $is_favorited = false;
+            } else {
+                $product->favoritedByUsers()->attach($user->id);
+                $message = "Đã thêm vào danh sách yêu thích";
+                $is_favorited = true;
+            }
+
+            // Load lại product với favorite users
+            $product->load('favoritedByUsers');
+
+            return response()->json([
+                'status' => 'success',
+                'message' => $isFavorited ? 'Đã xóa khỏi danh sách yêu thích' : 'Đã thêm vào danh sách yêu thích',
+                'product' => $product
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
             ], 500);
         }
     }
