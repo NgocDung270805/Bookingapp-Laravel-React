@@ -39,6 +39,16 @@ class ProductController extends Controller
             });
         }
 
+        // Lọc 4 sản phẩm mới nhất theo created_at
+        if ($request->has('latest') && $request->latest) {
+            $query->orderBy('created_at', 'desc')->limit(4);
+        }
+
+        // Lọc 6 sản phẩm có views cao nhất
+        if ($request->has('most_viewed') && $request->most_viewed) {
+            $query->orderBy('views', 'desc')->limit(6);
+        }
+
         $products = $query->orderBy('id')->get();
 
         return response()->json([
