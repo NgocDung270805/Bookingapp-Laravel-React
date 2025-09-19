@@ -1,6 +1,7 @@
 // src/common/constants.js
-export const BASE_URL_ADMIN = 'https://phungngocdungapp.up.railway.app/'; // Đảm bảo đúng với URL API Laravel của bạn 
-export const API_BASE_URL   = 'https://phungngocdungapp.up.railway.app/api/'; // Đảm bảo đúng với URL API Laravel của bạn http://127.0.0.1:8000/ -- https://phungngocdungapp.up.railway.app/
+
+export const BASE_URL_ADMIN = 'https://phungngocdungapp.up.railway.app/'; 
+export const API_BASE_URL   = 'https://phungngocdungapp.up.railway.app/api/'; 
 
 export const TOKEN_KEY = 'authToken'; // Key để lưu token xác thực trong Local Storage
 export const USER_INFO_KEY = 'userInfo'; // Key để lưu thông tin user trong Local Storage
@@ -20,6 +21,7 @@ export const PATHS = {
   AUTH_CALLBACK: '/auth/callback',
   REGISTER: '/register',
   PROFILE: '/user/profile',
+  MY_BOOKINGS: '/user/bookings',
   LOGOUT: '/logout',
   PRODUCTS: '/products',
   PRODUCTS_BY_CATEGORY_SLUG: '/products/categories/:categorySlug',
@@ -28,7 +30,7 @@ export const PATHS = {
   API_BASE_URL: API_BASE_URL,
 };
 
-// Bạn có thể định nghĩa các giá trị giới tính nếu cần kiểm tra
+// Định nghĩa các giá trị giới tính
 export const GENDER_TYPES = {
   MALE: 'nam',
   FEMALE: 'nu',

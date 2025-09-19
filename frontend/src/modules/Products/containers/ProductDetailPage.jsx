@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useMediaQuery } from 'react-responsive';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
@@ -47,35 +47,49 @@ const ProductDetailPage = () => {
     const [showImageModal, setShowImageModal] = useState(false);
     const [modalImageIndex, setModalImageIndex] = useState(0);
 
-    // Xử lý sắp xếp và lọc comments
-    const getFilteredAndSortedComments = (comments) => {
-        if (!comments) return [];
+    const [currentPage, setCurrentPage] = useState(1);
+    const [commentsPerPage] = useState(2); // hoặc số lượng comments/trang bạn muốn
+    const [expandedReplies, setExpandedReplies] = useState({}); // State mới
 
-        // Tách comments cha và con
-        const parentComments = comments.filter(comment => !comment.parent_id);
-        const childComments = comments.filter(comment => comment.parent_id);
-
-        // Lọc theo rating cho comments cha
-        let filteredParents = parentComments;
-        if (ratingFilter > 0) {
-            filteredParents = parentComments.filter(comment => comment.rating === ratingFilter);
-        }
-
-        // Sắp xếp comments cha theo thời gian
-        const sortedParents = [...filteredParents].sort((a, b) => {
-            const dateA = new Date(a.created_at);
-            const dateB = new Date(b.created_at);
-            return commentSort === 'newest' ? dateB - dateA : dateA - dateB;
-        });
-
-        // Gắn các replies vào comment cha tương ứng
-        return sortedParents.map(parent => ({
-            ...parent,
-            replies: childComments
-                .filter(child => child.parent_id === parent.id)
-                .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+    // Hàm để toggle replies
+    const toggleReplies = (commentId) => {
+        setExpandedReplies(prev => ({
+            ...prev,
+            [commentId]: !prev[commentId]
         }));
     };
+
+    // Xử lý sắp xếp và lọc comments
+    const filteredAndSortedComments = useMemo(() => {
+        return (comments) => {
+            if (!comments) return [];
+
+            // Tách comments cha và con
+            const parentComments = comments.filter(comment => !comment.parent_id);
+            const childComments = comments.filter(comment => comment.parent_id);
+
+            // Lọc theo rating cho comments cha
+            let filteredParents = parentComments;
+            if (ratingFilter > 0) {
+                filteredParents = parentComments.filter(comment => comment.rating === ratingFilter);
+            }
+
+            // Sắp xếp comments cha theo thời gian
+            const sortedParents = [...filteredParents].sort((a, b) => {
+                const dateA = new Date(a.created_at);
+                const dateB = new Date(b.created_at);
+                return commentSort === 'newest' ? dateB - dateA : dateA - dateB;
+            });
+
+            // Gắn các replies vào comment cha tương ứng
+            return sortedParents.map(parent => ({
+                ...parent,
+                replies: childComments
+                    .filter(child => child.parent_id === parent.id)
+                    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+            }));
+        };
+    }, [ratingFilter, commentSort]);
 
     // ===============================================
     // States cho Swiper và variant management
@@ -293,16 +307,7 @@ const ProductDetailPage = () => {
     const handleToggleFavorite = async (e, productId) => {
         e.preventDefault();
         try {
-            console.log('Toggle favorite - Start', {
-                productId,
-                currentUserId: currentUser?.id,
-                isMainProduct: productId === selectedProduct?.id
-            });
             const result = await dispatch(toggleFavorite(productId)).unwrap();
-            console.log('Toggle favorite - Success', {
-                result,
-                updatedProduct: result.product
-            });
 
             // Cập nhật related products nếu cần
             if (result.product && selectedProduct?.related_products) {
@@ -314,11 +319,6 @@ const ProductDetailPage = () => {
 
             toast.success(result.message, ToastConfig);
         } catch (error) {
-            console.error('Toggle favorite - Error:', {
-                error,
-                productId,
-                userId: currentUser?.id
-            });
             toast.error(error || 'Có lỗi xảy ra khi thay đổi trạng thái yêu thích', ToastConfig);
         }
     };
@@ -399,6 +399,27 @@ const ProductDetailPage = () => {
         }
     }, [selectedProduct, currentUser]);
 
+    // Lấy comments cho trang hiện tại
+    const getCurrentPageComments = (allComments) => {
+        const startIndex = (currentPage - 1) * commentsPerPage;
+        const endIndex = startIndex + commentsPerPage;
+        return allComments.slice(startIndex, endIndex);
+    };
+
+    const handlePageChange = (pageNumber) => {
+        const commentsSection = document.querySelector('.comments-list');
+        const currentScrollPosition = commentsSection?.offsetTop;
+        setCurrentPage(pageNumber);
+        if (currentScrollPosition) {
+            setTimeout(() => {
+                window.scrollTo({
+                    top: currentScrollPosition - 100,
+                    behavior: 'smooth'
+                });
+            }, 100);
+        }
+    };
+
     if (loading) {
         return <LoadingIndicator />;
     }
@@ -420,13 +441,6 @@ const ProductDetailPage = () => {
 
     // Kiểm tra xem sản phẩm có được yêu thích bởi user hiện tại không
     const isProductFavorited = (product) => {
-        // Debug log
-        console.log('isProductFavorited check:', {
-            product: product?.id,
-            currentUser: currentUser?.id,
-            favorited_by_users: product?.favorited_by_users
-        });
-
         if (!currentUser || !product || !Array.isArray(product.favorited_by_users)) {
             return false;
         }
@@ -721,7 +735,7 @@ const ProductDetailPage = () => {
 
                                         {comments && comments.length > 0 ? (
                                             <div className="comments-list">
-                                                {getFilteredAndSortedComments(comments).map((comment) => (
+                                                {getCurrentPageComments(filteredAndSortedComments(comments)).map((comment) => (
                                                     <div key={comment.id} className="comment-item border-bottom py-4">
                                                         <div className="d-flex justify-content-between mb-2">
                                                             <div className="d-flex align-items-center">
@@ -803,34 +817,58 @@ const ProductDetailPage = () => {
                                                             </div>
                                                         )}
 
-                                                        {/* Hiển thị các reply */}
+                                                        {/* Hiển thị số lượng replies và nút toggle */}
                                                         {comment.replies && comment.replies.length > 0 && (
-                                                            <div className="replies-list ms-4 mt-3">
-                                                                {comment.replies.map(reply => (
-                                                                    <div key={reply.id} className="reply-item py-3 border-top">
-                                                                        <div className="d-flex justify-content-between mb-2">
-                                                                            <div className="d-flex align-items-center">
-                                                                                <div className="avatar avatar-s me-2">
-                                                                                    {reply.user?.profile?.avatar ? (
-                                                                                        <img src={`${BASE_URL_ADMIN}storage/${reply.user?.profile?.avatar}`} alt="" className="rounded-circle" />
-                                                                                    ) : (
-                                                                                        <div className="avatar-name rounded-circle bg-primary text-white">
-                                                                                            <span>{reply.user?.name?.charAt(0)?.toUpperCase() || '?'}</span>
+                                                            <>
+                                                                <div className="d-flex align-items-center mt-2">
+                                                                    <button
+                                                                        className="btn btn-sm btn-link text-decoration-none p-0"
+                                                                        onClick={() => toggleReplies(comment.id)}
+                                                                    >
+                                                                        <i className={`fas fa-chevron-${expandedReplies[comment.id] ? 'up' : 'down'} me-1`}></i>
+                                                                        {expandedReplies[comment.id] ? 'Ẩn' : 'Xem'} {comment.replies.length} phản hồi
+                                                                    </button>
+                                                                </div>
+
+                                                                {/* Hiển thị các reply khi được mở */}
+                                                                {expandedReplies[comment.id] && (
+                                                                    <div className="replies-list ms-4 mt-3">
+                                                                        {comment.replies.map(reply => (
+                                                                            <div key={reply.id} className="reply-item py-3 border-top">
+                                                                                <div className="d-flex justify-content-between mb-2">
+                                                                                    <div className="d-flex align-items-center">
+                                                                                        <div className="avatar avatar-s me-2">
+                                                                                            {reply.user?.profile?.avatar ? (
+                                                                                                <img
+                                                                                                    src={`${BASE_URL_ADMIN}storage/${reply.user?.profile?.avatar}`}
+                                                                                                    alt=""
+                                                                                                    className="rounded-circle"
+                                                                                                />
+                                                                                            ) : (
+                                                                                                <div className="avatar-name rounded-circle bg-primary text-white">
+                                                                                                    <span>
+                                                                                                        {reply.user?.name?.charAt(0)?.toUpperCase() || '?'}
+                                                                                                    </span>
+                                                                                                </div>
+                                                                                            )}
                                                                                         </div>
-                                                                                    )}
+                                                                                        <div>
+                                                                                            <h6 className="mb-1 fw-bold">
+                                                                                                {reply.user?.name}
+                                                                                                {reply.user?.is_verified === 1 && <VerifiedBadge />}
+                                                                                            </h6>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <small className="text-muted">
+                                                                                        {new Date(reply.created_at).toLocaleDateString('vi-VN')}
+                                                                                    </small>
                                                                                 </div>
-                                                                                <div>
-                                                                                    <h6 className="mb-1 fw-bold">{reply.user?.name}{reply.user?.is_verified === 1 && <VerifiedBadge />}</h6>
-                                                                                </div>
+                                                                                <p className="mb-0">{reply.content}</p>
                                                                             </div>
-                                                                            <small className="text-muted">
-                                                                                {new Date(reply.created_at).toLocaleDateString('vi-VN')}
-                                                                            </small>
-                                                                        </div>
-                                                                        <p className="mb-0">{reply.content}</p>
+                                                                        ))}
                                                                     </div>
-                                                                ))}
-                                                            </div>
+                                                                )}
+                                                            </>
                                                         )}
                                                     </div>
                                                 ))}
@@ -856,6 +894,46 @@ const ProductDetailPage = () => {
                                                 onClose={() => setShowCommentModal(false)}
                                             />
                                         )}
+
+                                        {/* Phân trang */}
+                                        {filteredAndSortedComments(comments).length > commentsPerPage && (
+                                            <div className="d-flex justify-content-center mt-4">
+                                                <nav aria-label="Page navigation">
+                                                    <ul className="pagination">
+                                                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                            <button
+                                                                className="page-link"
+                                                                onClick={() => handlePageChange(currentPage - 1)}
+                                                                disabled={currentPage === 1}
+                                                            >
+                                                                <i className="fas fa-chevron-left"></i>
+                                                            </button>
+                                                        </li>
+
+                                                        {[...Array(Math.ceil(filteredAndSortedComments(comments).length / commentsPerPage))].map((_, index) => (
+                                                            <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
+                                                                <button
+                                                                    className="page-link"
+                                                                    onClick={() => handlePageChange(index + 1)}
+                                                                >
+                                                                    {index + 1}
+                                                                </button>
+                                                            </li>
+                                                        ))}
+
+                                                        <li className={`page-item ${currentPage === Math.ceil(filteredAndSortedComments(comments).length / commentsPerPage) ? 'disabled' : ''}`}>
+                                                            <button
+                                                                className="page-link"
+                                                                onClick={() => handlePageChange(currentPage + 1)}
+                                                                disabled={currentPage === Math.ceil(filteredAndSortedComments(comments).length / commentsPerPage)}
+                                                            >
+                                                                <i className="fas fa-chevron-right"></i>
+                                                            </button>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -868,7 +946,7 @@ const ProductDetailPage = () => {
                                             <p><strong>Danh mục:</strong>
                                                 {product.categories?.map(cat => cat.name).join(', ')}
                                             </p>
-                                            <p><strong>Tags:</strong>
+                                            <p><strong>Tags: </strong>
                                                 {product.tags?.map(tag => tag.name).join(', ')}
                                             </p>
                                             <p><strong>Lượt xem:</strong> {product.views}</p>
@@ -882,48 +960,50 @@ const ProductDetailPage = () => {
                 </section>
             </div>
 
-            <section class="py-0 mb-9">
-                <div class="container">
-                    <div class="d-flex flex-between-center mb-3">
+            <section className="py-0 mb-9">
+                <div className="container">
+                    <div className="d-flex flex-between-center mb-3">
                         <div>
                             <h3>Xe bạn có thể quan tâm</h3>
-                            <p class="mb-0 text-body-tertiary fw-semibold">Gợi ý xe theo sở thích của bạn</p>
+                            <p className="mb-0 text-body-tertiary fw-semibold">Gợi ý xe theo sở thích của bạn</p>
                         </div>
                         {/* Trên 6 Sp hiện Btn All */}
                         {product.related_products.length > 6 && (
-                            <button class="btn btn-sm btn-phoenix-primary">Xem tất cả</button>
+                            <button className="btn btn-sm btn-phoenix-primary">Xem tất cả</button>
                         )}
                     </div>
-                    <div class="swiper-theme-container products-slider">
+                    <div className="swiper-theme-container products-slider">
 
                         <Swiper className="swiper swiper theme-slider" slidesPerView={1} spaceBetween={16} navigation={{ nextEl: ".swiper-button-next", prevEl: ".swiper-button-prev" }} breakpoints={{ 640: { slidesPerView: 2 }, 768: { slidesPerView: 3 }, 1024: { slidesPerView: 6 } }} modules={[Navigation]} >
-                            <div class="swiper-wrapper">
+                            <div className="swiper-wrapper">
                                 {product.related_products.map((relatedProduct) => (
                                     <SwiperSlide className="swiper-slide" key={relatedProduct.id} >
-                                        <div class="position-relative text-decoration-none product-card h-100">
-                                            <div class="d-flex flex-column justify-content-between h-100">
+                                        <div className="position-relative text-decoration-none product-card h-100">
+                                            <div className="d-flex flex-column justify-content-between h-100">
                                                 <div>
-                                                    <div class="border border-1 border-translucent rounded-3 position-relative mb-3 d-flex justify-content-center align-items-center">
-                                                        <button className={`btn btn-wish btn-wish-danger position-absolute top-0 end-0 m-2 ${isProductFavorited(relatedProduct) ? 'btn-danger' : 'btn-outline-danger'} `}
+                                                    <div className="border border-1 border-translucent rounded-3 position-relative mb-3 d-flex justify-content-center align-items-center">
+                                                        <button
+                                                            className={`btn btn-wish btn-wish-danger ${isProductFavorited(relatedProduct) ? 'btn-danger' : 'btn-outline-danger'
+                                                                }`}
                                                             onClick={(e) => handleToggleFavorite(e, relatedProduct.id)}
                                                             style={{
-                                                                zIndex: 2,
                                                                 width: '32px',
                                                                 height: '32px',
                                                                 display: 'flex',
                                                                 alignItems: 'center',
                                                                 justifyContent: 'center',
                                                                 fontSize: '1rem',
-                                                                padding: 0
-                                                            }}>
+                                                                padding: 0,
+                                                            }}
+                                                        >
                                                             <span className={`fa${isProductFavorited(relatedProduct) ? 's' : 'r'} fa-heart`}></span>
                                                         </button>
-                                                        <img class="img-fluid w-100" src={`${BASE_URL_ADMIN}storage/${relatedProduct.img}`} alt="" style={{ aspectRatio: '1/1', objectFit: 'cover' }} />
+                                                        <img className="img-fluid w-100" src={`${BASE_URL_ADMIN}storage/${relatedProduct.img}`} alt="" style={{ aspectRatio: '1/1', objectFit: 'cover' }} />
                                                     </div>
                                                     <Link to={`${PATHS.PRODUCTS}/${relatedProduct.slug}`} className="stretched-link">
-                                                        <h6 class="mb-2 lh-sm line-clamp-3 product-name">{relatedProduct.name}</h6>
+                                                        <h6 className="mb-2 lh-sm line-clamp-3 product-name">{relatedProduct.name}</h6>
                                                     </Link>
-                                                    <p class="fs-9">
+                                                    <p className="fs-9">
                                                         {relatedProduct.tags?.map((tag) => (
                                                             <span key={tag.id} className="badge bg-light text-dark">
                                                                 {tag.name}
@@ -933,8 +1013,8 @@ const ProductDetailPage = () => {
                                                 </div>
                                                 <div>
                                                     {relatedProduct.variants?.[0]?.pricing_type === 'public_price' ? (
-                                                        <div class="d-flex align-items-center gap-2 mt-2">
-                                                            <p class="me-2 text-body text-decoration-line-through mb-0">
+                                                        <div className="d-flex align-items-center gap-2 mt-2">
+                                                            <p className="me-2 text-body text-decoration-line-through mb-0">
                                                                 {relatedProduct.variants[0].discount_price && (
                                                                     new Intl.NumberFormat('vi-VN', {
                                                                         style: 'currency',
@@ -942,7 +1022,7 @@ const ProductDetailPage = () => {
                                                                     }).format(relatedProduct.variants[0].price)
                                                                 )}
                                                             </p><br />
-                                                            <h5 class="text-body-emphasis mb-0">
+                                                            <h5 className="text-body-emphasis mb-0">
                                                                 {new Intl.NumberFormat('vi-VN', {
                                                                     style: 'currency',
                                                                     currency: 'VND'
@@ -954,7 +1034,7 @@ const ProductDetailPage = () => {
                                                             Liên hệ báo giá
                                                         </span>
                                                     )}
-                                                    <p class="text-body-tertiary fw-semibold fs-9 lh-1 mb-0">2 colors</p>
+                                                    <p className="text-body-tertiary fw-semibold fs-9 lh-1 mb-0">2 colors</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -963,9 +1043,9 @@ const ProductDetailPage = () => {
                             </div>
                         </Swiper>
 
-                        <div class="swiper-nav">
-                            <div class="swiper-button-next"><span class="fas fa-chevron-right nav-icon"></span></div>
-                            <div class="swiper-button-prev"><span class="fas fa-chevron-left nav-icon"></span></div>
+                        <div className="swiper-nav">
+                            <div className="swiper-button-next"><span className="fas fa-chevron-right nav-icon"></span></div>
+                            <div className="swiper-button-prev"><span className="fas fa-chevron-left nav-icon"></span></div>
                         </div>
                     </div>
                 </div>
