@@ -1,0 +1,32 @@
+/* MainLayout.css */
+.layout-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden; /* Ngăn scroll ngang */
+  width: 100%;
+  max-width: 100%;
+  position: relative;
+}
+
+.main-content {
+  flex: 1 0 auto;
+  padding: 20px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+
+/* Fix cho mobile */
+@media (max-width: 767px) {
+  .main-content {
+    padding: 15px;
+  }
+  
+  /* Đảm bảo không có element nào vượt quá width của container */
+  .main-content * {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}

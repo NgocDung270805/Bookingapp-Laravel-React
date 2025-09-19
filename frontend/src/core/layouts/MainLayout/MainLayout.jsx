@@ -1,25 +1,23 @@
 // src/core/layouts/MainLayout/MainLayout.jsx
 
+// Sau khi sửa
 import React from 'react';
-import { Outlet } from 'react-router-dom'; // Dùng Outlet để render các route con
-import Header from '../components/Header'; // Import Header
-import Footer from '../components/Footer'; // Import Footer
+import { Outlet } from 'react-router-dom';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import SupportChatWidget from '../components/SupportChatWidget';
+import './MainLayout.css';
 
 const MainLayout = () => {
   return (
-    <>
-      <main className="main" id="top">
-        <Header />
-        <div style={{ flexGrow: 1, width: '100%', maxWidth: '100vw' }}>
-          <main style={{ flexGrow: 1, padding: '20px', backgroundColor: '#fff' }}>
-            <Outlet />{/* Đây là nơi các trang (pages) sẽ được render */}
-          </main>
-        </div>
-        <Footer />
-        <SupportChatWidget />
+    <div className="layout-wrapper">
+      <Header />
+      <main className="main-content">
+        <Outlet />
       </main>
-    </>
+      <Footer />
+      <SupportChatWidget />
+    </div>
   );
 };
 
