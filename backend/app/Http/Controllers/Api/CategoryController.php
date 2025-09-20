@@ -16,12 +16,12 @@ class CategoryController extends Controller
     public function index()
     {
         try {
-            // Lấy tất cả danh mục với các trường cần thiết
-            $categories = Category::select('id', 'name', 'slug', 'description', 'img', 'parent_id', 'status')->whereNull('parent_id')->withCount('products')->get();
+            // Lấy tất cả danh mục với các trường cần thiết và status = 1
+            $categories = Category::select('id', 'name', 'slug', 'description', 'img', 'parent_id', 'status')->whereNull('parent_id')->where('status', 1)->withCount('products')->get();
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Lấy danh sách danh mục thành công',
+                'message' => 'Lấy danh sách danh mục thành công!',
                 'categories' => $categories
             ]);
         } catch (\Exception $e) {
