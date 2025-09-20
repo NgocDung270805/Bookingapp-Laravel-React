@@ -13,7 +13,7 @@ const LoadingIndicator = () => {
       height: "100vh"
     }}>
       <DotLottieReact
-        src="https://lottie.host/3722dbdc-d3e0-407e-bf0b-5b6805db01ba/duMhR6ttZz.lottie"
+        src="https://lottie.host/608b8683-91ff-4555-80c2-03569d2366b1/FmKyBN3nRD.lottie"
         loop
         autoplay
         style={{ width: "300px", height: "300px" }}

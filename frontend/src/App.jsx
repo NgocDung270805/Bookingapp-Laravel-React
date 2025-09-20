@@ -26,7 +26,8 @@ import RegisterPage from './modules/Auth/containers/RegisterPage';
 import ProfilePage from './modules/profile/containers/ProfilePage';
 import ProductsByCategoriesPage from './modules/Products/containers/ProductsByCategoriesPage';
 import ProductDetailPage from './modules/Products/containers/ProductDetailPage.jsx';
-import BookingsPage from './pages/Bookings/BookingsPage.jsx'; // Import trang mới
+import BookingsPage from './pages/Bookings/BookingsPage.jsx'; 
+import FavoriteProducts from './pages/FavoriteProducts/FavoriteProducts.jsx';
 
 // HOCs
 import withAuth from './hoc/withAuth.jsx';
@@ -78,7 +79,8 @@ const App = () => {
                     <Route path={PATHS.PROFILE} element={<ProtectedProfilePage />} />
                     <Route path={PATHS.PRODUCTS_BY_CATEGORY_SLUG} element={<ProtectedProductsByCategoriesPage />} />
                     <Route path={PATHS.PRODUCT_DETAIL_BY_SLUG} element={<ProtectedProductDetailPage />} />
-                    <Route path={PATHS.MY_BOOKINGS} element={<ProtectedBookingsPage />} /> {/* Đường dẫn tới trang mới */}
+                    <Route path={PATHS.MY_BOOKINGS} element={<ProtectedBookingsPage />} /> 
+                    <Route path={PATHS.FAVORITE_PRODUCTS} element={<FavoriteProducts />} />
                 </Route>
             </Routes>
             <ToastContainer />

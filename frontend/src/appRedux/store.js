@@ -1,19 +1,20 @@
 // src/appRedux/store.js
 
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer from '../modules/Auth/slice'; // Import auth reducer
-import profileReducer from '../modules/profile/slice'; // Import profile reducer
+import authReducer from '../modules/Auth/slice';
+import profileReducer from '../modules/profile/slice';
 import productsReducer from '../modules/Products/slice';
 import bannersReducer from '../modules/Banners/slice';
-import categoriesReducer from '../modules/Categories/slice'; 
+import categoriesReducer from '../modules/Categories/slice';
+import favoritesReducer from './slices/favoritesSlice';
 
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,    // Đăng ký auth reducer vào store
-    profile: profileReducer, // Đăng ký profile reducer vào store
-    products: productsReducer,
-    banners: bannersReducer,
-    categories: categoriesReducer,
-  },
-  // Bạn có thể thêm cấu hình middleware hoặc enhancers ở đây nếu cần
+    reducer: {
+        auth: authReducer,
+        profile: profileReducer,
+        products: productsReducer,
+        banners: bannersReducer,
+        categories: categoriesReducer,
+        favorites: favoritesReducer,
+    },
 });

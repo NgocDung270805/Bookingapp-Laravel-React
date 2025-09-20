@@ -60,13 +60,6 @@ const Header = () => {
         <Link to={PATHS.HOME} className="navbar-brand flex-1 flex-lg-grow-0 me-lg-8 me-xl-13">
           <div className="d-flex align-items-center">
             <img src="../../assets/img/icons/logo.png" alt="" style={{ height: "40px", width: "auto", maxWidth: "200px", objectFit: "contain", marginRight: "10px", display: "block" }} />
-            {/* {bannersLoading ? (
-              <span></span> // Hiển thị trạng thái tải
-            ) : logoBanner && logoBanner.image_path ? (
-              <img src={logoBanner.image_path} alt={logoBanner.title || "Logo BookingApp"} style={{ height: '40px', marginRight: '10px' }} />
-            ) : (
-              <img src="../../assets/img/icons/logo.png" alt="" style={{ height: '40px', marginRight: '10px' }} />
-            )} */}
           </div>
         </Link>
         <div className="col-auto order-md-1" style={{ transform: window.innerWidth < 768 ? "translateX(180px)" : "none", marginTop: window.innerWidth < 768 ? "-50px" : "0px", }}>
@@ -220,7 +213,7 @@ const Header = () => {
                       </div>
                       <div className="overflow-auto scrollbar" style={{ height: '10rem' }}>
                         <ul className="nav d-flex flex-column mb-2 pb-1">
-                          {isAdmin && ( // Chỉ hiển thị link "Quản lý" nếu là admin
+                          {isAdmin && ( 
                             <li className="nav-item">
                               <a className="nav-link px-3 d-block" href={PATHS.ADMIN_DASHBOARD}>
                                 <span className="me-2 text-body align-bottom" data-feather="shield"></span>
@@ -232,10 +225,9 @@ const Header = () => {
                             <span className="me-2 text-body align-bottom" data-feather="user"></span>
                             <span>Hồ sơ cá nhân</span>
                           </Link>
-                          {/* Thêm Link mới ở đây */}
-                          <Link to={PATHS.MY_BOOKINGS} className="nav-link px-3 d-block">
-                            <span className="me-2 text-body align-bottom" data-feather="calendar"></span>
-                            <span>Lịch đã đặt</span>
+                          <Link to={PATHS.FAVORITE_PRODUCTS} className="nav-link px-3 d-block">
+                            <span className="me-2 text-body align-bottom" data-feather="heart"></span>
+                            <span>Sản phẩm yêu thích</span>
                           </Link>
                           <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"><span className="me-2 text-body align-bottom" data-feather="pie-chart"></span>Dashboard</a></li>
                           <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="lock"></span>Posts &amp; Activity</a></li>
@@ -246,7 +238,11 @@ const Header = () => {
                       </div>
                       <div className="card-footer p-0 border-top border-translucent">
                         <ul className="nav d-flex flex-column my-3">
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="user-plus"></span>Đặt lịch</a></li>
+                          <li className="nav-item">
+                            <Link to={PATHS.MY_BOOKINGS} className="nav-link px-3 d-block">
+                              <span className="me-2 text-body align-bottom" data-feather="calendar"></span>Lịch đã đặt
+                            </Link>
+                          </li>
                         </ul>
                         <hr />
                         <div className="px-3">
@@ -305,11 +301,11 @@ const Header = () => {
             <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Xe</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
                 <li>
-                  {/* <a className="dropdown-item" href={PATHS.PRODUCTS}>Danh sách xe</a> */}
                   <Link to={PATHS.PRODUCTS} className="dropdown-item">Danh sách xe</Link>
                 </li>
-                {/* <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/booking.html">Booking</a></li> */}
-                {/* <li><a className="dropdown-item" href="../../../../apps/travel-agency/flight/payment.html">Payment</a></li> */}
+                <li>
+                  <Link to={PATHS.MY_BOOKINGS} className="dropdown-item">Lịch đã đặt</Link>
+                </li>
               </ul>
             </li>
             <li className="nav-item dropdown">
@@ -324,11 +320,6 @@ const Header = () => {
                 <li><Link to={PATHS.TERMS} className="dropdown-item">Điều Khoản</Link></li>
               </ul>
             </li>
-            {/* <li className="nav-item dropdown">
-              <Link to={PATHS.ABOUT} className="nav-link fs-8 fw-bold" role="button" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Giới thiệu</Link>
-            </li> */}
-
-            {/* <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold  " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Package</a></li> */}
           </ul>
         </div>
       </nav >
