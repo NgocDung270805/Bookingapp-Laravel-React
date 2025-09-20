@@ -41,19 +41,20 @@ class ProductController extends Controller
 
         // Lọc 4 sản phẩm mới nhất theo created_at
         if ($request->has('latest') && $request->latest) {
-            $query->orderBy('created_at', 'desc')->limit(4);
+            $query->orderBy('created_at', 'desc')->where('status', 1)->limit(4);
         }
 
-        // Lọc 6 sản phẩm có views cao nhất
+        // Lọc 6 sản phẩm có views cao nhất và status = 1
         if ($request->has('most_viewed') && $request->most_viewed) {
-            $query->orderBy('views', 'desc')->limit(6);
+            $query->orderBy('views', 'desc')->where('status', 1)->limit(6);
         }
 
-        $products = $query->orderBy('id')->get();
+
+        $products = $query->orderBy('id')->where('status', 1)->get();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Lấy danh sách sản phẩm thành công',
+            'message' => 'Lấy danh sách sản phẩm thành công!',
             'products' => $products
         ]);
     }
