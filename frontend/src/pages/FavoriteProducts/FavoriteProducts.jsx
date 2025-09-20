@@ -40,8 +40,8 @@ const FavoriteProducts = () => {
         }
     };
 
-    const handleProductClick = (productId) => {
-        navigate(`/product/${productId}`);
+    const handleProductClick = (productSlug) => {
+        navigate(`/products/${productSlug}`);
     };
 
     if (loading) {
@@ -66,7 +66,7 @@ const FavoriteProducts = () => {
                                 <img
                                     alt="Văn Đại Car"
                                     src={`${PATHS.ADMIN_DASHBOARD}storage/${product.img}`}
-                                    onClick={() => handleProductClick(product.id)}
+                                    onClick={() => handleProductClick(product.slug)}
                                 />
                             }
                             actions={[
