@@ -28,6 +28,14 @@ const HomePage = () => {
   const dispatch = useDispatch();
 
   // ===============================================
+  // useEffect để fetch dữ liệu khi component mount
+  // ===============================================
+  useEffect(() => {
+    // Thay đổi tiêu đề trang khi component này được render
+    document.title = 'Trang Chủ - Văn Đại Car';
+  }, []);
+
+  // ===============================================
   // Lấy dữ liệu Banners từ Redux store
   // ===============================================
   const sliderBanners = useSelector(selectSliderBanners);
@@ -112,15 +120,6 @@ const HomePage = () => {
       setPlayingVideo((prev) => ({ ...prev, [id]: false }));
     }
   };
-
-
-  // ===============================================
-  // useEffect để fetch dữ liệu khi component mount
-  // ===============================================
-  useEffect(() => {
-    // Thay đổi tiêu đề trang khi component này được render
-    document.title = 'Home - Trang Chu';
-  }, []);
 
   useEffect(() => {
     if (!bannersLoading && allBanners.length === 0) {
@@ -408,9 +407,9 @@ const HomePage = () => {
                       <div className="card card-img-shift border-0 mx-auto">
                         <div className="rounded-3 overflow-hidden w-100 position-relative z-5">
                           <img className="w-100" src={`${PATHS.ADMIN_DASHBOARD}storage/${product.img}`} alt="" height="250" />
-                          <button className="btn btn-wish position-absolute top-0 end-0 mt-3 me-3">
+                          {/* <button className="btn btn-wish position-absolute top-0 end-0 mt-3 me-3">
                             <span className="far fa-heart"></span>
-                          </button>
+                          </button> */}
                         </div>
                         <div className="card-body p-0">
                           <div className="card-content">
@@ -426,11 +425,36 @@ const HomePage = () => {
                             <Link to={`/products/${product.slug}`} className="fw-bold fs-7 text-body-emphasis mb-2 text-primary-hover">
                               {product.name}
                             </Link>
-                            <a className="fw-semibold text-body-tertiary mb-3 d-block" href="#!">
-                              <span className="fa-solid fa-car-side me-2"></span>{product.categories?.map((cat) => cat.name).join(', ') || 'N/A'}
-                            </a>
-                            <h6 className="fe-semibold text-body-tertiary d-flex align-items-center gap-1 mb-4">Giá
-                              <span className="fw-bolder fs-7 text-body-highlight">{product.price ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price) : 'Liên hệ'}</span>
+                            <Link to={`/products/categories/${product.categories?.[0]?.slug}`} className="fw-semibold text-body-tertiary mb-3 d-block" style={{ minHeight: '48px' }}>
+                              <span className="fa-solid fa-car-side me-2"></span>
+                              {product.categories?.map((cat) => cat.name).join(', ') || 'N/A'}
+                            </Link>
+                            <h6 className="fe-semibold text-body-tertiary d-flex align-items-center gap-1 mb-4">
+                              <span className="fw-bolder fs-7 text-body-highlight">
+                                {/* {product.price ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price) : 'Liên hệ'} */}
+                                {product.variants?.[0]?.pricing_type === 'public_price' ? (
+                                  <div className="d-flex align-items-center gap-2 mt-2">
+                                    <h5 className="text-body-emphasis mb-0">
+                                      {new Intl.NumberFormat('vi-VN', {
+                                        style: 'currency',
+                                        currency: 'VND'
+                                      }).format(product.variants[0].discount_price || product.variants[0].price)}
+                                    </h5>
+                                    <p className="me-2 text-body text-decoration-line-through mb-0">
+                                      {product.variants[0].discount_price && (
+                                        new Intl.NumberFormat('vi-VN', {
+                                          style: 'currency',
+                                          currency: 'VND'
+                                        }).format(product.variants[0].price)
+                                      )}
+                                    </p><br />
+                                  </div>
+                                ) : (
+                                  <span className="badge bg-info bg-opacity-10 text-info mt-2">
+                                    Liên hệ báo giá
+                                  </span>
+                                )}
+                              </span>
                             </h6>
                             <Link to={`/products/${product.slug}`} className="btn btn-primary px-5">
                               Xem Chi Tiết
