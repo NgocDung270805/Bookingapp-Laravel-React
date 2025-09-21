@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../appRedux';
 import { loginUser } from '../slice';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { PATHS } from '../../../common/constants';
 import FacebookLogin from "@greatsumini/react-facebook-login";
 
@@ -183,11 +183,10 @@ const LoginPage = () => {
                             </div>
                           </div>
                           {error && <p style={{ color: 'red' }}>{error}</p>}
-                          <button type="submit" disabled={loading} class="btn btn-primary w-100 mb-3">{loading ? 'Đang đăng nhập...' : 'Sign In'}</button>
-                          {/* <button type="submit" disabled={loading}>
-                            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-                          </button> */}
-                          {/* {{-- < div class="text-center"><a class="fs-9 fw-bold" href="../../../pages/authentication/card/sign-up.html">Create an account</a></> --}} */}
+                          <button type="submit" disabled={loading} className="btn btn-primary w-100 mb-3">{loading ? 'Đang đăng nhập...' : 'Đăng Nhập'}</button>
+                          <div className="text-center">
+                            <Link to={PATHS.REGISTER} className="fs-9 fw-bold">Tạo mới tài khoản</Link>
+                          </div>
                         </form>
                       </div>
                     </div>
