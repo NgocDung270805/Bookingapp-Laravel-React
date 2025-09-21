@@ -289,7 +289,7 @@ const Header = () => {
               <ul className="dropdown-menu navbar-dropdown-caret">
                 {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
                   <li key={category.id}>
-                    <Link to={`${PATHS.PRODUCTS_BY_CATEGORY_SLUG}${category.slug}`} className="dropdown-item">
+                    <Link to={`/products/categories/${category.slug}`} className="dropdown-item">
                       {category.name}
                     </Link>
                   </li>

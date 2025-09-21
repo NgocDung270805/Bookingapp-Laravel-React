@@ -36487,8 +36487,11 @@ a[href].bg-body-secondary:hover, a[href].bg-body-secondary:focus {
 }
 @media (min-width: 576px) {
   .support-chat + .btn-support-chat {
-    width: 9rem;
+    width: 0rem;
     right: 2rem;
+    background: transparent; /* nền trong suốt */
+    border: none;            /* bỏ viền */
+    box-shadow: none;        /* bỏ đổ bóng */
   }
   .support-chat-start .support-chat + .btn-support-chat {
     left: 2rem;
@@ -36496,7 +36499,7 @@ a[href].bg-body-secondary:hover, a[href].bg-body-secondary:focus {
 }
 @media (min-width: 992px) {
   .support-chat + .btn-support-chat {
-    right: 3rem;
+    right: 5rem;
   }
   .support-chat-start .support-chat + .btn-support-chat {
     left: 3rem;
