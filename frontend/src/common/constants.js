@@ -22,6 +22,7 @@ export const PATHS = {
   REGISTER: '/register',
   PROFILE: '/user/profile',
   MY_BOOKINGS: '/user/bookings',
+  FAVORITE_PRODUCTS: '/user/favorites',
   LOGOUT: '/logout',
   PRODUCTS: '/products',
   PRODUCTS_BY_CATEGORY_SLUG: '/products/categories/:categorySlug',
