@@ -61,7 +61,7 @@ const Header = () => {
             <img src="../../assets/img/icons/logo.png" alt="" style={{ height: "40px", width: "auto", maxWidth: "200px", objectFit: "contain", marginRight: "10px", display: "block" }} />
           </div>
         </Link>
-        <div className="col-auto order-md-1" style={{ transform: window.innerWidth < 768 ? "translateX(180px)" : "none", marginTop: window.innerWidth < 768 ? "-50px" : "0px", }}>
+        <div className="col-auto order-md-1" style={{ transform: window.innerWidth < 768 ? "translateX(-50px)" : "none", marginTop: window.innerWidth < 768 ? "-10px" : "0px", }}>
           <ul className="navbar-nav navbar-nav-icons flex-row me-n2">
             <li className="nav-item d-flex align-items-center">
               <div className="theme-control-toggle fa-icon-wait px-2">
@@ -88,7 +88,7 @@ const Header = () => {
                 <div className="card position-relative border-0">
                   <div className="card-header p-2">
                     <div className="d-flex justify-content-between">
-                      <h5 className="text-body-emphasis mb-0">Notifications</h5><button className="btn btn-link p-0 fs-9 fw-normal" type="button">Mark all as read</button>
+                      <h5 className="text-body-emphasis mb-0">Thông báo</h5><button className="btn btn-link p-0 fs-9 fw-normal" type="button">Đánh dấu tất cả là đã đọc</button>
                     </div>
                   </div>
                   <div className="card-body p-0">
@@ -104,7 +104,7 @@ const Header = () => {
                             </div>
                           </div>
                           <div className="dropdown notification-dropdown"><button className="btn fs-10 btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs-10 text-body"></span></button>
-                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Mark as unread</a></div>
+                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Đánh dấu là đã đọc</a></div>
                           </div>
                         </div>
                       </div>
@@ -121,7 +121,7 @@ const Header = () => {
                             </div>
                           </div>
                           <div className="dropdown notification-dropdown"><button className="btn fs-10 btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs-10 text-body"></span></button>
-                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Mark as unread</a></div>
+                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Đánh dấu là đã đọc</a></div>
                           </div>
                         </div>
                       </div>
@@ -136,7 +136,7 @@ const Header = () => {
                             </div>
                           </div>
                           <div className="dropdown notification-dropdown"><button className="btn fs-10 btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs-10 text-body"></span></button>
-                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Mark as unread</a></div>
+                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Đánh dấu là đã đọc</a></div>
                           </div>
                         </div>
                       </div>
@@ -151,7 +151,7 @@ const Header = () => {
                             </div>
                           </div>
                           <div className="dropdown notification-dropdown"><button className="btn fs-10 btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs-10 text-body"></span></button>
-                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Mark as unread</a></div>
+                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Đánh dấu là đã đọc</a></div>
                           </div>
                         </div>
                       </div>
@@ -166,7 +166,7 @@ const Header = () => {
                             </div>
                           </div>
                           <div className="dropdown notification-dropdown"><button className="btn fs-10 btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs-10 text-body"></span></button>
-                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Mark as unread</a></div>
+                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Đánh dấu là đã đọc</a></div>
                           </div>
                         </div>
                       </div>
@@ -181,14 +181,14 @@ const Header = () => {
                             </div>
                           </div>
                           <div className="dropdown notification-dropdown"><button className="btn fs-10 btn-sm dropdown-toggle dropdown-caret-none transition-none" type="button" data-bs-toggle="dropdown" data-boundary="window" aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span className="fas fa-ellipsis-h fs-10 text-body"></span></button>
-                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Mark as unread</a></div>
+                            <div className="dropdown-menu py-2"><a className="dropdown-item" href="#!">Đánh dấu là đã đọc</a></div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="card-footer p-0 border-top border-translucent border-0">
-                    <div className="my-2 text-center fw-bold fs-10 text-body-tertiary text-opactity-85"><a className="fw-bolder" href="../../../pages/notifications.html">Notification history</a></div>
+                    <div className="my-2 text-center fw-bold fs-10 text-body-tertiary text-opactity-85"><a className="fw-bolder" href="../../../pages/notifications.html">Lịch sử thông báo</a></div>
                   </div>
                 </div>
               </div>
@@ -212,7 +212,7 @@ const Header = () => {
                       </div>
                       <div className="overflow-auto scrollbar" style={{ height: '10rem' }}>
                         <ul className="nav d-flex flex-column mb-2 pb-1">
-                          {isAdmin && ( 
+                          {isAdmin && (
                             <li className="nav-item">
                               <a className="nav-link px-3 d-block" href={PATHS.ADMIN_DASHBOARD}>
                                 <span className="me-2 text-body align-bottom" data-feather="shield"></span>
@@ -220,19 +220,19 @@ const Header = () => {
                               </a>
                             </li>
                           )}
-                          <Link to={PATHS.PROFILE} className="nav-link px-3 d-block">
+                          <a href={PATHS.PROFILE} className="nav-link px-3 d-block">
                             <span className="me-2 text-body align-bottom" data-feather="user"></span>
                             <span>Hồ sơ cá nhân</span>
-                          </Link>
-                          <Link to={PATHS.FAVORITE_PRODUCTS} className="nav-link px-3 d-block">
+                          </a>
+                          <a href={PATHS.FAVORITE_PRODUCTS} className="nav-link px-3 d-block">
                             <span className="me-2 text-body align-bottom" data-feather="heart"></span>
                             <span>Sản phẩm yêu thích</span>
-                          </Link>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"><span className="me-2 text-body align-bottom" data-feather="pie-chart"></span>Dashboard</a></li>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="lock"></span>Posts &amp; Activity</a></li>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="settings"></span>Settings &amp; Privacy </a></li>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="help-circle"></span>Help Center</a></li>
-                          <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="globe"></span>Language</a></li>
+                          </a>
+                          {/* <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"><span className="me-2 text-body align-bottom" data-feather="pie-chart"></span>Thống kê cho ng dùng</a></li> */}
+                          {/* <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="lock"></span>Bài viết &amp; Lịch sử hoạt động</a></li> */}
+                          {/* <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="settings"></span>Settings &amp; Privacy </a></li> */}
+                          {/* <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="help-circle"></span>Help Center</a></li> */}
+                          {/* <li className="nav-item"><a className="nav-link px-3 d-block" href="#!"> <span className="me-2 text-body align-bottom" data-feather="globe"></span>Language</a></li> */}
                         </ul>
                       </div>
                       <div className="card-footer p-0 border-top border-translucent">
@@ -246,7 +246,7 @@ const Header = () => {
                         <hr />
                         <div className="px-3">
                           <a className="btn btn-phoenix-secondary d-flex flex-center w-100" onClick={logout}>
-                            <span className="me-2" data-feather="log-out"> </span>Sign out
+                            <span className="me-2" data-feather="log-out"> </span>Đăng xuất
                           </a>
                         </div>
                         <div className="my-2 text-center fw-bold fs-10 text-body-quaternary"><a className="text-body-quaternary me-1" href="#!">Privacy policy</a>&bull;<a className="text-body-quaternary mx-1" href="#!">Terms</a>&bull;<a className="text-body-quaternary ms-1" href="#!">Cookies</a></div>
@@ -284,39 +284,84 @@ const Header = () => {
         <div className="collapse navbar-collapse navbar-top-collapse order-1 order-lg-0 justify-content-center pb-0" id="navbarSupportedContent">
           <ul className="navbar-nav travel-nav-top me-auto" data-dropdown-on-hover="data-dropdown-on-hover">
             <li className="nav-item dropdown">
-              <a className="nav-link fs-8 fw-bold dropdown-toggle text-primary" href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Thương hiệu</a>
+              <a
+                className="nav-link fs-8 fw-bold dropdown-toggle text-primary"
+                href="#!"
+                role="button"
+                data-bs-toggle="dropdown"
+                data-bs-auto-close="outside"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                Thương hiệu
+              </a>
+
               <ul className="dropdown-menu navbar-dropdown-caret">
-                {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
-                  <li key={category.id}>
-                    <Link to={`/products/categories/${category.slug}`} className="dropdown-item">
-                      {category.name}
-                    </Link>
-                  </li>
-                ))) : (
-                  !categoriesLoading && !categoriesError && <div className="swiper-slide w-sm-auto"><p>Không có danh mục nào để hiển thị.</p></div>
+                {!categoriesLoading && categories.length > 0 ? (
+                  <>
+                    {categories.slice(0, 6).map((category) => (
+                      <li key={category.id}>
+                        <a href={`/products/categories/${category.slug}`} className="dropdown-item">
+                          {category.name}
+                        </a>
+                      </li>
+                    ))}
+
+                    {categories.length > 6 && (
+                      <li>
+                        <div className="dropdown dropend">
+                          <a
+                            className="dropdown-item dropdown-toggle"
+                            href="#!"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            Xem thêm
+                          </a>
+                          <ul className="dropdown-menu">
+                            {categories.slice(6).map((category) => (
+                              <li key={category.id}>
+                                <a href={`/products/categories/${category.slug}`} className="dropdown-item">
+                                  {category.name}
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </li>
+                    )}
+                  </>
+                ) : (
+                  !categoriesLoading &&
+                  !categoriesError && (
+                    <div className="swiper-slide w-sm-auto">
+                      <p>Không có danh mục nào để hiển thị.</p>
+                    </div>
+                  )
                 )}
               </ul>
             </li>
+
             <li className="nav-item dropdown"><a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Xe</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
                 <li>
-                  <Link to={PATHS.PRODUCTS} className="dropdown-item">Danh sách xe</Link>
+                  <a href={PATHS.PRODUCTS} className="dropdown-item">Danh sách xe</a>
                 </li>
                 <li>
-                  <Link to={PATHS.MY_BOOKINGS} className="dropdown-item">Lịch đã đặt</Link>
+                  <a href={PATHS.MY_BOOKINGS} className="dropdown-item">Lịch đã đặt</a>
                 </li>
               </ul>
             </li>
             <li className="nav-item dropdown">
               <a className="nav-link fs-8 fw-bold dropdown-toggle " href="#!" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">Thông tin / Chính sách</a>
               <ul className="dropdown-menu navbar-dropdown-caret">
-                <li><Link to={PATHS.ABOUT} className="dropdown-item">Giới thiệu</Link></li>
-                <li><Link to={PATHS.PRIVACY_POLICY} className="dropdown-item">Chính Sách Bảo Mật</Link></li>
-                <li><Link to={PATHS.BOOKING_POLICY} className="dropdown-item">Chính Sách Đặt Lịch</Link></li>
-                <li><Link to={PATHS.FAQ} className="dropdown-item">Câu Hỏi Thường Gặp</Link></li>
-                <li><Link to={PATHS.CONTACT} className="dropdown-item">Liên Hệ</Link></li>
-                <li><Link to={PATHS.WARRANTY_POLICY} className="dropdown-item">Chính Sách Bảo Hành</Link></li>
-                <li><Link to={PATHS.TERMS} className="dropdown-item">Điều Khoản</Link></li>
+                <li><a href={PATHS.ABOUT} className="dropdown-item">Giới thiệu</a></li>
+                <li><a href={PATHS.PRIVACY_POLICY} className="dropdown-item">Chính Sách Bảo Mật</a></li>
+                <li><a href={PATHS.BOOKING_POLICY} className="dropdown-item">Chính Sách Đặt Lịch</a></li>
+                <li><a href={PATHS.FAQ} className="dropdown-item">Câu Hỏi Thường Gặp</a></li>
+                <li><a href={PATHS.CONTACT} className="dropdown-item">Liên Hệ</a></li>
+                <li><a href={PATHS.WARRANTY_POLICY} className="dropdown-item">Chính Sách Bảo Hành</a></li>
+                <li><a href={PATHS.TERMS} className="dropdown-item">Điều Khoản</a></li>
               </ul>
             </li>
           </ul>
