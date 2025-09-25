@@ -257,11 +257,11 @@ class ProductController extends Controller
                 ], 404);
             }
 
-            // ĐIỀU CHỈNH: Sử dụng whereHas để lọc sản phẩm thuộc danh mục qua bảng trung gian
+            // ĐIỀU CHỈNH: Sử dụng whereHas để lọc sản phẩm thuộc danh mục qua bảng trung gian, truyền thêm biến thể của sản phẩm
             $products = Product::whereHas('categories', function ($query) use ($category) {
                 $query->where('categories.id', $category->id);
             })
-                ->with('images', 'categories') // Đã sửa từ 'category' thành 'categories'
+                ->with('images', 'categories', 'variants.attributeValues.attributeType') // Đã sửa từ 'category' thành 'categories'
                 ->paginate(10);
 
             return response()->json([
