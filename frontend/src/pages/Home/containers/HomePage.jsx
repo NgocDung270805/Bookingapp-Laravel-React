@@ -362,7 +362,7 @@ const HomePage = () => {
               <div className="swiper-wrapper">
                 {!categoriesLoading && categories.length > 0 ? (categories.map((category) => (
                   <div className={`swiper-slide w-sm-auto ${categoryStyles.myCustomSlide}`} key={category.id}>
-                    <Link to={`${PATHS.PRODUCTS_BY_CATEGORY_SLUG}${category.slug}`} className="position-relative rounded-3 overflow-hidden d-block">
+                    <Link to={`products/categories/${category.slug}`} className="position-relative rounded-3 overflow-hidden d-block">
                       <img className="w-100 w-sm-auto object-fit-cover" src={`${PATHS.ADMIN_DASHBOARD}storage/${category.img}`} alt={category.name} style={{ height: "220px" }} />
                       <div className="img-backdrop-faded" style={{ height: "220px" }}>
                         <div className="image-reveal-content mb-3">
