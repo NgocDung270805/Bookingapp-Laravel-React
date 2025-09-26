@@ -7,14 +7,13 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\Web\BannerController;
 use App\Http\Controllers\Web\ProductController;
-use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Web\Accounts\AdminController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
 use App\Http\Controllers\Web\ProductAttributeValueController;
 use App\Http\Controllers\Web\ProductAttributeValueConfigController;
-
+use App\Http\Controllers\Web\VideoController;
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
@@ -25,12 +24,12 @@ Route::get('/pJM', [HomeController::class, 'pJM'])->middleware('auth')->name('pJ
 Route::get('/product', [HomeController::class, 'product'])->middleware('auth')->name('product');
 Route::get('/add-product', [HomeController::class, 'addProduct'])->middleware('auth')->name('addProduct');
 
-Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin.index');// Admin
+Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin.index'); // Admin
 Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->middleware('auth')->name('admin.edit');
 Route::post('/admin/update/{id}', [AdminController::class, 'update'])->middleware('auth')->name('admin.update');
 // Route riêng để phân quyền (nếu bạn muốn modal hoặc chức năng riêng biệt cho phân quyền)
 // Nếu bạn tích hợp vào modal chỉnh sửa chính, route này không cần thiết.
-Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->middleware('auth')->name('admin.assign_roles');// Phân quyền roles
+Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->middleware('auth')->name('admin.assign_roles'); // Phân quyền roles
 
 // Route cho quản lý tài khoản manager
 Route::get('/manager', [AdminController::class, 'showManage'])->middleware('auth')->name('manager.index');
@@ -118,5 +117,10 @@ Route::get('/product/{product}/attribute-value-configs', [ProductVariantControll
 // Route cho quản lý banners
 Route::resource('banners', BannerController::class)->middleware('auth');
 
+// Video routes
+Route::resource('videos', VideoController::class)->middleware('auth');
 
-require __DIR__.'/backup.php';
+Route::post('/videos/{video}/toggle-status', [VideoController::class, 'toggleStatus'])->name('videos.toggle-status');
+Route::resource('videos', VideoController::class);
+
+require __DIR__ . '/backup.php';
