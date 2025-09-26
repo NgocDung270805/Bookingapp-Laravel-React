@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Api\ProductActions\BookingController;
 use App\Http\Controllers\Api\ProductActions\CommentController;
 use App\Http\Controllers\Api\ProductActions\FavoriteController;
+use App\Http\Controllers\Api\VideoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +44,7 @@ Route::post('/chat/gemini', [ChatController::class, 'geminiChat'])->name('api.ch
 // ===========================================
 // ROUTES CHO CATEGORIES
 // ===========================================
-Route::get('categories', [CategoryController::class, 'index']);// Lấy tất cả danh mục
+Route::get('categories', [CategoryController::class, 'index']); // Lấy tất cả danh mục
 Route::get('/products/categories/{category_slug}', [ProductController::class, 'productsByCategory']); // Lấy danh sách sản phẩm theo slug danh mục
 
 
@@ -58,8 +59,10 @@ Route::get('products/{product_slug}', [ProductController::class, 'show']); // L�
 // ROUTES CHO BANNERS
 // ===========================================
 Route::get('banners', [BannerController::class, 'index'])->name('api.banners.index');
-Route::get('banners/{banner}', [BannerController::class, 'show'])->name('api.banners.show'); 
+Route::get('banners/{banner}', [BannerController::class, 'show'])->name('api.banners.show');
 
+// Videos
+Route::get('/videos', [VideoController::class, 'index']);
 
 // ===========================================
 // ROUTES CHO CÁC CHỨC NĂNG YÊU CẦU XÁC THỰC
@@ -71,8 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/profile', [ProfileController::class, 'update'])->name('api.profile.update');
 
     // Product
-    Route::get('products/{product}/variants', [ProductVariantController::class, 'index']); 
-    Route::get('products/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs']); 
+    Route::get('products/{product}/variants', [ProductVariantController::class, 'index']);
+    Route::get('products/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs']);
 
     // Favorites
     Route::post('products/{product}/favorite/toggle', [FavoriteController::class, 'toggle'])->name('api.products.favorite.toggle');
@@ -86,4 +89,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Comments
     Route::apiResource('products/{product}/comments', CommentController::class)->only(['index', 'store']); // Xem và thêm comment cho 1 sản phẩm
     Route::apiResource('comments', CommentController::class)->except(['index', 'store']); // Quản lý comments (show, update, destroy)
+
+
 });
