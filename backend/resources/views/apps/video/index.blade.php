@@ -97,7 +97,7 @@
                                                         <span class="badge bg-info me-1">{{ $category->name }}</span>
                                                     @endforeach
                                                 @else
-                                                    <span class="text-muted">Tất cả</span>
+                                                    <span class="text-muted">Không tồn tại</span>
                                                 @endif
                                             </td>
                                             <td class="video-description align-middle ps-4">
@@ -193,13 +193,14 @@
                                     class="img-thumbnail mt-2" style="max-width: 100px; display: none;">
                             </div>
                             <div class="mb-3">
-                                <label for="videoCategories" class="form-label">Categories (<span class="text-warning">
-                                        Không chọn mặc định video chào bán tất cả xe tại cửa hàng</span> )</label>
+                                <label for="videoCategories" class="form-label">Categories</label>
                                 <select class="form-select" id="videoCategories" name="categories[]" multiple>
+                                    <option value="">Tất cả</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
+                                <small class="text-warning">*Chọn "Tất cả" nếu video này dành cho mọi danh mục</small>
                                 <div class="text-danger" id="categoriesError"></div>
                             </div>
                             <div class="mb-3">
@@ -297,7 +298,7 @@
                                 '<span class="badge bg-secondary">Inactive</span>';
 
                             let imageHtml = video.img_banner ?
-                                `<a class="d-block border border-translucent rounded-2" href="/storage/${video.img_banner}" target="_blank"><img src="/storage/${video.img_banner}" alt="${video.name}" width="53" /></a>` :
+                                `<a class="d-block border border-translucent rounded-2" href="/storage/${video.img_banner}" target="_blank"><img src="/storage/${video.img_banner}" alt="${video.name}" width="100%" /></a>` :
                                 `<div class="d-block border border-translucent rounded-2 text-center" style="width:53px; height:53px; line-height:53px;"><i class="fas fa-video text-body-secondary"></i></div>`;
 
                             let videoHtml = video.video ?
@@ -308,35 +309,45 @@
                             <tr class="position-static">
                                 <td class="fs-9 align-middle">
                                     <div class="form-check mb-0 fs-8">
-                                        <input class="form-check-input" type="checkbox" data-bulk-select-row='{"bannerId":${banner.id}}' />
+                                        <input class="form-check-input" type="checkbox" data-bulk-select-row='{"videoId":${video.id}}' />
                                     </div>
                                 </td>
-                                <td class="align-middle white-space-nowrap py-0 banner-img">
-                                    ${imageHtml}
+                                <td class="align-middle white-space-nowrap py-0 video-thumb">
+                                    <div class="position-relative" style="width: 160px; height: 90px;">
+                                        ${imageHtml}
+                                        <div class="position-absolute bottom-0 end-0 p-2">
+                                            <i class="fas fa-play-circle text-white fa-lg"></i>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="banner-title align-middle ps-4">
-                                    <a class="fw-semibold line-clamp-3 mb-0" href="#">${banner.title || 'N/A'}</a>
+                                <td class="video-name align-middle ps-4">
+                                    <a class="fw-semibold text-truncate mb-0" href="#" onclick="playVideo('${video.video}', '${video.name}')">
+                                        ${video.name}
+                                    </a>
                                 </td>
-                                <td class="banner-type align-middle white-space-nowrap text-body-tertiary fs-9 ps-4 fw-semibold">
-                                    ${BANNER_TYPES_MAP[banner.type] || 'Unknown'}
+                                <td class="video-categories align-middle ps-4">
+                                    ${video.categories && video.categories.length > 0 ? 
+                                        video.categories.map(category => `<span class="badge bg-info me-1">${category.name}</span>`).join('') 
+                                        : '<span class="text-muted">Tất cả</span>'}
                                 </td>
-                                <td class="banner-link align-middle white-space-nowrap text-end fw-bold text-body-tertiary ps-4">
-                                    ${linkHtml}
+                                <td class="video-description align-middle ps-4">
+                                    ${video.description || 'No description'}
                                 </td>
-                                <td class="banner-status align-middle white-space-nowrap text-body-quaternary fs-9 ps-4 fw-semibold">
-                                    ${statusBadge}
+                                <td class="video-status align-middle text-center ps-4">
+                                    <div class="form-check form-switch d-flex justify-content-center">
+                                        <input class="form-check-input toggle-status" type="checkbox" data-id="${video.id}" ${video.status ? 'checked' : ''}>
+                                    </div>
                                 </td>
-                                <td class="align-middle white-space-nowrap text-end pe-0 ps-4 btn-reveal-trigger">
-                                    <div class="btn-reveal-trigger position-static">
-                                        <button class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10"
-                                                type="button" data-bs-toggle="dropdown" data-boundary="window"
-                                                aria-haspopup="true" aria-expanded="false" data-bs-reference="parent">
-                                            <span class="fas fa-ellipsis-h fs-10"></span>
+                                <td class="align-middle text-end pe-0 ps-4">
+                                    <div class="btn-group">
+                                        <button class="btn btn-falcon-default btn-sm dropdown-toggle dropdown-caret-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-h"></i>
                                         </button>
-                                        <div class="dropdown-menu dropdown-menu-end py-2">
-                                            <a class="dropdown-item edit-banner-btn" href="#" data-id="${banner.id}">Edit</a>
+                                        <div class="dropdown-menu dropdown-menu-end">
+                                            <a class="dropdown-item edit-video-btn" href="#" data-id="${video.id}">
+                                                <i class="fas fa-edit me-1"></i>Edit
+                                            </a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item text-danger delete-banner-btn" href="#" data-id="${banner.id}">Remove</a>
                                         </div>
                                     </div>
                                 </td>
@@ -346,7 +357,7 @@
                     } else {
                         tableBody.append('<tr><td colspan="7" class="text-center">No banners found.</td></tr>');
                     }
-                    $('#total-banners').text(`(${banners.length})`); // Cập nhật tổng số banners
+                    $('#total-videos').text(`(${videos.length})`); // Cập nhật tổng số videos
                 }
 
                 // Handle "Add Video" button click
@@ -382,8 +393,13 @@
                             $('#videoStatus').prop('checked', video.status);
 
                             // Set selected categories
-                            let selectedCategories = video.categories.map(cat => cat.id);
-                            $('#videoCategories').val(selectedCategories);
+                            if (video.categories && video.categories.length > 0) {
+                                let selectedCategories = video.categories.map(cat => cat.id);
+                                $('#videoCategories').val(selectedCategories);
+                            } else {
+                                // Nếu không có categories, chọn option "Tất cả"
+                                $('#videoCategories').val(['']);
+                            }
 
                             // Show current video if exists
                             if (video.video) {
@@ -513,6 +529,14 @@
                             $(this).prop('checked', !status);
                         }
                     });
+                });
+                // Handle select change for categories
+                $('#videoCategories').on('change', function() {
+                    let selectedValues = $(this).val();
+                    if (selectedValues && selectedValues.includes('')) {
+                        // Nếu "Tất cả" được chọn, bỏ chọn các option khác
+                        $(this).val(['']);
+                    }
                 });
             });
         </script>

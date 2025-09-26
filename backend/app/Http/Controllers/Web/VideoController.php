@@ -63,7 +63,13 @@ class VideoController extends Controller
         $video = Video::create($data);
 
         if ($request->has('categories')) {
-            $video->categories()->sync($request->categories);
+            $categories = array_filter($request->categories); // Loại bỏ giá trị rỗng
+            if (empty($categories)) {
+                // Nếu chọn "Tất cả", xóa hết categories
+                $video->categories()->detach();
+            } else {
+                $video->categories()->sync($categories);
+            }
         }
 
         return response()->json([
@@ -140,7 +146,13 @@ class VideoController extends Controller
         $video->update($data);
 
         if ($request->has('categories')) {
-            $video->categories()->sync($request->categories);
+            $categories = array_filter($request->categories); // Loại bỏ giá trị rỗng
+            if (empty($categories)) {
+                // Nếu chọn "Tất cả", xóa hết categories
+                $video->categories()->detach();
+            } else {
+                $video->categories()->sync($categories);
+            }
         }
 
         return response()->json([
