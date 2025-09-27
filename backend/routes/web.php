@@ -1,40 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\TagController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\Web\VideoController;
 use App\Http\Controllers\Web\BannerController;
 use App\Http\Controllers\Web\ProductController;
-use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\Web\Accounts\AdminController;
+use App\Http\Controllers\Web\CategoriesController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
 use App\Http\Controllers\Web\ProductAttributeValueController;
 use App\Http\Controllers\Web\ProductAttributeValueConfigController;
-use App\Http\Controllers\Web\VideoController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\Web\Accounts\AdminController;
 
+// ==========================================================
+// ROUTE AUTHENTICATION
+// ==========================================================
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('home');
-Route::get('/pJM', [HomeController::class, 'pJM'])->middleware('auth')->name('pJM');
-Route::get('/product', [HomeController::class, 'product'])->middleware('auth')->name('product');
-Route::get('/add-product', [HomeController::class, 'addProduct'])->middleware('auth')->name('addProduct');
-
-Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin.index'); // Admin
-Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->middleware('auth')->name('admin.edit');
-Route::post('/admin/update/{id}', [AdminController::class, 'update'])->middleware('auth')->name('admin.update');
-// Route riêng để phân quyền (nếu bạn muốn modal hoặc chức năng riêng biệt cho phân quyền)
-// Nếu bạn tích hợp vào modal chỉnh sửa chính, route này không cần thiết.
-Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->middleware('auth')->name('admin.assign_roles'); // Phân quyền roles
-
-// Route cho quản lý tài khoản manager
-Route::get('/manager', [AdminController::class, 'showManage'])->middleware('auth')->name('manager.index');
-
-Route::get('/users', [AdminController::class, 'showUsers'])->middleware('auth')->name('users.index');
 
 // Routes cho Google Login
 Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
@@ -44,7 +30,50 @@ Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCa
 Route::get('/auth/facebook', [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');
 Route::get('/auth/facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
 
-// Route cho Category CRUD
+
+// ==========================================================
+// ROUTE CHO ỨNG DỤNG
+// ==========================================================
+Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('home');
+Route::get('/pJM', [HomeController::class, 'pJM'])->middleware('auth')->name('pJM');
+Route::get('/product', [HomeController::class, 'product'])->middleware('auth')->name('product');
+Route::get('/add-product', [HomeController::class, 'addProduct'])->middleware('auth')->name('addProduct');
+
+
+// ==========================================================
+// ROUTE CHO QUẢN LÝ TÀI KHOẢN
+// ==========================================================
+
+// Route cho quản lý tài khoản admin
+Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin.index'); // Admin
+Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->middleware('auth')->name('admin.edit');
+Route::post('/admin/update/{id}', [AdminController::class, 'update'])->middleware('auth')->name('admin.update');
+Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->middleware('auth')->name('admin.assign_roles'); // Phân quyền roles
+
+// Route cho quản lý tài khoản manager
+Route::get('/manager', [AdminController::class, 'showManage'])->middleware('auth')->name('manager.index');
+
+// Route cho quản lý tài khoản user
+Route::get('/users', [AdminController::class, 'showUsers'])->middleware('auth')->name('users.index');
+
+
+// ==========================================================
+// ROUTE CHO QUẢN LÝ BANNER
+// ==========================================================
+Route::resource('banners', BannerController::class)->middleware('auth');
+
+
+// ==========================================================
+// ROUTE CHO QUẢN LÝ VIDEO
+// ==========================================================
+Route::resource('videos', VideoController::class)->middleware('auth');
+Route::post('/videos/{video}/toggle-status', [VideoController::class, 'toggleStatus'])->name('videos.toggle-status');
+Route::resource('videos', VideoController::class);
+
+
+// ==========================================================
+// ROUTE CHO QUẢN LÝ CATEGORY
+// ==========================================================
 Route::prefix('category')->name('category.')->middleware('auth')->group(function () {
     Route::get('/', [CategoriesController::class, 'index'])->name('index');
     Route::post('/', [CategoriesController::class, 'store'])->name('store');
@@ -53,7 +82,10 @@ Route::prefix('category')->name('category.')->middleware('auth')->group(function
     Route::delete('/{id}', [CategoriesController::class, 'destroy'])->name('destroy');
 });
 
-// Route cho Tag CRUD
+
+// ==========================================================
+// ROUTE CHO QUẢN LÝ TAG
+// ==========================================================
 Route::prefix('tag')->name('tag.')->middleware('auth')->group(function () {
     Route::get('/', [TagController::class, 'index'])->name('index');
     Route::post('/', [TagController::class, 'store'])->name('store');
@@ -62,7 +94,10 @@ Route::prefix('tag')->name('tag.')->middleware('auth')->group(function () {
     Route::delete('/{id}', [TagController::class, 'destroy'])->name('destroy');
 });
 
-// Route cho Product CRUD
+
+// ==========================================================
+// ROUTE CHO QUẢN LÝ SẢN PHẨM VÀ BIẾN THỂ SẢN PHẨM
+// ==========================================================
 Route::prefix('product')->name('product.')->middleware('auth')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
     Route::post('/', [ProductController::class, 'store'])->name('store');
@@ -83,11 +118,10 @@ Route::prefix('product-variant')->name('product_variant.')->middleware('auth')->
     Route::delete('/{productVariant}', [ProductVariantController::class, 'destroy'])->name('destroy');
 });
 
+
 // ==========================================================
 // THÊM CÁC ROUTE MỚI CHO QUẢN LÝ THUỘC TÍNH SẢN PHẨM (ATTRIBUTES)
 // ==========================================================
-
-// Route cho ProductAttributeType CRUD
 Route::prefix('product-attribute-types')->middleware('auth')->name('product_attribute_type.')->group(function () {
     Route::get('/', [ProductAttributeTypeController::class, 'index'])->name('index'); // Route bị thiếu
     Route::post('/', [ProductAttributeTypeController::class, 'store'])->name('store');
@@ -102,10 +136,9 @@ Route::prefix('product-attribute-types')->middleware('auth')->name('product_attr
     });
 });
 
-// Route cho ProductAttributeValue CRUD (khi truy cập trực tiếp bằng ID giá trị)
+// Route cho ProductAttributeValue CRUD 
 Route::prefix('product-attribute-values')->middleware('auth')->name('product_attribute_value.')->group(function () {
     Route::get('/{attributeValue}/edit', [ProductAttributeValueController::class, 'edit'])->name('edit');
-    // SỬA DÒNG NÀY:
     Route::put('/{attributeValue}', [ProductAttributeValueController::class, 'update'])->name('update'); // Đổi từ ProductAttributeValue::class
     Route::delete('/{attributeValue}', [ProductAttributeValueController::class, 'destroy'])->name('destroy');
     Route::post('/get-by-ids', [ProductAttributeValueController::class, 'getByIds']);
@@ -113,14 +146,5 @@ Route::prefix('product-attribute-values')->middleware('auth')->name('product_att
 // Route để lấy các cấu hình giá trị thuộc tính cho một sản phẩm cụ thể
 Route::get('/product/{product}/attribute-value-configs', [ProductAttributeValueConfigController::class, 'index'])->middleware('auth')->name('product.attribute_value_configs.index');
 Route::get('/product/{product}/attribute-value-configs', [ProductVariantController::class, 'getAttributeValueConfigs'])->middleware('auth')->name('product.attribute_value_configs.index');
-
-// Route cho quản lý banners
-Route::resource('banners', BannerController::class)->middleware('auth');
-
-// Video routes
-Route::resource('videos', VideoController::class)->middleware('auth');
-
-Route::post('/videos/{video}/toggle-status', [VideoController::class, 'toggleStatus'])->name('videos.toggle-status');
-Route::resource('videos', VideoController::class);
 
 require __DIR__ . '/backup.php';

@@ -94,13 +94,13 @@ class ProductController extends Controller
 
         // Upload multiple images
         if ($request->hasFile('images')) {
-            \Log::info('Starting image upload in store method');
-            \Log::info('Number of images received: ' . count($request->file('images')));
+            Log::info('Starting image upload in store method');
+            Log::info('Number of images received: ' . count($request->file('images')));
 
             foreach ($request->file('images') as $index => $image) {
-                \Log::info('Processing image ' . ($index + 1));
+                Log::info('Processing image ' . ($index + 1));
                 $imagePath = Storage::disk('public')->putFile('uploads/products', $image);
-                \Log::info('Image saved at: ' . $imagePath);
+                Log::info('Image saved at: ' . $imagePath);
 
                 $imageRecord = $product->images()->create([
                     'product_id' => $product->id,
@@ -108,10 +108,10 @@ class ProductController extends Controller
                     'is_main_gallery_image' => false,
                     'sort_order' => $index + 1
                 ]);
-                \Log::info('Image record created:', $imageRecord->toArray());
+                Log::info('Image record created:', $imageRecord->toArray());
             }
         } else {
-            \Log::info('No images in request');
+            Log::info('No images in request');
         }
 
         return response()->json(['success' => 'Product created successfully.', 'products' => Product::with('categories', 'tags', 'variants', 'images')->orderBy('name')->get()]);
