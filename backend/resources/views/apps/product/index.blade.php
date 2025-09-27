@@ -236,6 +236,7 @@
         @include('partials.footer')
     </div>
 
+    {{-- Modal để thêm mới, sửa thông tin sản phẩm--}}
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -324,10 +325,98 @@
                             </button>
                         </div>
 
+                        <div class="mb-3 mt-4" id="createVariantBtnContainer" style="display: none;">
+                            <button type="button" class="btn btn-success" id="createVariantBtn">
+                                <span class="fas fa-plus me-2"></span>Create Variant
+                            </button>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- Modal để thêm mới biến thể nhanh --}}
+    <div class="modal fade" id="createVariantQuickModal" tabindex="-1" aria-labelledby="createVariantQuickModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                {{-- Đảm bảo form này không có enctype="multipart/form-data" nếu bạn dùng AJAX --}}
+                <form id="createVariantForm" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="product_id" id="quickVariantProductIdField">
+                    <input type="hidden" name="is_new_variant" value="1"> {{-- Dùng cho backend xác định đây là thêm mới --}}
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createVariantQuickModalLabel">Thêm Biến thể mới cho sản phẩm: <span
+                                id="quickVariantProductName"></span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{-- Phần quản lý thuộc tính biến thể --}}
+                        <div class="mb-3 border p-3 rounded">
+                            <label class="form-label d-block">THUỘC TÍNH BIẾN THỂ
+                                <button type="button" class="btn btn-link btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#attributesModal">
+                                    <i class="fas fa-plus"></i> Thêm mới thuộc tính
+                                </button>
+                            </label>
+                            <div id="quickVariantAttributesSelectionContainer">
+                                <p class="text-muted small">Đang tải thuộc tính...</p><br>
+                                {{-- Các loại thuộc tính và giá trị sẽ được tải ở đây qua JS --}}
+                            </div>
+                            <input type="hidden" name="attribute_value_ids" id="quickAttributeValueIdsInput">
+                            <div class="text-danger" id="quick_attribute_value_idsError"></div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h6>Thông tin biến thể:</h6>
+                        {{-- Các trường thông tin Variant (Name, SKU, Price, Quantity) --}}
+                        <div class="mb-3">
+                            <label for="quickVariantNameDisplay" class="form-label">TÊN BIẾN THỂ</label>
+                            <input type="text" class="form-control" id="quickVariantNameDisplay" readonly>
+                            <input type="hidden" name="variant_name" id="quickVariantNameHidden">
+                        </div>
+                        <div class="mb-3">
+                            <label for="quickVariantSkuDisplay" class="form-label">SKU</label>
+                            <input type="text" class="form-control" id="quickVariantSkuDisplay" readonly>
+                            <input type="hidden" name="sku" id="quickVariantSkuHidden">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="quickVariantPrice" class="form-label">GIÁ</label>
+                            <input type="number" step="0.01" class="form-control" id="quickVariantPrice"
+                                name="price">
+                            <div class="text-danger" id="quick_priceError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quickVariantQuantity" class="form-label">SỐ LƯỢNG</label>
+                            <input type="number" class="form-control" id="quickVariantQuantity" name="quantity"
+                                required min="0">
+                            <div class="text-danger" id="quick_quantityError"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quickVariantImage" class="form-label">HÌNH ẢNH BIẾN THỂ</label>
+                            <input class="form-control" type="file" id="quickVariantImage" name="img">
+                            <div class="text-danger" id="quick_imgError"></div>
+                            <img id="currentQuickVariantImage" src="" alt="Hình ảnh hiện tại"
+                                class="img-thumbnail mt-2" style="max-width: 80px; display: none;">
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="quickVariantStatus" name="status"
+                                value="1" checked>
+                            <label class="form-check-label" for="quickVariantStatus">Hoạt động</label>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary" id="saveQuickVariantBtn">Lưu biến thể mới</button>
                     </div>
                 </form>
             </div>
@@ -628,7 +717,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Define URLs for AJAX calls
+        const variantStoreUrl = "{{ route('product.variants.store', ['product' => ':product']) }}";
         const productStoreUrl = "{{ route('product.store') }}";
     </script>
     <script src="/assets/js/product.js"></script>
@@ -708,6 +797,72 @@
             imageDiv.find('input[name="deleted_image_ids[]"]').prop('disabled', false);
         }
 
+        // Hàm thiết lập Modal Tạo Biến thể Nhanh
+        function setupCreateVariantModal(productId, productName) {
+            $('#createVariantForm').trigger('reset');
+            $('#createVariantForm').find('.text-danger').text('');
+            $('#currentQuickVariantImage').attr('src', '').hide();
+
+            $('#quickVariantProductIdField').val(productId);
+            $('#quickVariantProductName').text(productName);
+
+            // GỌI HÀM TẢI THUỘC TÍNH: Bạn cần triển khai hàm này
+            loadAttributesForQuickVariantForm(productId);
+            $('#quickVariantAttributesSelectionContainer').html(
+                '<p class="text-info small">Đang tải cấu hình thuộc tính...</p>');
+        }
+
+        function loadAttributesForQuickVariantForm(productId) {
+            // Giả định bạn có một endpoint để lấy tất cả thuộc tính/giá trị có thể có
+            // hoặc các thuộc tính đã được gán cho sản phẩm đang chỉnh sửa.
+            // Tạm thời hiển thị thông báo:
+            $('#quickVariantAttributesSelectionContainer').html(
+                '<p class="text-info small">Đang tải cấu hình thuộc tính...</p>');
+
+            // **Ví dụ AJAX (Bạn cần điều chỉnh URL và logic xử lý)**
+            /*
+            $.ajax({
+                url: `/api/product-attributes/${productId}`, // Thay thế bằng URL lấy thuộc tính thực tế
+                method: 'GET',
+                success: function(data) {
+                    let html = '';
+                    // Logic tạo HTML cho các checkbox/radio/select dựa trên data
+                    // Ví dụ: html += generateAttributeHtml(data);
+                    $('#quickVariantAttributesSelectionContainer').html(html);
+                },
+                error: function() {
+                    $('#quickVariantAttributesSelectionContainer').html('<p class="text-danger small">Không thể tải cấu hình thuộc tính.</p>');
+                }
+            });
+            */
+        }
+
+        function updateQuickVariantDetails() {
+            // Logic để kết hợp các giá trị thuộc tính đã chọn thành TÊN và SKU
+            let variantName = [];
+            let variantSku = $('#quickVariantProductIdField').val() + '-';
+
+            // Ví dụ: Lặp qua các checkbox/radio đã chọn trong #quickVariantAttributesSelectionContainer
+            $('#quickVariantAttributesSelectionContainer input:checked').each(function() {
+                variantName.push($(this).data('attribute-value-name')); // Giả định có data attribute
+                variantSku += $(this).val() + '-'; // Giả định value là ID thuộc tính
+            });
+
+            const finalName = variantName.join(' / ');
+            const finalSku = variantSku.slice(0, -1); // Xóa dấu '-' cuối cùng
+
+            $('#quickVariantNameDisplay').val(finalName);
+            $('#quickVariantNameHidden').val(finalName);
+            $('#quickVariantSkuDisplay').val(finalSku);
+            $('#quickVariantSkuHidden').val(finalSku);
+
+            // Cập nhật input ẩn chứa các ID giá trị thuộc tính đã chọn
+            const selectedAttributeValueIds = $('#quickVariantAttributesSelectionContainer input:checked').map(function() {
+                return $(this).val();
+            }).get().join(',');
+            $('#quickAttributeValueIdsInput').val(selectedAttributeValueIds);
+        }
+
         // Phần xử lý tải và hiển thị danh sách sản phẩm
         $(document).ready(function() {
             // Hình ảnh sản phẩm chính
@@ -768,13 +923,13 @@
 
                     let priceDisplay = 'N/A';
                     if (product.variants && product.variants.length > 0) {
-                        let publicPriceVariants = product.variants.filter(v => 
+                        let publicPriceVariants = product.variants.filter(v =>
                             v.pricing_type === 'public_price' && v.price !== null
                         );
 
                         if (publicPriceVariants.length > 0) {
                             // Sort by price to get min price variant
-                            let minPriceVariant = publicPriceVariants.reduce((min, current) => 
+                            let minPriceVariant = publicPriceVariants.reduce((min, current) =>
                                 parseFloat(current.price) < parseFloat(min.price) ? current : min
                             );
 
@@ -785,7 +940,8 @@
                             });
 
                             if (minPriceVariant.discount_price) {
-                                priceDisplay = `<span>${formatter.format(minPriceVariant.discount_price)}</span><br>
+                                priceDisplay =
+                                    `<span>${formatter.format(minPriceVariant.discount_price)}</span><br>
                                               <small class="text-decoration-line-through text-muted">${formatter.format(minPriceVariant.price)}</small>`;
                             } else {
                                 priceDisplay = formatter.format(minPriceVariant.price);
@@ -1704,6 +1860,7 @@
 
                 // Hide variant management section for new product
                 $('#variantManagementSection').hide();
+                $('#createVariantBtnContainer').show();
                 currentEditingProductId = null;
 
                 // Reset các biến global liên quan
@@ -1714,6 +1871,178 @@
                 // Show modal
                 $('#productModal').modal('show');
             });
+
+            // THÊM: Xử lý sự kiện khi click nút "Create Variant"
+            $('#createVariantBtn').on('click', function() {
+                let productId = $('#productId').val();
+                const productName = $('#productName').val();
+
+                if (!productId) {
+                    // 🌟 Xử lý khi chưa có ID sản phẩm (Thêm mới)
+
+                    // Đặt cờ trạng thái chờ vào form sản phẩm
+                    $('#productForm').data('pending-action', 'create_variant');
+
+                    // Hiển thị loading và tự động submit
+                    Swal.fire({
+                        title: 'Đang lưu sản phẩm...',
+                        text: 'Hệ thống đang lưu thông tin sản phẩm cơ bản để tạo biến thể.',
+                        icon: 'info',
+                        allowOutsideClick: false,
+                        showConfirmButton: false,
+                        willOpen: () => {
+                            Swal.showLoading(); // Hiệu ứng loading
+                            // 🌟 Tự động submit form sản phẩm cơ bản, form submit này sẽ bị chặn bởi AJAX handler ở bước 2
+                            $('#productForm').submit();
+                        }
+                    });
+
+                    return;
+                }
+
+                // Xử lý khi đã có ID sản phẩm (Chỉnh sửa)
+                $('#productModal').modal('hide');
+                // Đảm bảo hàm này đã được định nghĩa
+                if (typeof setupCreateVariantModal === 'function') {
+                    setupCreateVariantModal(productId, productName);
+                    $('#createVariantQuickModal').modal('show');
+                }
+            });
+
+            $('#productForm').on('submit', function(e) {
+                // 🌟 RẤT QUAN TRỌNG: Ngăn chặn submit form theo cách truyền thống
+                e.preventDefault();
+
+                const isPendingAction = $(this).data('pending-action') === 'create_variant';
+                const currentUrl = $(this).attr('action');
+                const method = $('#productId').val() ? 'PUT' : 'POST';
+                const formData = new FormData(this);
+
+                // Nếu không phải trạng thái chờ, hiển thị loading bình thường
+                if (!isPendingAction) {
+                    // Có thể hiển thị Swal.fire('Đang lưu...'); nếu cần
+                }
+
+                // Xóa tất cả thông báo lỗi cũ
+                $('.text-danger').text('');
+
+                $.ajax({
+                    url: currentUrl,
+                    method: 'POST', // Laravel dùng POST cho cả PUT/PATCH qua form data
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+
+                    success: function(response) {
+                        Swal.close(); // Đóng loading (cả loading tự động và loading chờ)
+
+                        // 🌟 LOGIC QUAN TRỌNG ĐÃ CÓ TRONG PHÂN TÍCH TRƯỚC:
+                        const newProductId = response.product_id;
+                        const newProductName = response.name || $('#productName')
+                            .val(); // Lấy tên nếu server không trả về
+
+                        // Cập nhật ID mới (chuyển sang chế độ chỉnh sửa)
+                        $('#productId').val(newProductId);
+
+                        if (isPendingAction) {
+                            // Xử lý tự động mở Modal Biến thể sau khi lưu thành công
+                            $('#productForm').removeData('pending-action');
+                            toastr.success(
+                                'Lưu sản phẩm thành công! Đang chuyển sang thêm biến thể.');
+
+                            $('#productModal').modal('hide');
+                            setupCreateVariantModal(newProductId, newProductName);
+                            $('#createVariantQuickModal').modal('show');
+                        } else {
+                            // Xử lý lưu bình thường
+                            Swal.fire('Thành công!', response.success, 'success');
+                            // Nếu muốn đóng modal sản phẩm: $('#productModal').modal('hide');
+                            // Tải lại bảng sản phẩm: loadProducts(); (nếu có hàm này)
+                        }
+                    },
+
+                    error: function(xhr) {
+                        Swal.close(); // Đóng loading
+                        $('#productForm').removeData('pending-action');
+                        // ... Logic xử lý hiển thị lỗi validation ...
+                        Swal.fire('Lỗi!',
+                            'Lưu sản phẩm không thành công. Vui lòng kiểm tra các trường bắt buộc.',
+                            'error');
+                    }
+                });
+            });
+
+            $(document).on('change', '#quickVariantAttributesSelectionContainer input', function() {
+                updateQuickVariantDetails();
+            });
+
+            // Xử lý sự kiện khi submit form tạo biến thể nhanh
+            $('#createVariantForm').on('submit', function(e) {
+                e.preventDefault();
+
+                const productId = $('#quickVariantProductIdField').val();
+                const url = variantStoreUrl.replace(':product', productId);
+                const formData = new FormData(this);
+                const $btn = $('#saveQuickVariantBtn');
+
+                $btn.prop('disabled', true).html(
+                    '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Đang lưu...'
+                );
+                $('#createVariantForm').find('.text-danger').text('');
+
+                $.ajax({
+                    url: url,
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $btn.prop('disabled', false).html('Lưu biến thể mới');
+                        $('#createVariantQuickModal').modal('hide');
+                        Swal.fire('Thành công!', response.success, 'success');
+
+                        // Sau khi tạo biến thể thành công, mở lại productModal và tải lại variants
+                        $('#productModal').modal('show');
+                        if (typeof loadVariantsForProduct === 'function') {
+                            loadVariantsForProduct(productId);
+                        }
+                    },
+                    error: function(xhr) {
+                        $btn.prop('disabled', false).html('Lưu biến thể mới');
+                        const errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            $.each(errors, function(key, value) {
+                                $(`#quick_${key}Error`).text(value[0]);
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', xhr.responseJSON.error ||
+                                'Đã xảy ra lỗi khi lưu biến thể.', 'error');
+                        }
+                    }
+                });
+            });
+
+            // THÊM: Xử lý sự kiện hiển thị ảnh biến thể nhanh
+            $('#quickVariantImage').on('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#currentQuickVariantImage')
+                            .attr('src', e.target.result)
+                            .css('display', 'block');
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            // THÊM: Xử lý logic hiển thị/ẩn trường giá theo loại giá cho form quick
+            $('input[name="pricing_type"]').on('change', function() {
+                if ($('#quickPricingTypePublic').is(':checked')) {
+                    $('#quickPublicPriceFields').show();
+                } else {
+                    $('#quickPublicPriceFields').hide();
+                }
+            }).trigger('change'); // Kích hoạt lần đầu để thiết lập trạng thái ban đầu
 
             // Handle "Edit Product" button click
             $(document).on('click', '.edit-product-btn', function() {
@@ -1751,6 +2080,7 @@
                         loadTagsForProductModal(productTagIds);
 
                         $('#variantManagementSection').show(); // Hiện phần quản lý biến thể
+                        // $('#createVariantBtnContainer').hide();
                         $('#productModal').modal('show');
                     },
                     error: function(xhr, status, error) {
@@ -1759,65 +2089,6 @@
                         Swal.fire('Error!',
                             'Failed to load product details. Check console for more info.',
                             'error');
-                    }
-                });
-            });
-
-            // Handle form submission (Add/Edit Product)
-            $('#productForm').on('submit', function(e) {
-                e.preventDefault();
-
-                // Clear previous errors
-                $('.text-danger').text('');
-
-                let formData = new FormData(this);
-
-                // Remove any existing category_ids entries from formData
-                // because we're manually adding them from the hidden input.
-                // This is crucial if a product starts with categories and then changes.
-                if (formData.has('category_ids[]')) {
-                    formData.delete('category_ids[]');
-                }
-
-                // Parse the JSON string from the hidden input and append each ID
-                let selectedCategoryIds = JSON.parse($('#selectedCategoryIdsHidden').val() || '[]');
-                selectedCategoryIds.forEach(id => {
-                    formData.append('category_ids[]', id);
-                });
-
-                // Existing logic for product ID, method, URL
-                let productId = $('#productId').val();
-                let method = $('#formMethod').val();
-                let url = method === 'POST' ? "{{ route('product.store') }}" : `/product/${productId}`;
-
-                $.ajax({
-                    url: url,
-                    method: 'POST', // Always POST for FormData with _method override (Laravel will handle _method parameter)
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function(response) {
-                        Swal.fire('Success!', response.success, 'success');
-                        $('#productModal').modal('hide');
-                        updateProductTable(response.products); // Cập nhật lại bảng sản phẩm
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error:", xhr.responseText);
-                        let errors = xhr.responseJSON.errors;
-                        if (errors) {
-                            for (let field in errors) {
-                                let errorId = field.replace('.', '_') + 'Error';
-                                // Handle validation for category_ids (if it's an array, errors might be on category_ids.0, category_ids.1)
-                                if (field.startsWith('category_ids.')) {
-                                    $('#category_idsError').text(errors[field][0]);
-                                } else {
-                                    $(`#${errorId}`).text(errors[field][0]);
-                                }
-                            }
-                        } else {
-                            Swal.fire('Error!', xhr.responseJSON.error ||
-                                'Something went wrong.', 'error');
-                        }
                     }
                 });
             });

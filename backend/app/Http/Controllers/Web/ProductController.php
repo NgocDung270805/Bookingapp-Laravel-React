@@ -17,8 +17,8 @@ class ProductController extends Controller
     private function getCategoriesTreeForView($parentId = null, $level = 0)
     {
         $categories = Category::where('parent_id', $parentId)
-                               ->orderBy('name')
-                               ->get();
+            ->orderBy('name')
+            ->get();
 
         $tree = [];
         foreach ($categories as $category) {
@@ -43,10 +43,12 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        // 1. Validation: Đảm bảo các trường NO NULL được gửi lên
+        // Đặc biệt là 'name' và 'status'.
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'category_ids' => 'required|array',
-            'category_ids.*' => 'exists:categories,id',
+            'category_ids' => 'array',
+            'category_ids.*' => 'integer|exists:categories,id|distinct',
             'description' => 'nullable|string',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
@@ -56,65 +58,53 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
         ]);
 
-        $slug = Str::slug($request->name);
-        $originalSlug = $slug;
-        $count = 1;
-        while (Product::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $count++;
-        }
+        // 2. Xử lý dữ liệu trước khi tạo (QUAN TRỌNG NHẤT)
+        $dataToCreate = $validatedData;
 
-        $imgPath = null;
+        // 🌟 A. Xử lý SLUG (NO NULL trong DB) 🌟
+        // Đây là nguyên nhân CHÍNH gây lỗi 422 nếu bạn không tạo nó.
+        $dataToCreate['slug'] = Str::slug($dataToCreate['name']);
+
+        // 🌟 B. Xử lý STATUS (NO NULL trong DB) 🌟
+        // Đảm bảo status là 0 nếu không được gửi (unchecked checkbox)
+        $dataToCreate['status'] = $request->has('status') ? $request->input('status') : 0;
+        $dataToCreate['is_featured'] = $request->has('is_featured') ? $request->input('is_featured') : 0;
+
+        // Loại bỏ các trường liên quan đến quan hệ (nếu cần)
+        unset($dataToCreate['category_ids'], $dataToCreate['tags']);
+
+        // 3. Tạo Product
+        $product = Product::create($dataToCreate);
+
+        // 4. Xử lý ảnh chính (img)
         if ($request->hasFile('img')) {
-            $image = $request->file('img');
-            $imgPath = Storage::disk('public')->putFile('uploads/products/general', $image);
+            // Lưu trữ file và cập nhật đường dẫn vào DB
+            $product->img = $request->file('img')->store('products', 'public');
+            $product->save();
         }
 
-        $product = Product::create([
-            'name' => $request->name,
-            'slug' => $slug,
-            'description' => $request->description,
-            'views' => 0,
-            'sold' => 0,
-            'img' => $imgPath,
-            'status' => $request->status ?? 1,
-            'is_featured' => $request->is_featured ?? 0,
-        ]);
-
-        if ($request->has('category_ids')) {
-            $product->categories()->sync($request->category_ids);
-        } else {
-            $product->categories()->detach();
-        }
-
-        if ($request->has('tags')) {
-            $product->tags()->sync($request->tags);
-        } else {
-            $product->tags()->detach();
-        }
-
-        // Upload multiple images
+        // 5. Xử lý ảnh phụ (images)
         if ($request->hasFile('images')) {
-            Log::info('Starting image upload in store method');
-            Log::info('Number of images received: ' . count($request->file('images')));
-
-            foreach ($request->file('images') as $index => $image) {
-                Log::info('Processing image ' . ($index + 1));
-                $imagePath = Storage::disk('public')->putFile('uploads/products', $image);
-                Log::info('Image saved at: ' . $imagePath);
-
-                $imageRecord = $product->images()->create([
-                    'product_id' => $product->id,
-                    'image_path' => $imagePath,
-                    'is_main_gallery_image' => false,
-                    'sort_order' => $index + 1
-                ]);
-                Log::info('Image record created:', $imageRecord->toArray());
+            foreach ($request->file('images') as $imageFile) {
+                $path = $imageFile->store('products/gallery', 'public');
+                $product->images()->create(['image_path' => $path]);
             }
-        } else {
-            Log::info('No images in request');
         }
 
-        return response()->json(['success' => 'Product created successfully.', 'products' => Product::with('categories', 'tags', 'variants', 'images')->orderBy('name')->get()]);
+        // 6. Đồng bộ Tags và Categories
+        if ($request->has('tags')) {
+            $product->tags()->sync($request->input('tags'));
+        }
+        if ($request->has('category_ids')) {
+            $product->categories()->sync($request->input('category_ids'));
+        }
+
+        // 7. Trả về thành công
+        return response()->json([
+            'success' => 'Sản phẩm đã được tạo. Đang mở quản lý biến thể.',
+            'product' => $product->load(['images', 'categories', 'tags']),
+            'product_id' => $product->id, // Trả về ID để frontend biết và mở modal biến thể
+        ], 201); // Sử dụng mã 201 Created cho POST thành công
     }
 
     public function edit($id)
@@ -211,11 +201,11 @@ class ProductController extends Controller
         if ($request->hasFile('images')) {
             Log::info('Starting image upload in update method');
             Log::info('Number of images received: ' . count($request->file('images')));
-            
+
             // Get max sort_order
             $maxSortOrder = $product->images()->max('sort_order') ?? 0;
             Log::info('Current max sort order: ' . $maxSortOrder);
-            
+
             foreach ($request->file('images') as $index => $image) {
                 Log::info('Processing image ' . ($index + 1));
                 $imagePath = Storage::disk('public')->putFile('uploads/products', $image);
@@ -249,7 +239,7 @@ class ProductController extends Controller
 
         // Reload the product with fresh relationships
         $product->load('categories', 'tags', 'variants', 'images');
-        
+
         Log::info('Updated product details:', [
             'product_id' => $product->id,
             'images_count' => $product->images->count(),
@@ -258,8 +248,8 @@ class ProductController extends Controller
 
         // Get all products with relationships for table update
         $products = Product::with(['categories', 'tags', 'variants', 'images'])
-                          ->orderBy('name')
-                          ->get();
+            ->orderBy('name')
+            ->get();
 
         Log::info('Returning products list with count:', ['total' => $products->count()]);
 
