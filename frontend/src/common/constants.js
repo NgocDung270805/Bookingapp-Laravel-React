@@ -1,7 +1,7 @@
 // src/common/constants.js
 
-export const BASE_URL_ADMIN = 'http://127.0.0.1:8000/'; 
-export const API_BASE_URL   = 'http://127.0.0.1:8000/api/'; 
+export const BASE_URL_ADMIN = 'https://phungngocdungapp.up.railway.app/'; 
+export const API_BASE_URL   = 'https://phungngocdungapp.up.railway.app/api/'; 
 
 export const TOKEN_KEY = 'authToken'; // Key để lưu token xác thực trong Local Storage
 export const USER_INFO_KEY = 'userInfo'; // Key để lưu thông tin user trong Local Storage

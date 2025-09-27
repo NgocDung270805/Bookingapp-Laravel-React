@@ -14,13 +14,51 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
   const [notes, setNotes] = useState('');
 
   // Lấy ngày hiện tại để giới hạn không cho chọn ngày trong quá khứ
-  const today = new Date().toISOString().split('T')[0];
+  // Chuyển đổi sang múi giờ VN (+7)
+  const getVNTime = () => {
+    const now = new Date();
+    // Lấy offset của múi giờ hiện tại (đơn vị là phút)
+    const offset = now.getTimezoneOffset();
+    // Chuyển về múi giờ UTC+7
+    return new Date(now.getTime() + (offset * 60 * 1000) + (7 * 60 * 60 * 1000));
+  };
 
-  // Danh sách các khung giờ làm việc
-  const availableTimeSlots = [
-    '08:00', '09:00', '10:00', '11:00',
-    '13:30', '14:30', '15:30', '16:30'
-  ];
+  const vnTime = getVNTime();
+  const today = vnTime.toLocaleDateString('en-CA'); // Format YYYY-MM-DD
+  const currentHour = vnTime.getHours();
+  const currentMinute = vnTime.getMinutes();
+
+  // Danh sách khung giờ làm việc buổi sáng và chiều
+  const morningSlots = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00'];
+  const afternoonSlots = ['13:30', '14:30', '15:30', '16:30', '17:30', '18:30', '19:30'];
+  
+  // Hàm lọc thời gian hợp lệ
+  const filterTimeSlots = (slots) => {
+    if (bookingDate !== today) return slots;
+    
+    return slots.filter(time => {
+      const [slotHours, slotMinutes] = time.split(':').map(Number);
+      
+      // Nếu giờ slot lớn hơn giờ hiện tại, cho phép đặt
+      if (slotHours > currentHour) return true;
+      
+      // Nếu cùng giờ, kiểm tra phút
+      if (slotHours === currentHour) {
+        // Cho phép đặt slot tiếp theo nếu thời gian hiện tại + 15 phút
+        const bookingMinute = currentMinute + 15;
+        return slotMinutes > bookingMinute;
+      }
+      
+      return false;
+    });
+  };
+
+  // Lọc các khung giờ hợp lệ
+  const availableMorningSlots = filterTimeSlots(morningSlots);
+  const availableAfternoonSlots = filterTimeSlots(afternoonSlots);
+  
+  // Gộp tất cả các khung giờ hợp lệ
+  const availableTimeSlots = [...availableMorningSlots, ...availableAfternoonSlots];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,6 +72,15 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
     if (!bookingTime) {
       toast.error('Vui lòng chọn giờ đặt lịch!');
       return;
+    }
+
+    // Kiểm tra thời gian đặt lịch có hợp lệ
+    if (bookingDate === today) {
+      const [hours, minutes] = bookingTime.split(':').map(Number);
+      if (hours < currentHour || (hours === currentHour && minutes <= currentMinute)) {
+        toast.error('Vui lòng chọn thời gian sau thời điểm hiện tại!');
+        return;
+      }
     }
 
     const bookingData = {
@@ -106,11 +153,24 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
                   required
                 >
                   <option value="">Chọn thời gian</option>
-                  {availableTimeSlots.map((time) => (
-                    <option key={time} value={time}>
-                      {time}
-                    </option>
-                  ))}
+                  {availableMorningSlots.length > 0 && (
+                    <optgroup label="Buổi sáng">
+                      {availableMorningSlots.map((time) => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  {availableAfternoonSlots.length > 0 && (
+                    <optgroup label="Buổi chiều">
+                      {availableAfternoonSlots.map((time) => (
+                        <option key={time} value={time}>
+                          {time}
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
                 </select>
                 <small className="text-muted">
                   Vui lòng chọn thời gian trong giờ làm việc
