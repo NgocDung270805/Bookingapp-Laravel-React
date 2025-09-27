@@ -21,11 +21,29 @@ import { faHeart } from '@fortawesome/free-regular-svg-icons';
 import Isotope from 'isotope-layout';
 import imagesLoaded from 'imagesloaded';
 
-import { faVolumeMute, faVolumeUp, faPause, faPlay } from "@fortawesome/free-solid-svg-icons"; // Import icon âm thanh
+import { faVolumeMute, faVolumeUp, faPause, faPlay, faExpand } from "@fortawesome/free-solid-svg-icons"; // Import icon âm thanh
 
 dayjs.locale('vi')
 const HomePage = () => {
   const dispatch = useDispatch();
+  const [videos, setVideos] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  // Fetch videos
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/videos');
+        const data = await response.json();
+        setVideos(data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+        setLoading(false);
+      }
+    };
+    fetchVideos();
+  }, []);
 
   // ===============================================
   // useEffect để fetch dữ liệu khi component mount
@@ -68,46 +86,46 @@ const HomePage = () => {
   const videoRef3 = useRef(null);
 
   const [activeVideo, setActiveVideo] = useState(null); // video đang bật tiếng
-  const [playingVideo, setPlayingVideo] = useState({ 1: true, 2: true, 3: true }); // mặc định autoplay
+  const [playingVideo, setPlayingVideo] = useState({}); // Theo dõi trạng thái play/pause của từng video
 
   // Toggle mute/unmute
-  const toggleMute = (id) => {
-    const videos = {
-      1: videoRef1.current,
-      2: videoRef2.current,
-      3: videoRef3.current,
-    };
+  const toggleMute = (id, videoElement) => {
+    const videos = [videoRef1.current, videoRef2.current, videoRef3.current];
 
+    // Nếu click vào video đang active, chỉ tắt âm video đó
     if (activeVideo === id) {
-      videos[id].muted = true;
+      if (videoElement) {
+        videoElement.muted = true;
+      }
       setActiveVideo(null);
       return;
     }
 
-    Object.values(videos).forEach((v) => v && (v.muted = true));
-    if (videos[id]) {
-      videos[id].muted = false;
+    // Tắt âm tất cả video khác
+    videos.forEach((video) => {
+      if (video && video !== videoElement) {
+        video.muted = true;
+      }
+    });
+
+    // Bật âm video được click
+    if (videoElement) {
+      videoElement.muted = false;
       setActiveVideo(id);
     }
   };
 
   // Toggle play/pause
-  const togglePlay = (id) => {
-    const videos = {
-      1: videoRef1.current,
-      2: videoRef2.current,
-      3: videoRef3.current,
-    };
+  const togglePlay = (id, videoRef) => {
+    if (!videoRef) return;
 
-    const video = videos[id];
-    if (!video) return;
-
+    const video = videoRef;
     if (video.paused) {
       // Pause tất cả video khác trước
-      Object.keys(videos).forEach((key) => {
-        if (Number(key) !== id && videos[key]) {
-          videos[key].pause();
-          setPlayingVideo((prev) => ({ ...prev, [key]: false }));
+      [videoRef1.current, videoRef2.current, videoRef3.current].forEach((v) => {
+        if (v && v !== video) {
+          v.pause();
+          setPlayingVideo((prev) => ({ ...prev, [v.dataset.videoId]: false }));
         }
       });
 
@@ -154,22 +172,25 @@ const HomePage = () => {
   const galleryRef = useRef(null); // Ref cho container của Isotope (#image_gallery)
   const filterNavRef = useRef(null); // Ref cho ul của các nút lọc
   const [isotopeInstance, setIsotopeInstance] = useState(null); // State để lưu instance của Isotope
-  const [activeFilter, setActiveFilter] = useState('.tokyo'); // State cho active filter
+  const [activeFilter, setActiveFilter] = useState('.all'); // State cho active filter
 
   // useEffect để khởi tạo Isotope và Feather Icons cho Gallery
   useEffect(() => {
-    // Kiểm tra và khởi tạo Isotope
-    if (window.Isotope && window.imagesLoaded && galleryRef.current) {
-      window.imagesLoaded(galleryRef.current, () => {
-        setTimeout(() => { // Giữ setTimeout để ổn định DOM
-          // console.log("Initializing Isotope for Gallery:", galleryRef.current.children);
-          const iso = new window.Isotope(galleryRef.current, {
-            itemSelector: '',
-            layoutMode: 'packery',
-            filter: activeFilter
-          });
-          setIsotopeInstance(iso);
-        }, 100);
+    // Chỉ khởi tạo Isotope khi videos đã load xong và không còn loading
+    if (!loading && videos && Object.keys(videos).length > 0 && window.Isotope && window.imagesLoaded && galleryRef.current) {
+      const initIsotope = () => {
+        const iso = new window.Isotope(galleryRef.current, {
+          itemSelector: '.col-12',
+          layoutMode: 'fitRows',
+          filter: '*'
+        });
+        setIsotopeInstance(iso);
+      };
+
+      // Đợi images load xong
+      const imgLoad = window.imagesLoaded(galleryRef.current);
+      imgLoad.on('done', () => {
+        setTimeout(initIsotope, 100);
       });
     }
 
@@ -180,11 +201,11 @@ const HomePage = () => {
 
     // Cleanup function cho Isotope
     return () => {
-      if (isotopeInstance) { // Sử dụng instance từ state
+      if (isotopeInstance) {
         isotopeInstance.destroy();
       }
     };
-  }, []); // [] đảm bảo chỉ chạy một lần khi mount
+  }, [loading, videos, galleryRef]);
 
   // useEffect để xử lý khi filter của Gallery thay đổi
   useEffect(() => {
@@ -198,6 +219,9 @@ const HomePage = () => {
     if (e.target.tagName === 'A' && e.target.dataset.filter) {
       const filterValue = e.target.dataset.filter;
       setActiveFilter(filterValue);
+      if (isotopeInstance) {
+        isotopeInstance.arrange({ filter: filterValue });
+      }
     }
   };
 
@@ -503,419 +527,211 @@ const HomePage = () => {
             data-filter-nav="data-filter-nav"
             onClick={handleFilterClick}
           >
-            <li className="nav-item">
-              <a className={`isotope-nav cursor-pointer ${activeFilter === '.tokyo' ? 'active' : ''}`} data-filter=".tokyo">
-                Tất cả
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className={`isotope-nav cursor-pointer ${activeFilter === '.bali' ? 'active' : ''}`} data-filter=".bali">
-                Sedan
-              </a>
-            </li>
-            <li className="nav-item">
-              <a className={`isotope-nav cursor-pointer ${activeFilter === '.sydney' ? 'active' : ''}`} data-filter=".sydney">
-                SUV
-              </a>
-            </li>
-            <li className="nav-item">
-              {' '}
-              <a className={`isotope-nav cursor-pointer ${activeFilter === '.paris' ? 'active' : ''}`} data-filter=".paris">
-                Xe điện
-              </a>
-            </li>
+            {!loading && videos && Object.entries(videos).map(([key]) => (
+              <li className="nav-item" key={key}>
+                <a
+                  className={`isotope-nav cursor-pointer ${activeFilter === `.${key.toLowerCase()}` ? 'active' : ''}`}
+                  data-filter={`.${key.toLowerCase()}`}
+                >
+                  {key === 'All' ? 'Toàn bộ xe' : key}
+                </a>
+              </li>
+            ))}
           </ul>
           <div className="row g-0 justify-content-center">
             <div className="col-md-12 col-lg-10 col-xl-9 mx-auto">
               <div className="row g-3 justify-content-center" id="image_gallery" ref={galleryRef}>
-                {/* Tokyo */}
-                <div className="col-12 col-md-6 col-lg-4 tokyo">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden position-relative">
-                    <video
-                      ref={videoRef1}
-                      src="../../assets/video/capnhatmauxemoinhat.mp4"
-                      className="w-100 object-fit-cover"
-                      style={{ aspectRatio: "9/16", objectFit: "cover" }}
-                      poster="https://marketplace.canva.com/EAGRB58BnmI/2/0/1600w/canva-b%C3%A0i-%C4%91%C4%83ng-instagram-qu%E1%BA%A3ng-c%C3%A1o-xe-h%C6%A1i-hi%E1%BB%87n-%C4%91%E1%BA%A1i-tr%E1%BA%BB-trung-xanh-d%C6%B0%C6%A1ng-f3rvclAtsus.jpg"   // ảnh giới thiệu trước khi chạy
-                      muted
-                      // autoPlay
-                      loop
-                      playsInline
-                      onClick={() => togglePlay(1)}
-                    />
+                {!loading && videos && Object.entries(videos).map(([categoryName, categoryData]) =>
+                  // Lấy 3 video mới nhất của mỗi danh mục
+                  categoryData.videos.slice(0, 3).map((video, index) => (
+                    <div className={`col-12 col-md-6 col-lg-4 ${categoryName.toLowerCase()}`} key={video.id}>
+                      <div className="img-zoom-hover-lg rounded-2 overflow-hidden position-relative">
+                        <video
+                          ref={el => {
+                            if (index === 0) videoRef1.current = el;
+                            else if (index === 1) videoRef2.current = el;
+                            else if (index === 2) videoRef3.current = el;
+                          }}
+                          src={`${PATHS.ADMIN_DASHBOARD}storage/${video.video}`}
+                          className="w-100 object-fit-cover"
+                          style={{ aspectRatio: "9/16", objectFit: "cover" }}
+                          poster={`${PATHS.ADMIN_DASHBOARD}storage/${video.img_banner}`}
+                          muted
+                          loop
+                          playsInline
+                          data-video-id={video.id}
+                          onClick={(e) => togglePlay(video.id, e.target)}
+                        />
 
-                    {/* Nút Play chỉ hiện khi video đang pause */}
-                    {!playingVideo[1] && (
-                      <button
-                        onClick={() => togglePlay(1)}
-                        className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          borderRadius: "50%",
-                          backgroundColor: "rgba(0,0,0,0.6)",
-                          color: "#fff",
-                          border: "none"
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faPlay} size="lg" />
-                      </button>
-                    )}
+                        {/* Nút Play chỉ hiện khi video đang pause */}
+                        {!playingVideo[video.id] && (
+                          <button
+                            onClick={(e) => {
+                              const videoEl = e.target.parentElement.querySelector('video');
+                              togglePlay(video.id, videoEl);
+                            }}
+                            className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
+                            style={{
+                              width: "60px",
+                              height: "60px",
+                              borderRadius: "50%",
+                              backgroundColor: "rgba(0,0,0,0.6)",
+                              color: "#fff",
+                              border: "none"
+                            }}
+                          >
+                            <FontAwesomeIcon icon={faPlay} size="lg" />
+                          </button>
+                        )}
 
-                    {/* Nút mute/unmute góc phải dưới */}
-                    <button
-                      onClick={() => toggleMute(1)}
-                      className="position-absolute bottom-0 end-0 mb-2 me-2 d-flex align-items-center justify-content-center"
-                      style={{
-                        width: "36px",
-                        height: "36px",
-                        borderRadius: "50%",
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                        color: "#fff",
-                        border: "none",
-                        zIndex: 9999
-                      }}
-                    >
-                      <FontAwesomeIcon icon={activeVideo === 1 ? faVolumeUp : faVolumeMute} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Tổng hợp xem xe mới nhất
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4 tokyo">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden position-relative">
-                    <video
-                      ref={videoRef2}
-                      src="../../assets/video/mazda3.mp4"
-                      className="w-100 object-fit-cover"
-                      style={{ aspectRatio: "9/16", objectFit: "cover" }}
-                      poster="https://i1-vnexpress.vnecdn.net/2021/09/18/Mazda32020VnE993047211573621051jpg-1631963909.jpg?w=750&h=450&q=100&dpr=1&fit=crop&s=Ksi2dIeIocGk9Pke5aGnRQ"   // ảnh giới thiệu trước khi chạy
-                      muted
-                      // autoPlay
-                      loop
-                      playsInline
-                      onClick={() => togglePlay(2)}
-                    />
+                        {/* Nút fullscreen góc phải trên */}
+                        <button
+                          onClick={(e) => {
+                            const container = e.target.closest('.img-zoom-hover-lg');
+                            const videoEl = container.querySelector('video');
+                            const wrapper = document.createElement('div');
+                            wrapper.style.position = 'fixed';
+                            wrapper.style.top = '50%';
+                            wrapper.style.left = '50%';
+                            wrapper.style.transform = 'translate(-50%, -50%)';
+                            wrapper.style.backgroundColor = 'black';
+                            wrapper.style.zIndex = '10000';
+                            wrapper.style.maxWidth = '90vw'; // Giới hạn chiều rộng tối đa
+                            wrapper.style.maxHeight = '90vh'; // Giới hạn chiều cao tối đa
+                            wrapper.style.width = 'auto';
+                            wrapper.style.height = 'auto';
+                            wrapper.style.display = 'flex';
+                            wrapper.style.alignItems = 'center';
+                            wrapper.style.justifyContent = 'center';
 
-                    {/* Nút Play chỉ hiện khi video đang pause */}
-                    {!playingVideo[2] && (
-                      <button
-                        onClick={() => togglePlay(2)}
-                        className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          borderRadius: "50%",
-                          backgroundColor: "rgba(0,0,0,0.6)",
-                          color: "#fff",
-                          border: "none"
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faPlay} size="lg" />
-                      </button>
-                    )}
+                            const clonedVideo = videoEl.cloneNode(true);
+                            // Giữ nguyên trạng thái mute/unmute từ video gốc
+                            clonedVideo.muted = videoEl.muted;
+                            // Tính toán kích thước video dựa trên tỷ lệ gốc
+                            const originalAspectRatio = videoEl.videoWidth / videoEl.videoHeight;
+                            // Kiểm tra nếu là thiết bị di động (màn hình nhỏ hơn 768px)
+                            const isMobile = window.innerWidth < 768;
 
-                    {/* Nút mute/unmute góc phải dưới */}
-                    <button
-                      onClick={() => toggleMute(2)}
-                      className="position-absolute bottom-0 end-0 mb-2 me-2 d-flex align-items-center justify-content-center"
-                      style={{
-                        width: "36px",
-                        height: "36px",
-                        borderRadius: "50%",
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                        color: "#fff",
-                        border: "none",
-                        zIndex: 9999
-                      }}
-                    >
-                      <FontAwesomeIcon icon={activeVideo === 2 ? faVolumeUp : faVolumeMute} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Mazda 3 2024 - Chi tiết và trải nghiệm
-                      </a>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4 tokyo">
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden position-relative">
-                    <video
-                      ref={videoRef3}
-                      src="../../assets/video/MPV7cho.mp4"
-                      className="w-100 object-fit-cover"
-                      style={{ aspectRatio: "9/16", objectFit: "cover" }}
-                      poster="https://image.made-in-china.com/2f0j00TeBbyKdliskS/2021-KIA-Carnival-2-0t-Luxury-2WD-MPV-7-Seats-Car-Left-Hand-Drive-Gasoline-Car-Made-in-China-0km-Used-Car.webp"   // ảnh giới thiệu trước khi chạy
-                      muted
-                      // autoPlay
-                      loop
-                      playsInline
-                      onClick={() => togglePlay(3)}
-                    />
+                            let width, height;
+                            if (isMobile) {
+                              // Trên mobile: video full width và tự động tính chiều cao
+                              width = window.innerWidth;
+                              height = width / originalAspectRatio;
 
-                    {/* Nút Play chỉ hiện khi video đang pause */}
-                    {!playingVideo[3] && (
-                      <button
-                        onClick={() => togglePlay(3)}
-                        className="position-absolute top-50 start-50 translate-middle d-flex align-items-center justify-content-center"
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          borderRadius: "50%",
-                          backgroundColor: "rgba(0,0,0,0.6)",
-                          color: "#fff",
-                          border: "none"
-                        }}
-                      >
-                        <FontAwesomeIcon icon={faPlay} size="lg" />
-                      </button>
-                    )}
+                              // Điều chỉnh wrapper styles cho mobile
+                              wrapper.style.width = '100%';
+                              wrapper.style.height = 'auto';
+                              wrapper.style.top = '50%';
+                              wrapper.style.maxHeight = '80vh';
+                              wrapper.style.backgroundColor = '#000';
 
-                    {/* Nút mute/unmute góc phải dưới */}
-                    <button
-                      onClick={() => toggleMute(3)}
-                      className="position-absolute bottom-0 end-0 mb-2 me-2 d-flex align-items-center justify-content-center"
-                      style={{
-                        width: "36px",
-                        height: "36px",
-                        borderRadius: "50%",
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                        color: "#fff",
-                        border: "none",
-                        zIndex: 9999
-                      }}
-                    >
-                      <FontAwesomeIcon icon={activeVideo === 3 ? faVolumeUp : faVolumeMute} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        MPV 7 chỗ - Lựa chọn hoàn hảo cho gia đình
-                      </a>
+                              // Thêm styles cho video trên mobile
+                              clonedVideo.style.width = '100%';
+                              clonedVideo.style.height = 'auto';
+                              clonedVideo.style.maxHeight = '80vh';
+                              clonedVideo.style.objectFit = 'contain';
+                            } else {
+                              // Trên desktop: giữ nguyên logic cũ
+                              const maxWidth = window.innerWidth * 0.9;
+                              const maxHeight = window.innerHeight * 0.9;
+
+                              width = videoEl.videoWidth;
+                              height = videoEl.videoHeight;
+
+                              if (width > maxWidth) {
+                                width = maxWidth;
+                                height = width / originalAspectRatio;
+                              }
+
+                              if (height > maxHeight) {
+                                height = maxHeight;
+                                width = height * originalAspectRatio;
+                              }
+                            }
+
+                            clonedVideo.style.width = width + 'px';
+                            clonedVideo.style.height = height + 'px';
+                            // Thêm controls cho video khi phóng to
+                            clonedVideo.controls = true;
+                            wrapper.appendChild(clonedVideo);
+
+                            // Thêm nút đóng
+                            const closeBtn = document.createElement('button');
+                            closeBtn.innerHTML = '×';
+                            closeBtn.style.position = 'absolute';
+                            closeBtn.style.top = '-40px';
+                            closeBtn.style.right = '0';
+                            closeBtn.style.backgroundColor = 'transparent';
+                            closeBtn.style.border = 'none';
+                            closeBtn.style.color = 'white';
+                            closeBtn.style.fontSize = '30px';
+                            closeBtn.style.cursor = 'pointer';
+                            wrapper.appendChild(closeBtn);
+
+                            // Thêm overlay nền tối
+                            const overlay = document.createElement('div');
+                            overlay.style.position = 'fixed';
+                            overlay.style.top = '0';
+                            overlay.style.left = '0';
+                            overlay.style.width = '100%';
+                            overlay.style.height = '100%';
+                            overlay.style.backgroundColor = 'rgba(0,0,0,0.9)';
+                            overlay.style.zIndex = '9999';
+
+                            document.body.appendChild(overlay);
+                            document.body.appendChild(wrapper);
+
+                            // Xử lý đóng modal
+                            const closeModal = () => {
+                              document.body.removeChild(wrapper);
+                              document.body.removeChild(overlay);
+                            };
+
+                            closeBtn.onclick = closeModal;
+                            overlay.onclick = closeModal;
+
+                            // Bắt đầu phát video
+                            clonedVideo.play();
+                          }}
+                          className="position-absolute top-0 end-0 mt-2 me-2 d-flex align-items-center justify-content-center"
+                          style={{ width: "36px", height: "36px", borderRadius: "50%", backgroundColor: "rgba(0,0,0,0.5)", color: "#fff", border: "none", zIndex: 9999 }}
+                        >
+                          <FontAwesomeIcon icon={faExpand} />
+                        </button>
+
+                        {/* Nút mute/unmute góc phải dưới */}
+                        <button
+                          onClick={(e) => {
+                            const videoEl = e.target.closest('.img-zoom-hover-lg').querySelector('video');
+                            toggleMute(index + 1, videoEl);
+                          }}
+                          className="position-absolute bottom-0 end-0 mb-2 me-2 d-flex align-items-center justify-content-center"
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "50%",
+                            backgroundColor: "rgba(0,0,0,0.5)",
+                            color: "#fff",
+                            border: "none",
+                            zIndex: 9999
+                          }}
+                        >
+                          <FontAwesomeIcon icon={activeVideo === (index + 1) ? faVolumeUp : faVolumeMute} />
+                        </button>
+                        <div className="backdrop-faded">
+                          <h3 className="text-white fw-bolder fs-7 stretched-link">
+                            {video.name}
+                          </h3>
+                          {video.categories?.length > 0 && (
+                            <p className="mb-0 text-white fs-9">
+                              {video.categories.map(cat => cat.name).join(', ')}
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                {/* Bali */}
-                <div className="col-12 col-md-6 col-lg-4 bali" style={{ display: activeFilter === '.bali' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-1.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }}
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Nusa Lembongan
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        4.7<span className="fs-10">/5 </span>(1.2k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4 bali" style={{ display: activeFilter === '.bali' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-2.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }}
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Waterbom Bali
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        4.5<span className="fs-10">/5 </span>(1.8k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4 bali" style={{ display: activeFilter === '.bali' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-3.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Kuta Beach
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        5<span className="fs-10">/5 </span>(4.1k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
-                {/* Sydney */}
-                <div className="col-12 col-md-6 col-lg-4 sydney" style={{ display: activeFilter === '.sydney' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-3.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Kuta Beach
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        5<span className="fs-10">/5 </span>(4.1k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4 sydney" style={{ display: activeFilter === '.sydney' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-3.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Kuta Beach
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        5<span className="fs-10">/5 </span>(4.1k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4 sydney" style={{ display: activeFilter === '.sydney' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-3.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Kuta Beach
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        5<span className="fs-10">/5 </span>(4.1k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
-                {/* Paris */}
-                <div className="col-12 col-md-6 col-lg-4 paris" style={{ display: activeFilter === '.paris' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-3.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Kuta Beach
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        5<span className="fs-10">/5 </span>(4.1k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4 paris" style={{ display: activeFilter === '.paris' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-3.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Kuta Beach
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        5<span className="fs-10">/5 </span>(4.1k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-12 col-md-6 col-lg-4 paris" style={{ display: activeFilter === '.paris' || activeFilter === '*' ? 'block' : 'none' }}>
-                  <div className="img-zoom-hover-lg rounded-2 overflow-hidden">
-                    <a href="#!">
-                      <img
-                        className="w-100 object-fit-cover"
-                        src="../../assets/img/gallery/bali-3.png"
-                        alt=""
-                        style={{ aspectRatio: "9/16", objectFit: "cover" }} // video dọc
-                      />
-                    </a>
-                    <button className="btn btn-wish position-absolute top-0 end-0 mt-4 me-4">
-                      <FontAwesomeIcon icon={faHeart} />
-                    </button>
-                    <div className="backdrop-faded">
-                      <a className="text-white fw-bolder fs-7 stretched-link" href="#!">
-                        Kuta Beach
-                      </a>
-                      <h5 className="text-light mb-0">
-                        <FontAwesomeIcon icon={faStar} className="text-warning me-1" />
-                        5<span className="fs-10">/5 </span>(4.1k review)
-                      </h5>
-                    </div>
-                  </div>
-                </div>
+                  ))
+                )}
               </div>
             </div>
           </div>

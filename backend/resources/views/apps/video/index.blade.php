@@ -97,7 +97,7 @@
                                                         <span class="badge bg-info me-1">{{ $category->name }}</span>
                                                     @endforeach
                                                 @else
-                                                    <span class="text-muted">Không tồn tại</span>
+                                                    <span class="text-muted">Chào bán xe tại showroom</span>
                                                 @endif
                                             </td>
                                             <td class="video-description align-middle ps-4">
@@ -195,12 +195,12 @@
                             <div class="mb-3">
                                 <label for="videoCategories" class="form-label">Categories</label>
                                 <select class="form-select" id="videoCategories" name="categories[]" multiple>
-                                    <option value="">Tất cả</option>
+                                    <option value="">Chào bán xe tại showroom</option>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
-                                <small class="text-warning">*Chọn "Tất cả" nếu video này dành cho mọi danh mục</small>
+                                <small class="text-warning">*Chọn "Chào bán xe tại showroom" nếu video này dành cho mọi danh mục</small>
                                 <div class="text-danger" id="categoriesError"></div>
                             </div>
                             <div class="mb-3">
@@ -328,7 +328,7 @@
                                 <td class="video-categories align-middle ps-4">
                                     ${video.categories && video.categories.length > 0 ? 
                                         video.categories.map(category => `<span class="badge bg-info me-1">${category.name}</span>`).join('') 
-                                        : '<span class="text-muted">Tất cả</span>'}
+                                        : '<span class="text-muted">Chào bán xe tại showroom</span>'}
                                 </td>
                                 <td class="video-description align-middle ps-4">
                                     ${video.description || 'No description'}
@@ -397,7 +397,7 @@
                                 let selectedCategories = video.categories.map(cat => cat.id);
                                 $('#videoCategories').val(selectedCategories);
                             } else {
-                                // Nếu không có categories, chọn option "Tất cả"
+                                // Nếu không có categories, chọn option "Chào bán xe tại showroom"
                                 $('#videoCategories').val(['']);
                             }
 
@@ -534,7 +534,7 @@
                 $('#videoCategories').on('change', function() {
                     let selectedValues = $(this).val();
                     if (selectedValues && selectedValues.includes('')) {
-                        // Nếu "Tất cả" được chọn, bỏ chọn các option khác
+                        // Nếu "Chào bán xe tại showroom" được chọn, bỏ chọn các option khác
                         $(this).val(['']);
                     }
                 });

@@ -20,13 +20,16 @@ class VideoController extends Controller
         // Get videos with their categories
         $videos = Video::with('categories')->get();
         
-        // Group videos by category
+        // Group videos by category (associative array with category name as key)
         $videosByCategory = [];
         foreach ($categories as $category) {
             $categoryVideos = $videos->filter(function ($video) use ($category) {
                 return $video->categories->contains('id', $category->id);
-            })->values();
-            
+            })
+            // Sắp xếp video mới nhất lên đầu
+            ->sortByDesc('created_at')
+            ->values();
+
             if ($categoryVideos->isNotEmpty()) {
                 $videosByCategory[$category->name] = [
                     'category' => $category,
@@ -34,14 +37,21 @@ class VideoController extends Controller
                 ];
             }
         }
-        
-        // Get videos without categories (these are for all categories)
+
+        // Sắp xếp các danh mục theo số lượng video giảm dần
+        uasort($videosByCategory, function ($a, $b) {
+            return count($b['videos']) <=> count($a['videos']);
+        });
+
+        // Get videos without categories (these are for all categories), sort by created_at descending
         $allVideos = $videos->filter(function ($video) {
             return $video->categories->isEmpty();
-        })->values();
-        
+        })->sortByDesc('created_at')->values();
+
+        // Đưa "All" lên đầu
+        $result = [];
         if ($allVideos->isNotEmpty()) {
-            $videosByCategory['All'] = [
+            $result['All'] = [
                 'category' => [
                     'id' => 0,
                     'name' => 'All',
@@ -50,10 +60,13 @@ class VideoController extends Controller
                 'videos' => $allVideos
             ];
         }
+        foreach ($videosByCategory as $key => $value) {
+            $result[$key] = $value;
+        }
 
         return response()->json([
             'status' => 'success',
-            'data' => $videosByCategory
+            'data' => $result
         ], 200);
     }
 
