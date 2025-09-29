@@ -47,8 +47,8 @@ class ProductController extends Controller
         // Đặc biệt là 'name' và 'status'.
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'category_ids' => 'array',
-            'category_ids.*' => 'integer|exists:categories,id|distinct',
+            'category_ids' => 'nullable',
+            'category_ids.*' => 'nullable',
             'description' => 'nullable|string',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
@@ -104,7 +104,7 @@ class ProductController extends Controller
             'success' => 'Sản phẩm đã được tạo. Đang mở quản lý biến thể.',
             'product' => $product->load(['images', 'categories', 'tags']),
             'product_id' => $product->id, // Trả về ID để frontend biết và mở modal biến thể
-        ], 201); // Sử dụng mã 201 Created cho POST thành công
+        ], 200); // Sử dụng mã 200 OK cho POST thành công
     }
 
     public function edit($id)

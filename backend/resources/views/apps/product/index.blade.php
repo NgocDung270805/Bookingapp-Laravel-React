@@ -436,6 +436,11 @@
                     <input type="hidden" id="currentProductIdForVariants">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h6>Các biến thể hiện có:</h6>
+                        <div id="noVariantsMessage" style="display: none;">
+                            <button type="button" class="btn btn-primary" id="addNewVariantBtn">
+                                <i class="fas fa-plus me-2"></i>Thêm biến thể mới
+                            </button>
+                        </div>
                     </div>
 
                     <table class="table table-bordered">
@@ -1228,11 +1233,15 @@
                         allProductVariants = response.variants; // Store variants globally
                         let variantsTableBody = $('#variantsTableBody');
                         variantsTableBody.empty();
+                        
+                        // Show/hide the "Add New Variant" button based on variants existence
                         if (response.variants.length === 0) {
+                            $('#noVariantsMessage').show();
                             variantsTableBody.append(
                                 '<tr><td colspan="9" class="text-center">No variants found. Add a new one.</td></tr>'
                             );
                         } else {
+                            $('#noVariantsMessage').hide();
                             response.variants.forEach(variant => {
                                 let variantStatus = variant.status ? 'Active' : 'Inactive';
                                 let variantFeatured = variant.is_featured ? 'Yes' : 'No';
@@ -2550,9 +2559,14 @@
                 }
             });
 
-            $('#addVariantBtn').on('click', function() {
-                resetVariantForm(); // Sẽ tải thuộc tính và reset chi tiết
+            $('#addNewVariantBtn').on('click', function() {
+                resetVariantForm(); // Reset form và load attributes
+                loadAttributeTypesForVariantModal([]); // Load attributes without any pre-selection
                 $('#variantForm').slideDown();
+                // Scroll to the form
+                $('html, body').animate({
+                    scrollTop: $('#variantForm').offset().top - 100
+                }, 500);
             });
 
             $(document).on('click', '.edit-variant-btn', function() {
