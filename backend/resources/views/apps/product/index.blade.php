@@ -236,13 +236,14 @@
         @include('partials.footer')
     </div>
 
-    {{-- Modal để thêm mới, sửa thông tin sản phẩm--}}
+    {{-- Modal để thêm mới, sửa thông tin sản phẩm --}}
     <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="productForm" enctype="multipart/form-data">
+                <form id="productForm" enctype="multipart/form-data" method="POST">
                     @csrf
                     <input type="hidden" name="_method" id="formMethod" value="POST">
+                    <input type="hidden" name="_method" value="POST">
                     <input type="hidden" name="product_id" id="productId">
                     <div class="modal-header">
                         <h5 class="modal-title" id="productModalLabel">Add New Product</h5>
@@ -724,9 +725,17 @@
     <script>
         const variantStoreUrl = "{{ route('product.variants.store', ['product' => ':product']) }}";
         const productStoreUrl = "{{ route('product.store') }}";
-    </script>
-    <script src="/assets/js/product.js"></script>
-    <script>
+        const categoryIndexUrl = "{{ route('category.index') }}";
+        const tagIndexUrl = "{{ route('tag.index') }}";
+        const attributeTypeIndexUrl = "{{ route('product_attribute_type.store') }}";
+        const csrfToken = "{{ csrf_token() }}";
+        
+        // Get current URL function
+        function getCurrentUrl() {
+            return window.location.href.split('?')[0];
+        }
+        const currentUrl = getCurrentUrl();
+
         // Hàm sử lý cho hiển thị ảnh sản phẩm chính
         function previewMainImage(input) {
             if (input.files && input.files[0]) {
@@ -1233,7 +1242,7 @@
                         allProductVariants = response.variants; // Store variants globally
                         let variantsTableBody = $('#variantsTableBody');
                         variantsTableBody.empty();
-                        
+
                         // Show/hide the "Add New Variant" button based on variants existence
                         if (response.variants.length === 0) {
                             $('#noVariantsMessage').show();
@@ -1755,46 +1764,6 @@
                 });
             }
 
-
-            // Load attribute types and values for the main attribute modal
-            function loadAttributeTypesForManageModal() {
-                $.ajax({
-                    url: "{{ route('product_attribute_type.index') }}",
-                    method: 'GET',
-                    success: function(response) {
-                        let tableBody = $('#attributeTypesTableBody');
-                        tableBody.empty();
-                        if (response.attributeTypes.length === 0) {
-                            tableBody.append(
-                                '<tr><td colspan="3" class="text-center">No attribute types found.</td></tr>'
-                            );
-                        } else {
-                            response.attributeTypes.forEach(type => {
-                                tableBody.append(`
-                                    <tr>
-                                        <td><a href="#" class="select-attr-type-to-manage-values" data-id="${type.id}" data-name="${type.name}" data-display-type="${type.display_type}">${type.name}</a></td>
-                                        <td>${type.display_type}</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info edit-attr-type-btn" data-id="${type.id}">Edit</button>
-                                            <button class="btn btn-sm btn-danger delete-attr-type-btn" data-id="${type.id}">Delete</button>
-                                        </td>
-                                    </tr>
-                                `);
-                            });
-                        }
-                        // Reset form
-                        $('#attrTypeForm')[0].reset();
-                        $('#attrTypeFormMethod').val('POST');
-                        $('#attrTypeId').val('');
-                        $('#cancelAttrTypeEditBtn').hide();
-                        $('.text-danger').text('');
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error loading attribute types for manage modal:", error);
-                    }
-                });
-            }
-
             // Load attribute values for a specific type in the main attribute modal
             function loadAttributeValuesForManageModal(attrTypeId) {
                 $.ajax({
@@ -1919,25 +1888,86 @@
             });
 
             $('#productForm').on('submit', function(e) {
-                // 🌟 RẤT QUAN TRỌNG: Ngăn chặn submit form theo cách truyền thống
                 e.preventDefault();
 
                 const isPendingAction = $(this).data('pending-action') === 'create_variant';
-                const currentUrl = $(this).attr('action');
-                const method = $('#productId').val() ? 'PUT' : 'POST';
+                const id = $('#productId').val();
+                const formMethod = id ? 'PUT' : 'POST'; // Sử dụng PUT cho update, POST cho create
+                const url = id ? `/product/${id}` : '/product';
+                console.log('Submit URL:', url, 'Method:', formMethod);
+
                 const formData = new FormData(this);
+
+                // Set correct HTTP method for updates
+                if (id) {
+                    formData.append('_method', 'PUT'); // Use PUT for updates
+                }
+
+                // Always include status and is_featured
+                formData.append('status', $('#productStatus').is(':checked') ? '1' : '0');
+                formData.append('is_featured', $('#productIsFeatured').is(':checked') ? '1' : '0');
 
                 // Nếu không phải trạng thái chờ, hiển thị loading bình thường
                 if (!isPendingAction) {
-                    // Có thể hiển thị Swal.fire('Đang lưu...'); nếu cần
+                    Swal.fire({
+                        title: 'Đang xử lý...',
+                        text: 'Vui lòng chờ',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    });
                 }
 
-                // Xóa tất cả thông báo lỗi cũ
+                // Xóa tất cả thông báo lỗi cũ 
                 $('.text-danger').text('');
 
+                // Thu thập tất cả category IDs
+                const selectedCategoryIds = [];
+
+                // 1. Lấy parent category nếu được chọn
+                const parentCategoryId = $('#parentCategorySelect').val();
+                if (parentCategoryId) {
+                    selectedCategoryIds.push(parseInt(parentCategoryId));
+                    console.log('Selected parent category:', parentCategoryId);
+                }
+
+                // 2. Lấy child categories đã chọn
+                $('.category-checkbox:checked').each(function() {
+                    selectedCategoryIds.push(parseInt($(this).val()));
+                });
+                console.log('All selected categories:', selectedCategoryIds);
+
+                // Xóa category_ids cũ nếu có
+                formData.delete('category_ids[]');
+
+                // Thêm tất cả category IDs vào formData
+                selectedCategoryIds.forEach(id => {
+                    formData.append('category_ids[]', id);
+                });
+
+                // Log formData để debug
+                console.log('FormData categories:');
+                for (var pair of formData.entries()) {
+                    if (pair[0].includes('category')) {
+                        console.log(pair[0] + ': ' + pair[1]);
+                    }
+                }
+
+                // Lấy selected tags từ checkboxes
+                const selectedTags = $('input[name="tags[]"]:checked').map(function() {
+                    return $(this).val();
+                }).get();
+                // Xóa tags cũ nếu có
+                formData.delete('tags[]');
+                // Thêm từng tag ID vào formData
+                selectedTags.forEach(tagId => {
+                    formData.append('tags[]', tagId);
+                });
+
                 $.ajax({
-                    url: currentUrl,
-                    method: 'POST', // Laravel dùng POST cho cả PUT/PATCH qua form data
+                    url: url, // Sử dụng url đã tạo ở trên thay vì currentUrl
+                    method: 'POST', // Vẫn giữ POST vì đang dùng FormData với _method
                     data: formData,
                     processData: false,
                     contentType: false,
@@ -1965,8 +1995,8 @@
                         } else {
                             // Xử lý lưu bình thường
                             Swal.fire('Thành công!', response.success, 'success');
-                            // Nếu muốn đóng modal sản phẩm: $('#productModal').modal('hide');
-                            // Tải lại bảng sản phẩm: loadProducts(); (nếu có hàm này)
+                            $('#productModal').modal('hide');
+                            updateProductTable(response.products);
                         }
                     },
 
@@ -2487,47 +2517,6 @@
                     },
                     error: function(xhr, status, error) {
                         console.error("Error loading attribute types for manage modal:", error);
-                    }
-                });
-            }
-
-            // Load attribute values for a specific type in the main attribute modal
-            function loadAttributeValuesForManageModal(attrTypeId) {
-                $.ajax({
-                    url: `/product-attribute-types/${attrTypeId}/values`, // Route to get attribute values for a type
-                    method: 'GET',
-                    success: function(response) {
-                        let tableBody = $('#attributeValuesTableBody');
-                        tableBody.empty();
-                        if (response.attributeValues.length === 0) {
-                            tableBody.append(
-                                '<tr><td colspan="2" class="text-center">No values found.</td></tr>'
-                            );
-                        } else {
-                            response.attributeValues.forEach(value => {
-                                tableBody.append(`
-                                    <tr>
-                                        <td>${value.value}</td>
-                                        <td>
-                                            <button class="btn btn-sm btn-info edit-attr-value-btn" data-id="${value.id}" data-type-id="${value.attribute_type_id}">Edit</button>
-                                            <button class="btn btn-sm btn-danger delete-attr-value-btn" data-id="${value.id}" data-type-id="${value.attribute_type_id}">Delete</button>
-                                        </td>
-                                    </tr>
-                                `);
-                            });
-                        }
-                        // Reset form
-                        $('#attrValueForm')[0].reset();
-                        $('#attrValueFormMethod').val('POST');
-                        $('#attrValueId').val('');
-                        $('#currentAttrTypeIdForValue').val(attrTypeId);
-                        $('#cancelAttrValueEditBtn').hide();
-                        $('.text-danger').text('');
-                        $('#attrValueForm').hide(); // Hide form initially
-                        $('#addAttrValueBtn').show(); // Show add button
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Error loading attribute values for manage modal:", error);
                     }
                 });
             }

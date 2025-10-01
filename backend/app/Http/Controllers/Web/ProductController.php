@@ -7,10 +7,11 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\ProductAttributeType;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -43,6 +44,12 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        Log::info('Store method called with:', ['method' => $request->method(), 'all_data' => $request->all()]);
+
+        Log::info('Request method:', ['method' => $request->method()]);
+        Log::info('Request path:', ['path' => $request->path()]);
+        Log::info('Route:', ['route' => $request->route()->getName()]);
+
         // 1. Validation: Đảm bảo các trường NO NULL được gửi lên
         // Đặc biệt là 'name' và 'status'.
         $validatedData = $request->validate([
@@ -56,6 +63,16 @@ class ProductController extends Controller
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validation cho multiple images
             'status' => 'boolean',
             'is_featured' => 'boolean',
+        ], [
+            'name.required' => 'Tên sản phẩm là bắt buộc.',
+            'name.string' => 'Tên sản phẩm phải là chuỗi ký tự.',
+            'name.max' => 'Tên sản phẩm không được vượt quá 255 ký tự.',
+            'description.string' => 'Mô tả phải là chuỗi ký tự.',
+            'tags.*.exists' => 'Tag không hợp lệ.',
+            'img.image' => 'Ảnh chính phải là một file ảnh hợp lệ.',
+            'images.*.image' => 'Mỗi ảnh phụ phải là một file ảnh hợp lệ.',
+            'status.boolean' => 'Trạng thái không hợp lệ.',
+            'is_featured.boolean' => 'Nổi bật không hợp lệ.',
         ]);
 
         // 2. Xử lý dữ liệu trước khi tạo (QUAN TRỌNG NHẤT)
@@ -140,15 +157,18 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
-        $product = Product::find($id);
-        if (!$product) {
-            return response()->json(['error' => 'Product not found.'], 404);
-        }
+        Log::info('Product update request:', [
+            'id' => $id,
+            'method' => $request->method(),
+            'data' => $request->all()
+        ]);
 
+        // Validate
         $request->validate([
             'name' => 'required|string|max:255',
-            'category_ids' => 'required|array',
-            'category_ids.*' => 'exists:categories,id',
+            'slug' => 'string|max:255|unique:products,slug,' . $id,
+            'category_ids' => 'nullable|array',
+            'category_ids.*' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
             'tags' => 'nullable|array',
             'tags.*' => 'exists:tags,id',
@@ -158,118 +178,135 @@ class ProductController extends Controller
             'deleted_image_ids.*' => 'exists:product_images,id',
             'status' => 'boolean',
             'is_featured' => 'boolean',
+        ], [
+            'name.required' => 'Tên sản phẩm là bắt buộc.',
+            'name.string' => 'Tên sản phẩm phải là chuỗi ký tự.',
+            'name.max' => 'Tên sản phẩm không được vượt quá 255 ký tự.',
+
+            'slug.string' => 'Mã sản phẩm phải là chuỗi ký tự.',
+            'slug.max' => 'Mã sản phẩm không được vượt quá 255 ký tự.',
+            'slug.unique' => 'Mã sản phẩm đã tồn tại, vui lòng dùng tên khác.',
+
+            'category_ids.array' => 'Danh mục không hợp lệ.',
+            'category_ids.*.exists' => 'Danh mục không hợp lệ.',
+
+            'description.string' => 'Mô tả phải là chuỗi ký tự.',
+
+            'tags.array' => 'Tags không hợp lệ.',
+            'tags.*.exists' => 'Tag không hợp lệ.',
+
+            'img.image' => 'Ảnh chính phải là một file ảnh hợp lệ.',
+            'img.mimes' => 'Ảnh chính phải có định dạng: jpeg, png, jpg, gif, svg.',
+            'img.max' => 'Ảnh chính không được vượt quá 2048 KB.',
+            'images.*.image' => 'Mỗi ảnh phụ phải là một file ảnh hợp lệ.',
+            'images.*.mimes' => 'Ảnh phụ phải có định dạng: jpeg, png, jpg, gif, svg.',
+            'images.*.max' => 'Ảnh phụ không được vượt quá 2048 KB.',
+
+            'status.boolean' => 'Trạng thái không hợp lệ.',
+            'is_featured.boolean' => 'Nổi bật không hợp lệ.',
         ]);
 
-        $slug = Str::slug($request->name);
-        $originalSlug = $slug;
-        $count = 1;
-        while (Product::where('slug', $slug)->where('id', '!=', $id)->exists()) {
-            $slug = $originalSlug . '-' . $count++;
-        }
-
-        $imgPath = $product->img;
-        if ($request->hasFile('img')) {
-            if ($imgPath && Storage::disk('public')->exists($imgPath)) {
-                Storage::disk('public')->delete($imgPath);
+        DB::beginTransaction();
+        try {
+            $product = Product::find($id);
+            if (!$product) {
+                throw new \Exception('San phẩm không tồn tại.');
             }
-            $image = $request->file('img');
-            $imgPath = Storage::disk('public')->putFile('uploads/products/general', $image);
-        }
 
-        $product->update([
-            'name' => $request->name,
-            'slug' => $slug,
-            'description' => $request->description,
-            'img' => $imgPath,
-            'status' => $request->status ?? 1,
-            'is_featured' => $request->is_featured ?? 0,
-        ]);
+            // Generate unique slug for both new and existing names
+            $slug = Str::slug($request->name);
+            $originalSlug = $slug;
+            $count = 1;
 
-        if ($request->has('category_ids')) {
-            $product->categories()->sync($request->category_ids);
-        } else {
-            $product->categories()->detach();
-        }
-
-        if ($request->has('tags')) {
-            $product->tags()->sync($request->tags);
-        } else {
-            $product->tags()->detach();
-        }
-
-        // Handle additional images
-        if ($request->hasFile('images')) {
-            Log::info('Starting image upload in update method');
-            Log::info('Number of images received: ' . count($request->file('images')));
-
-            // Get max sort_order
-            $maxSortOrder = $product->images()->max('sort_order') ?? 0;
-            Log::info('Current max sort order: ' . $maxSortOrder);
-
-            foreach ($request->file('images') as $index => $image) {
-                Log::info('Processing image ' . ($index + 1));
-                $imagePath = Storage::disk('public')->putFile('uploads/products', $image);
-                Log::info('Image saved at: ' . $imagePath);
-
-                $imageRecord = $product->images()->create([
-                    'product_id' => $product->id,
-                    'image_path' => $imagePath,
-                    'is_main_gallery_image' => false,
-                    'sort_order' => $maxSortOrder + $index + 1
-                ]);
-                Log::info('Image record created:', $imageRecord->toArray());
+            while (Product::where('slug', $slug)
+                ->where('id', '!=', $id)
+                ->exists()
+            ) {
+                $slug = $originalSlug . '-' . $count++;
             }
-        } else {
-            Log::info('No new images in update request');
-        }
+            Log::info('Generated slug:', ['product_id' => $id, 'old_slug' => $product->slug, 'new_slug' => $slug]);
 
-        // Delete images if requested
-        if (!empty($request->deleted_image_ids)) {
-            Log::info('Deleting images:', ['image_ids' => $request->deleted_image_ids]);
-            $imagesToDelete = $product->images()->whereIn('id', $request->deleted_image_ids)->get();
-            foreach ($imagesToDelete as $image) {
-                if (Storage::disk('public')->exists($image->image_path)) {
-                    Storage::disk('public')->delete($image->image_path);
-                    Log::info('Deleted file: ' . $image->image_path);
+            // Handle main image
+            $imgPath = $product->img;
+            if ($request->hasFile('img')) {
+                if ($imgPath && Storage::disk('public')->exists($imgPath)) {
+                    Storage::disk('public')->delete($imgPath);
                 }
-                $image->delete();
-                Log::info('Deleted image record:', $image->toArray());
+                $imgPath = $request->file('img')->store('uploads/products/general', 'public');
             }
+
+            // Update product
+            $product->update([
+                'name' => $request->name,
+                'slug' => $slug,
+                'description' => $request->description,
+                'img' => $imgPath,
+                'status' => $request->status ?? 1,
+                'is_featured' => $request->is_featured ?? 0,
+            ]);
+
+            // Sync categories & tags
+            $product->categories()->sync($request->category_ids ?? []);
+            $product->tags()->sync($request->tags ?? []);
+
+            // Handle gallery images
+            if ($request->hasFile('images')) {
+                $maxSortOrder = $product->images()->max('sort_order') ?? 0;
+                foreach ($request->file('images') as $index => $image) {
+                    $imagePath = $image->store('uploads/products', 'public');
+                    $product->images()->create([
+                        'image_path' => $imagePath,
+                        'is_main_gallery_image' => false,
+                        'sort_order' => $maxSortOrder + $index + 1,
+                    ]);
+                }
+            }
+
+            // Delete images if requested
+            if (!empty($request->deleted_image_ids)) {
+                $imagesToDelete = $product->images()->whereIn('id', $request->deleted_image_ids)->get();
+                foreach ($imagesToDelete as $image) {
+                    if (Storage::disk('public')->exists($image->image_path)) {
+                        Storage::disk('public')->delete($image->image_path);
+                    }
+                    $image->delete();
+                }
+            }
+
+            DB::commit();
+
+            // Reload
+            $product->load(['categories', 'tags', 'variants', 'images']);
+            $products = Product::with(['categories', 'tags', 'variants', 'images'])
+                ->orderBy('name')
+                ->get();
+
+            return response()->json([
+                'success' => 'Update Sản phẩm thành công.',
+                'product' => $product,
+                'products' => $products
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating product:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Cập nhật sản phẩm thất bại.'], 500);
         }
-
-        // Reload the product with fresh relationships
-        $product->load('categories', 'tags', 'variants', 'images');
-
-        Log::info('Updated product details:', [
-            'product_id' => $product->id,
-            'images_count' => $product->images->count(),
-            'images' => $product->images->toArray()
-        ]);
-
-        // Get all products with relationships for table update
-        $products = Product::with(['categories', 'tags', 'variants', 'images'])
-            ->orderBy('name')
-            ->get();
-
-        Log::info('Returning products list with count:', ['total' => $products->count()]);
-
-        return response()->json([
-            'success' => 'Product updated successfully.',
-            'product' => $product,
-            'products' => $products
-        ]);
     }
+
 
     public function destroy($id)
     {
         $product = Product::find($id);
         if (!$product) {
-            return response()->json(['error' => 'Product not found.'], 404);
+            return response()->json(['error' => 'Sản phẩm không tồn tại.'], 404);
         }
 
         $product->categories()->detach();
         $product->tags()->detach();
-        // Variants and Images will be deleted via cascade on delete from migrations.
+        // Biến thể và ảnh sẽ được xóa thông qua cascade on delete từ migrations.
 
         if ($product->img && Storage::disk('public')->exists($product->img)) {
             Storage::disk('public')->delete($product->img);
@@ -277,6 +314,6 @@ class ProductController extends Controller
 
         $product->delete(); // Soft delete
 
-        return response()->json(['success' => 'Product deleted successfully.', 'products' => Product::with('categories', 'tags', 'variants')->orderBy('name')->get()]);
+        return response()->json(['success' => 'Xóa sản phẩm thành công.', 'products' => Product::with('categories', 'tags', 'variants')->orderBy('name')->get()]);
     }
 }
