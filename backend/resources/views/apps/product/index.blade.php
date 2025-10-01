@@ -898,6 +898,29 @@
             let currentManagingAttrTypeId = null; // Để biết loại thuộc tính nào đang được quản lý trong modal chính
 
             function updateProductTable(products) {
+                // Nếu không có dữ liệu products hợp lệ, load lại products từ server
+                if (!products || !Array.isArray(products)) {
+                    $.ajax({
+                        url: '/product',
+                        method: 'GET',
+                        success: function(response) {
+                            if (response.products) {
+                                updateProductTable(response.products);
+                                // Nếu đang thêm mới (không có currentEditingProductId)
+                                // thì mở modal edit cho sản phẩm vừa thêm
+                                if (!currentEditingProductId && response.products.length > 0) {
+                                    const latestProduct = response.products[0];
+                                    $('.edit-product-btn[data-id="' + latestProduct.id + '"]').click();
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error loading products:", error);
+                        }
+                    });
+                    return;
+                }
+
                 let tableBody = $('#products-table-body');
                 tableBody.empty();
                 let totalProducts = 0;
@@ -961,7 +984,7 @@
                                 priceDisplay = formatter.format(minPriceVariant.price);
                             }
                         } else {
-                            priceDisplay = 'Quote';
+                            priceDisplay = 'Sản phẩm yêu cầu báo giá!';
                         }
                     } else {
                         priceDisplay = 'No Variants';
@@ -1838,7 +1861,6 @@
 
                 // Hide variant management section for new product
                 $('#variantManagementSection').hide();
-                $('#createVariantBtnContainer').show();
                 currentEditingProductId = null;
 
                 // Reset các biến global liên quan
@@ -1991,12 +2013,20 @@
 
                             $('#productModal').modal('hide');
                             setupCreateVariantModal(newProductId, newProductName);
-                            $('#createVariantQuickModal').modal('show');
+                            $('#productModal').modal('show');
                         } else {
-                            // Xử lý lưu bình thường
-                            Swal.fire('Thành công!', response.success, 'success');
-                            $('#productModal').modal('hide');
-                            updateProductTable(response.products);
+                            // Xử lý lưu bình thường và chờ user xác nhận trước khi tắt modal
+                            Swal.fire({
+                                title: 'Thành công!',
+                                text: response.success,
+                                icon: 'success',
+                                allowOutsideClick: false
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $('#productModal').modal('hide');
+                                    updateProductTable(response.products);
+                                }
+                            });
                         }
                     },
 
@@ -2119,7 +2149,7 @@
                         loadTagsForProductModal(productTagIds);
 
                         $('#variantManagementSection').show(); // Hiện phần quản lý biến thể
-                        // $('#createVariantBtnContainer').hide();
+                        $('#createVariantBtnContainer').hide();
                         $('#productModal').modal('show');
                     },
                     error: function(xhr, status, error) {
