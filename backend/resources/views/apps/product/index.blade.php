@@ -172,18 +172,22 @@
                                                     $variant = $product->variants->sortBy('price')->first();
                                                 @endphp
 
-                                                @if ($variant->discount_price)
-                                                    <span>{{ number_format($variant->discount_price, 0, ',', '.') }}
-                                                        VNĐ</span>
-                                                    <br>
-                                                    <small class="text-muted" style="text-decoration: line-through;">
+                                                @if ($variant->pricing_type === 'public_price')
+                                                    @if ($variant->discount_price)
+                                                        <span>{{ number_format($variant->discount_price, 0, ',', '.') }}
+                                                            VNĐ</span>
+                                                        <br>
+                                                        <small class="text-muted" style="text-decoration: line-through;">
+                                                            {{ number_format($variant->price, 0, ',', '.') }} VNĐ
+                                                        </small>
+                                                    @else
                                                         {{ number_format($variant->price, 0, ',', '.') }} VNĐ
-                                                    </small>
+                                                    @endif
                                                 @else
-                                                    {{ number_format($variant->price, 0, ',', '.') }} VNĐ
+                                                    <p>Sản phẩm yêu cầu báo giá!</p>
                                                 @endif
                                             @else
-                                                N/A
+                                                Chưa có biến thể
                                             @endif
                                         </td>
                                         <td class="product-tags align-middle review pb-2 ps-3" style="min-width:225px;">
@@ -729,7 +733,7 @@
         const tagIndexUrl = "{{ route('tag.index') }}";
         const attributeTypeIndexUrl = "{{ route('product_attribute_type.store') }}";
         const csrfToken = "{{ csrf_token() }}";
-        
+
         // Get current URL function
         function getCurrentUrl() {
             return window.location.href.split('?')[0];
@@ -987,7 +991,7 @@
                             priceDisplay = 'Sản phẩm yêu cầu báo giá!';
                         }
                     } else {
-                        priceDisplay = 'No Variants';
+                        priceDisplay = 'Chưa có biến thể';
                     }
 
 
