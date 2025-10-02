@@ -1,46 +1,49 @@
-@extends('layouts.app')
-@section('title', 'Trang chủ')
-@section('content')
-    {{-- Thông báo cho Login Google, Fb --}}
+
+<?php $__env->startSection('title', 'Trang chủ'); ?>
+<?php $__env->startSection('content'); ?>
+    
     <div class="toast-container position-fixed top-0 end-0 p-3">
-        @if (session('success'))
+        <?php if(session('success')): ?>
             <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('success') }}
+                        <?php echo e(session('success')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
-        @endif
+        <?php endif; ?>
 
-        @if (session('error'))
+        <?php if(session('error')): ?>
             <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('error') }}
+                        <?php echo e(session('error')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
-        @endif
+        <?php endif; ?>
 
-        @if (session('warning'))
+        <?php if(session('warning')): ?>
             <div class="toast align-items-center text-bg-warning border-0" role="alert" aria-live="assertive"
                 aria-atomic="true">
                 <div class="d-flex">
                     <div class="toast-body">
-                        {{ session('warning') }}
+                        <?php echo e(session('warning')); ?>
+
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                         aria-label="Close"></button>
                 </div>
             </div>
-        @endif
+        <?php endif; ?>
     </div>
     <script>
         // JS cho phần thông báo Login Google FB
@@ -77,7 +80,7 @@
                                         class="fa-stack-1x fa-solid fa-star text-success "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0"><span data-stat="new_bookings">{{ $stats['new_bookings'] ?? 0 }}</span> yêu cầu mới</h4>
+                                    <h4 class="mb-0"><span data-stat="new_bookings"><?php echo e($stats['new_bookings'] ?? 0); ?></span> yêu cầu mới</h4>
                                     <p class="text-body-secondary fs-9 mb-0">Đang chờ xử lý</p>
                                 </div>
                             </div>
@@ -92,7 +95,7 @@
                                         class="fa-stack-1x fa-solid fa-pause text-warning "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0"><span data-stat="pending_bookings">{{ $stats['pending_bookings'] ?? 0 }}</span> yêu cầu đang chờ xử lý</h4>
+                                    <h4 class="mb-0"><span data-stat="pending_bookings"><?php echo e($stats['pending_bookings'] ?? 0); ?></span> yêu cầu đang chờ xử lý</h4>
                                     <p class="text-body-secondary fs-9 mb-0">Đang giữ</p>
                                 </div>
                             </div>
@@ -1670,6 +1673,8 @@
                 </div>
             </div>
         </div>
-        @include('partials.footer')
+        <?php echo $__env->make('partials.footer', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\BookingApp–Laravel-React\backend\resources\views/index.blade.php ENDPATH**/ ?>

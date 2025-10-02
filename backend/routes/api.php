@@ -92,3 +92,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 });
+
+Route::get('/stats', [App\Http\Controllers\DashboardController::class, 'getStats']);

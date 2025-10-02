@@ -9,7 +9,7 @@
     <!-- ===============================================-->
     <!--    Document Title-->
     <!-- ===============================================-->
-    <title>@yield('title')</title>
+    <title><?php echo $__env->yieldContent('title'); ?></title>
 
     <!-- ===============================================-->
     <!--    Favicons-->
@@ -18,7 +18,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icons/logo.png">">
     <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/icons/logo.png">">
     <link rel="shortcut icon" type="image/x-icon" href="/assets/img/icons/logo.png">>
-    {{-- <link rel="manifest" href="/assets/img/icons/logo.png"> --}}
+    
     <meta name="msapplication-TileImage" content="/assets/img/icons/logo.png">
     <meta name="theme-color" content="#ffffff">
     <script src="vendors/simplebar/simplebar.min.js"></script>
@@ -62,8 +62,8 @@
             Pusher.logToConsole = true;
 
             // Initialize Pusher
-            var pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
-                cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+            var pusher = new Pusher('<?php echo e(env('PUSHER_APP_KEY')); ?>', {
+                cluster: '<?php echo e(env('PUSHER_APP_CLUSTER')); ?>',
                 forceTLS: true
             });
 
@@ -100,8 +100,8 @@
         });
 
         // Initialize Pusher
-        const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
-            cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+        const pusher = new Pusher('<?php echo e(env('PUSHER_APP_KEY')); ?>', {
+            cluster: '<?php echo e(env('PUSHER_APP_CLUSTER')); ?>',
             forceTLS: true
         });
 
@@ -155,8 +155,8 @@
 
 <body>
     <main class="main" id="top">
-        @include('partials.sidebar')
-        @include('partials.header')
+        <?php echo $__env->make('partials.sidebar', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        <?php echo $__env->make('partials.header', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
         <script>
             var navbarTopShape = window.config.config.phoenixNavbarTopShape;
             var navbarPosition = window.config.config.phoenixNavbarPosition;
@@ -256,7 +256,7 @@
                 navbarVertical.setAttribute('data-navbar-appearance', 'darker');
             }
         </script>
-        @yield('content')
+        <?php echo $__env->yieldContent('content'); ?>
     </main><!-- ===============================================-->
     <!--    End of Main Content-->
     <!-- ===============================================-->
@@ -279,7 +279,8 @@
     <script src="assets/js/phoenix.js"></script>
     <script src="vendors/echarts/echarts.min.js"></script>
     <script src="assets/js/dashboards/ecommerce-dashboard.js"></script>
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
 </html>
+<?php /**PATH C:\laragon\www\BookingApp–Laravel-React\backend\resources\views/layouts/app.blade.php ENDPATH**/ ?>
