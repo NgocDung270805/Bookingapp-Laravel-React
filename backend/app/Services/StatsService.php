@@ -13,12 +13,11 @@ class StatsService
 {
     public function getStats()
     {
-        // Lấy timestamp 24h trước theo giờ Việt Nam
-        $now = new \DateTime('now', new \DateTimeZone('Asia/Ho_Chi_Minh'));
-        $last24Hours = $now->modify('-24 hours')->format('Y-m-d H:i:s');
+        // Lấy thời gian 24h trước (tự động theo timezone đã cấu hình)
+        $last24Hours = now()->subHours(24);
         
         $stats = [
-            'new_bookings' => DB::table('bookings')->whereRaw('CONVERT_TZ(created_at, "UTC", "Asia/Ho_Chi_Minh") >= ?', [$last24Hours])->count(),
+            'new_bookings' => DB::table('bookings')->where('created_at', '>=', $last24Hours)->count(),
             'pending_bookings' => DB::table('bookings')->where('status', 'pending')->count(),
             // Sản phẩm hết hàng
             'out_of_stock' => DB::table('product_variants')->where('quantity', 0)->count(),
