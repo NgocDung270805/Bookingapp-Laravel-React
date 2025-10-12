@@ -19,40 +19,46 @@
                             <ul class="nav collapse parent show" data-bs-parent="#navbarVerticalCollapse"
                                 id="nv-home">
                                 <li class="collapsed-nav-item-title d-none">Home</li>
-                                <li class="nav-item"><a class="nav-link active" href="{{ route('home')}}">
+                                <li class="nav-item"><a
+                                        class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                                        href="{{ route('home') }}">
                                         <div class="d-flex align-items-center"><span
                                                 class="nav-link-text">Dashboard</span></div>
                                     </a><!-- more inner pages-->
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="dashboard/project-management.html">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text">Quản lý dự án</span>
+                                <li class="nav-item"><a class="nav-link" href="#!">
+                                        <div class="d-flex align-items-center"><span class="nav-link-text">Quản lý dự
+                                                án</span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="dashboard/crm.html">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text">Quản lý quan hệ khách hàng</span>
+                                <li class="nav-item"><a class="nav-link" href="#!">
+                                        <div class="d-flex align-items-center"><span class="nav-link-text">Quản lý quan
+                                                hệ khách hàng</span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="dashboard/travel-agency.html">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text">Quản lý đại lý du lịch</span></div>
+                                <li class="nav-item"><a class="nav-link" href="#!">
+                                        <div class="d-flex align-items-center"><span class="nav-link-text">Quản lý đại
+                                                lý du lịch</span></div>
                                     </a><!-- more inner pages-->
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="dashboard/stock.html">
-                                        <div class="d-flex align-items-center"><span
-                                                class="nav-link-text">Quản lý kho</span><span
+                                <li class="nav-item"><a class="nav-link" href="#!">
+                                        <div class="d-flex align-items-center"><span class="nav-link-text">Quản lý
+                                                kho</span><span
                                                 class="badge ms-2 badge badge-phoenix badge-phoenix-warning ">new</span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="
+                                    <a class="nav-link"
+                                        href="
                                     {{-- {{ $user->hasRole('manage') ? '#' : ' --}}
                                     apps/social/feed.html
                                     {{-- ' }} --}}
-                                    " 
-                                    {{-- onclick="{{ $user->hasRole('manage') ? 'return false;' : '' }}" style="{{ $user->hasRole('manage') ? 'pointer-events: none; opacity: 0.5; cursor: not-allowed;' : '' }}" --}}
-                                        ><div class="d-flex align-items-center">
+                                    "
+                                        {{-- onclick="{{ $user->hasRole('manage') ? 'return false;' : '' }}" style="{{ $user->hasRole('manage') ? 'pointer-events: none; opacity: 0.5; cursor: not-allowed;' : '' }}" --}}>
+                                        <div class="d-flex align-items-center">
                                             <span class="nav-link-text">Nguồn cấp dữ liệu xã hội</span>
                                         </div>
                                     </a>
@@ -67,8 +73,10 @@
                     <hr class="navbar-vertical-line" /><!-- parent pages-->
                     {{-- Phần acc --}}
                     <div class="nav-item-wrapper">
-                        <a class="nav-link dropdown-indicator label-1" href="#nv-acc"
-                            role="button"data-bs-toggle="collapse" aria-expanded="false" aria-controls="nv-acc">
+                        <a class="nav-link dropdown-indicator label-1" href="#nv-acc" role="button"
+                            data-bs-toggle="collapse"
+                            aria-expanded="{{ request()->routeIs('users.*') || request()->routeIs('manager.*') ? 'true' : 'false' }}"
+                            aria-controls="nv-acc">
                             <div class="d-flex align-items-center">
                                 <div class="dropdown-indicator-icon-wrapper">
                                     <span class="fas fa-caret-right dropdown-indicator-icon"></span>
@@ -79,79 +87,42 @@
                                 <span class="nav-link-text">Account</span>
                             </div>
                         </a>
-                        <div class="parent-wrapper label-1">
-                            <ul class="nav collapse parent" data-bs-parent="#navbarVerticalCollapse" id="nv-acc">
-                                <li class="nav-item">
-                                    <a class="nav-link dropdown-indicator" href="#nv-admin-acc"
-                                        data-bs-toggle="collapse" aria-expanded="true" aria-controls="nv-admin-acc">
 
-                                        <div class="d-flex align-items-center">
-                                            <div class="dropdown-indicator-icon-wrapper"><span
-                                                    class="fas fa-caret-right dropdown-indicator-icon"></span></div>
-                                            <span class="nav-link-text">Users</span>
-                                        </div>
-                                    </a><!-- more inner pages-->
-                                    <div class="parent-wrapper">
-                                        <ul class="nav collapse parent show" data-bs-parent="#nv-acc" id="nv-admin-acc">
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('users.index') }}">
-                                                    <div class="d-flex align-items-center"><span
-                                                            class="nav-link-text">Users Manager</span>
-                                                    </div>
-                                                </a><!-- more inner pages-->
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
+                        <div class="parent-wrapper label-1">
+                            <ul class="nav collapse parent {{ request()->routeIs('users.*') || request()->routeIs('manager.*') || request()->routeIs('admin.*') ? 'show' : '' }}"
+                                data-bs-parent="#navbarVerticalCollapse" id="nv-acc">
                                 <li class="nav-item">
-                                    <a class="nav-link dropdown-indicator" href="#nv-admin" data-bs-toggle="collapse"
-                                        aria-expanded="true" aria-controls="nv-admin">
+                                    <a class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}"
+                                        href="{{ route('users.index') }}">
                                         <div class="d-flex align-items-center">
-                                            <div class="dropdown-indicator-icon-wrapper">
-                                                <span class="fas fa-caret-right dropdown-indicator-icon"></span>
-                                            </div>
-                                            <span class="nav-link-text">Manage</span>
+                                            <span class="nav-link-text">Users Manager</span>
                                         </div>
                                     </a>
-                                    <div class="parent-wrapper">
-                                        <ul class="nav collapse parent show" data-bs-parent="#e-commerce"
-                                            id="nv-admin">
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('manager.index') }}">
-                                                    <div class="d-flex align-items-center"><span
-                                                            class="nav-link-text">Manager</span></div>
-                                                </a></li>
-                                            <!-- ... các mục con khác giữ nguyên ... -->
-                                        </ul>
-                                    </div>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link dropdown-indicator" href="#nv-customer"
-                                        data-bs-toggle="collapse" aria-expanded="true" aria-controls="nv-customer">
+                                    <a class="nav-link {{ request()->routeIs('manager.index') ? 'active' : '' }}"
+                                        href="{{ route('manager.index') }}">
                                         <div class="d-flex align-items-center">
-                                            <div class="dropdown-indicator-icon-wrapper"><span
-                                                    class="fas fa-caret-right dropdown-indicator-icon"></span></div>
-                                            <span class="nav-link-text">Admin</span>
+                                            <span class="nav-link-text">Manager</span>
                                         </div>
-                                    </a><!-- more inner pages-->
-                                    <div class="parent-wrapper">
-                                        <ul class="nav collapse parent show" data-bs-parent="#e-commerce"
-                                            id="nv-customer">
-                                            <li class="nav-item"><a class="nav-link"
-                                                    href="{{ route('admin.index') }}">
-                                                    <div class="d-flex align-items-center"><span
-                                                            class="nav-link-text">Admin Manager</span></div>
-                                                </a><!-- more inner pages-->
-                                            </li>
-                                        </ul>
-                                    </div>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->routeIs('admin.index') ? 'active' : '' }}"
+                                        href="{{ route('admin.index') }}">
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-text">Admin Manager</span>
+                                        </div>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
 
                     </div><!-- parent pages-->
                     <div class="nav-item-wrapper">
-                        <a class="nav-link label-1" href="{{ route('category.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                        <a class="nav-link label-1 {{ request()->routeIs('category.index') ? 'active' : '' }}"
+                            href="{{ route('category.index') }}" role="button" data-bs-toggle=""
+                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span data-feather="layers"></span>
@@ -161,7 +132,8 @@
                         </a>
                     </div><!-- parent pages-->
                     <div class="nav-item-wrapper">
-                        <a class="nav-link label-1" href="{{ route('tag.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                        <a class="nav-link label-1 {{ request()->routeIs('tag.index') ? 'active' : '' }}"
+                            href="{{ route('tag.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span data-feather="tag"></span>
@@ -171,7 +143,9 @@
                         </a>
                     </div><!-- parent pages-->
                     <div class="nav-item-wrapper">
-                        <a class="nav-link label-1" href="{{ route('product.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                        <a class="nav-link label-1 {{ request()->routeIs('product.index') ? 'active' : '' }}"
+                            href="{{ route('product.index') }}" role="button" data-bs-toggle=""
+                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span data-feather="package"></span>
@@ -181,7 +155,9 @@
                         </a>
                     </div><!-- parent pages-->
                     <div class="nav-item-wrapper">
-                        <a class="nav-link label-1" href="{{ route('banners.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                        <a class="nav-link label-1 {{ request()->routeIs('banners.index') ? 'active' : '' }}"
+                            href="{{ route('banners.index') }}" role="button" data-bs-toggle=""
+                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span data-feather="image"></span>
@@ -192,7 +168,9 @@
                     </div><!-- parent pages-->
 
                     <div class="nav-item-wrapper">
-                        <a class="nav-link label-1" href="{{ route('banners.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                        <a class="nav-link label-1 {{ request()->routeIs('bookings.index') ? 'active' : '' }}"
+                            href="{{ route('bookings.index') }}" role="button" data-bs-toggle=""
+                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span data-feather="calendar"></span>
@@ -203,7 +181,9 @@
                     </div><!-- parent pages-->
 
                     <div class="nav-item-wrapper">
-                        <a class="nav-link label-1" href="{{ route('videos.index') }}" role="button" data-bs-toggle="" aria-expanded="false">
+                        <a class="nav-link label-1 {{ request()->routeIs('videos.index') ? 'active' : '' }}"
+                            href="{{ route('videos.index') }}" role="button" data-bs-toggle=""
+                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span data-feather="calendar"></span>
@@ -211,8 +191,8 @@
                                 <span class="nav-link-text-wrapper"><span class="nav-link-text">Video</span></span>
                             </div>
                         </a>
-                    </div><!-- parent pages-->
-                    
+                    {{-- </div><!-- parent pages-->
+
                     <div class="nav-item-wrapper"><a class="nav-link dropdown-indicator label-1"
                             href="#nv-e-commerce" role="button" data-bs-toggle="collapse" aria-expanded="false"
                             aria-controls="nv-e-commerce">
@@ -720,7 +700,8 @@
                         </div>
                     </div><!-- parent pages-->
                     <div class="nav-item-wrapper">
-                        <a class="nav-link label-1" href="apps/chat.html" role="button" data-bs-toggle="" aria-expanded="false">
+                        <a class="nav-link label-1" href="apps/chat.html" role="button" data-bs-toggle=""
+                            aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span data-feather="message-square"></span>
@@ -931,9 +912,10 @@
                                         data-feather="calendar"></span></span><span
                                     class="nav-link-text-wrapper"><span class="nav-link-text">Calendar</span></span>
                             </div>
-                        </a></div>
+                        </a>
+                    </div> --}}
                 </li>
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <!-- label-->
                     <p class="navbar-vertical-label">Pages</p>
                     <hr class="navbar-vertical-line" /><!-- parent pages-->
@@ -1062,7 +1044,8 @@
                                     </a><!-- more inner pages-->
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="pages/errors/500.html">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text">500</span>
+                                        <div class="d-flex align-items-center"><span
+                                                class="nav-link-text">500</span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
@@ -2243,7 +2226,7 @@
                                     class="nav-link-text-wrapper"><span class="nav-link-text">Showcase</span></span>
                             </div>
                         </a></div>
-                </li>
+                </li> --}}
             </ul>
         </div>
     </div>

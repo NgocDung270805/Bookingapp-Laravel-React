@@ -62,7 +62,7 @@
             <div class="row g-4">
                 <div class="col-12 col-xxl-6">
                     <div class="mb-8">
-                        <h2 class="mb-2">Dashboard</h2>
+                        <h2 class="mb-2">Thống kê hệ thống</h2>
                         <h5 class="text-body-tertiary fw-semibold">Đây là những gì mà diễn ra tại doanh nghiệp của bạn ngay
                             bây giờ</h5>
                     </div>
@@ -77,7 +77,9 @@
                                         class="fa-stack-1x fa-solid fa-star text-success "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0"><span data-stat="new_bookings">{{ $stats['new_bookings'] ?? 0 }}</span> yêu cầu mới</h4>
+                                    <h4 class="mb-0"><span
+                                            data-stat="new_bookings">{{ $stats['new_bookings'] ?? 0 }}</span> yêu cầu mới
+                                    </h4>
                                     <p class="text-body-secondary fs-9 mb-0">Đang chờ xử lý</p>
                                 </div>
                             </div>
@@ -92,7 +94,9 @@
                                         class="fa-stack-1x fa-solid fa-pause text-warning "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0"><span data-stat="pending_bookings">{{ $stats['pending_bookings'] ?? 0 }}</span> yêu cầu đang chờ xử lý</h4>
+                                    <h4 class="mb-0"><span
+                                            data-stat="pending_bookings">{{ $stats['pending_bookings'] ?? 0 }}</span> yêu
+                                        cầu đang chờ xử lý</h4>
                                     <p class="text-body-secondary fs-9 mb-0">Đang giữ</p>
                                 </div>
                             </div>
@@ -107,7 +111,8 @@
                                         class="fa-stack-1x fa-solid fa-xmark text-danger "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0"><span data-stat="out_of_stock">{{ $stats['out_of_stock'] ?? 0 }}</span> sản phẩm</h4>
+                                    <h4 class="mb-0"><span
+                                            data-stat="out_of_stock">{{ $stats['out_of_stock'] ?? 0 }}</span> sản phẩm</h4>
                                     <p class="text-body-secondary fs-9 mb-0">Hết hàng</p>
                                 </div>
                             </div>
@@ -116,17 +121,103 @@
                     <hr class="bg-body-secondary mb-6 mt-4" />
                     <div class="row flex-between-center mb-4 g-3">
                         <div class="col-auto">
-                            <h3>Tổng số bán</h3>
+                            <h3>Số lượt yêu cầu(booking)</h3>
                             <p class="text-body-tertiary lh-sm mb-0">Thanh toán nhận được trên tất cả các kênh</p>
                         </div>
-                        <div class="col-8 col-sm-4"><select class="form-select form-select-sm"
-                                id="select-gross-revenue-month">
-                                <option>Mar 1 - 31, 2022</option>
-                                <option>April 1 - 30, 2022</option>
-                                <option>May 1 - 31, 2022</option>
+                        <div class="col-8 col-sm-4"><select class="form-select form-select-sm" id="booking-filter">
+                                <option value="year">Năm</option>
+                                <option value="month">Tháng</option>
+                                <option value="day">Ngày</option>
                             </select></div>
                     </div>
-                    <div class="echart-total-sales-chart" style="min-height:320px;width:100%"></div>
+                    <div class="booking-stats-chart" style="min-height:320px;width:100%"></div>
+                    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+                    <script>
+                        const bookingChart = echarts.init(document.querySelector('.booking-stats-chart'));
+                        const loadBookingData = (filter = 'year') => {
+                            let bookingStats = {
+                                'year': @json($stats['bookings_by_year']),
+                                'month': @json($stats['bookings_by_month']),
+                                'day': @json($stats['bookings_by_day'])
+                            };
+                            
+                            let data;
+                            try {
+                                
+                                data = {
+                                    labels: bookingStats[filter].map(item => {
+                                        return item.year || item.month || item.date;
+                                    }),
+                                    values: bookingStats[filter].map(item => {
+                                        return item.count;
+                                    })
+                                };
+                            } catch (error) {
+                                return;
+                            }
+                            
+                            if (!data) {
+                                return;
+                            }
+                            bookingChart.setOption({
+                                tooltip: {
+                                    trigger: 'axis',
+                                    formatter: function(params) {
+                                        return `${params[0].axisValue}: ${params[0].value} lượt booking`
+                                    }
+                                },
+                                grid: {
+                                    left: '3%',
+                                    right: '4%',
+                                    bottom: '3%',
+                                    containLabel: true
+                                },
+                                xAxis: {
+                                    type: 'category',
+                                    data: data.labels,
+                                    boundaryGap: false,
+                                    axisLabel: {
+                                        formatter: (value) => {
+                                            if (filter === 'year') return value
+                                            if (filter === 'month') return dayjs(value).format('MM/YYYY')
+                                            return dayjs(value).format('DD/MM')
+                                        }
+                                    }
+                                },
+                                yAxis: {
+                                    type: 'value',
+                                    axisLabel: {
+                                        formatter: '{value}'
+                                    }
+                                },
+                                series: [{
+                                    name: 'Số lượt booking',
+                                    type: 'line',
+                                    data: data.values,
+                                    smooth: true,
+                                    symbol: 'circle',
+                                    symbolSize: 8,
+                                    lineStyle: {
+                                        width: 3
+                                    },
+                                    itemStyle: {
+                                        borderWidth: 2
+                                    },
+                                    areaStyle: {
+                                        opacity: 0.3
+                                    }
+                                }]
+                            });
+                        };
+
+                        // Load initial data
+                        loadBookingData('year');
+
+                        // Handle filter change
+                        document.getElementById('booking-filter').addEventListener('change', (e) => {
+                            loadBookingData(e.target.value);
+                        });
+                    </script>
                 </div>
                 <div class="col-12 col-xxl-6">
                     <div class="row g-3">
@@ -1142,7 +1233,8 @@
                                             data-bs-reference="parent"><span
                                                 class="fas fa-ellipsis-h fs-10"></span></button>
                                         <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item"
-                                                href="#!">View</a><a class="dropdown-item" href="#!">Export</a>
+                                                href="#!">View</a><a class="dropdown-item"
+                                                href="#!">Export</a>
                                             <div class="dropdown-divider"></div><a class="dropdown-item text-danger"
                                                 href="#!">Remove</a>
                                         </div>
@@ -1185,8 +1277,8 @@
                                 </td>
                                 <td class="align-middle text-start ps-5 status"><span
                                         class="badge badge-phoenix fs-10 badge-phoenix-warning"><span
-                                            class="badge-label">Pending</span><span class="ms-1" data-feather="clock"
-                                            style="height:12.8px;width:12.8px;"></span></span></td>
+                                            class="badge-label">Pending</span><span class="ms-1"
+                                            data-feather="clock" style="height:12.8px;width:12.8px;"></span></span></td>
                                 <td class="align-middle text-end time white-space-nowrap">
                                     <div class="hover-hide">
                                         <h6 class="text-body-highlight mb-0">Nov 03, 8:53 AM</h6>
@@ -1208,7 +1300,8 @@
                                             data-bs-reference="parent"><span
                                                 class="fas fa-ellipsis-h fs-10"></span></button>
                                         <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item"
-                                                href="#!">View</a><a class="dropdown-item" href="#!">Export</a>
+                                                href="#!">View</a><a class="dropdown-item"
+                                                href="#!">Export</a>
                                             <div class="dropdown-divider"></div><a class="dropdown-item text-danger"
                                                 href="#!">Remove</a>
                                         </div>
@@ -1253,8 +1346,8 @@
                                 </td>
                                 <td class="align-middle text-start ps-5 status"><span
                                         class="badge badge-phoenix fs-10 badge-phoenix-success"><span
-                                            class="badge-label">Approved</span><span class="ms-1" data-feather="check"
-                                            style="height:12.8px;width:12.8px;"></span></span></td>
+                                            class="badge-label">Approved</span><span class="ms-1"
+                                            data-feather="check" style="height:12.8px;width:12.8px;"></span></span></td>
                                 <td class="align-middle text-end time white-space-nowrap">
                                     <div class="hover-hide">
                                         <h6 class="text-body-highlight mb-0">Nov 03, 10:43 AM</h6>
@@ -1276,7 +1369,8 @@
                                             data-bs-reference="parent"><span
                                                 class="fas fa-ellipsis-h fs-10"></span></button>
                                         <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item"
-                                                href="#!">View</a><a class="dropdown-item" href="#!">Export</a>
+                                                href="#!">View</a><a class="dropdown-item"
+                                                href="#!">Export</a>
                                             <div class="dropdown-divider"></div><a class="dropdown-item text-danger"
                                                 href="#!">Remove</a>
                                         </div>

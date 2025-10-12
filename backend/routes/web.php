@@ -1,19 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\TagController;
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Web\VideoController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Web\BannerController;
 use App\Http\Controllers\Web\ProductController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Web\CategoriesController;
+use App\Http\Controllers\Web\Accounts\AdminController;
 use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
 use App\Http\Controllers\Web\ProductAttributeValueController;
 use App\Http\Controllers\Web\ProductAttributeValueConfigController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\Web\Accounts\AdminController;
 
 // ==========================================================
 // ROUTE AUTHENTICATION
@@ -35,6 +36,8 @@ Route::get('/auth/facebook/callback', [SocialiteController::class, 'handleFacebo
 // ROUTE CHO ỨNG DỤNG
 // ==========================================================
 Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('home');
+// Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/get-booking-stats', [DashboardController::class, 'getBookingStats']);
 Route::get('/pJM', [HomeController::class, 'pJM'])->middleware('auth')->name('pJM');
 Route::get('/product', [HomeController::class, 'product'])->middleware('auth')->name('product');
 Route::get('/add-product', [HomeController::class, 'addProduct'])->middleware('auth')->name('addProduct');
