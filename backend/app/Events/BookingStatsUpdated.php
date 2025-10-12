@@ -13,10 +13,12 @@ class BookingStatsUpdated implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $stats;
+    public $type;
 
-    public function __construct($stats)
+    public function __construct($stats, $type = 'booking')
     {
         $this->stats = $stats;
+        $this->type = $type;
     }
 
     public function broadcastOn()

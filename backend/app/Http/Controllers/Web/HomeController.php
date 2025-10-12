@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Web;
 
 use App\Models\User;
-use App\Services\StatsService;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Services\StatsService;
 use App\Events\BookingStatsUpdated;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 class HomeController extends Controller
 {
@@ -25,6 +26,7 @@ class HomeController extends Controller
         try {
             broadcast(new BookingStatsUpdated($stats))->toOthers();
         } catch (\Exception $e) {
+            Log::error('Failed to broadcast stats', ['error' => $e->getMessage()]);
         }
         
         return view('index', compact('stats'));

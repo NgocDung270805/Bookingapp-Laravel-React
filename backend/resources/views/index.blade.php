@@ -107,7 +107,7 @@
                                         class="fa-stack-1x fa-solid fa-xmark text-danger "
                                         data-fa-transform="shrink-2 up-8 right-6"></span></span>
                                 <div class="ms-3">
-                                    <h4 class="mb-0">15 sản phẩm</h4>
+                                    <h4 class="mb-0"><span data-stat="out_of_stock">{{ $stats['out_of_stock'] ?? 0 }}</span> sản phẩm</h4>
                                     <p class="text-body-secondary fs-9 mb-0">Hết hàng</p>
                                 </div>
                             </div>

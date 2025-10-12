@@ -2,6 +2,4 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('dashboard-stats', function () {
-    return true;
-});
+// Tất cả channels authorization rules sẽ được định nghĩa ở đây

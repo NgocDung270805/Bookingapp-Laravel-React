@@ -31,16 +31,10 @@ class DashboardController extends Controller
 
     private function getStatsData()
     {
-        $last24h = Carbon::now()->subHours(24);
-        
-        $stats = [
-            'new_bookings' => Booking::where('created_at', '>=', $last24h)->count(),
-            'pending_bookings' => Booking::where('status', 'pending')->count()
-        ];
+        $stats = $this->statsService->getStats();
 
         // Broadcast ngay khi có thay đổi
         $this->broadcastStats($stats);
-        
         return $stats;
     }
 

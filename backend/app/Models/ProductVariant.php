@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Events\BookingStatsUpdated;
+use Illuminate\Support\Facades\Log;
 
 class ProductVariant extends Model
 {
@@ -55,5 +57,31 @@ class ProductVariant extends Model
     public function attributeValues()
     {
         return $this->belongsToMany(ProductAttributeValue::class, 'product_variant_attribute_value', 'product_variant_id', 'product_attribute_value_id');
+    }
+
+    protected static function booted()
+    {
+        // Theo dõi khi tác động(real-time)
+        static::saved(function ($ProductVariant) {
+            static::broadcastStats();
+        });
+
+        static::deleted(function ($ProductVariant) {
+            static::broadcastStats();
+        });
+    }
+
+    protected static function broadcastStats()
+    {
+        // Lấy stats sản phẩm hết hàng
+        $stats = [
+            'out_of_stock' => static::where('quantity', 0)->count()
+        ];
+
+        try {
+            event(new BookingStatsUpdated($stats, 'product'));
+        } catch (\Exception $e) {
+            Log::error('Failed to broadcast product stats', ['error' => $e->getMessage()]);
+        }
     }
 }
