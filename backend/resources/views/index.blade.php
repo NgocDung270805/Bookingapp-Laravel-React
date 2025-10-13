@@ -226,12 +226,20 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-1">Tổng số đơn đặt hàng<span
-                                                    class="badge badge-phoenix badge-phoenix-warning rounded-pill fs-9 ms-2"><span
-                                                        class="badge-label">-6.8%</span></span></h5>
+                                            <h5 class="mb-1">Tổng số đơn yêu cầu(booking)
+                                                @php
+                                                    $currentWeekBookings = $stats['bookings_current_week'] ?? 0;
+                                                    $lastWeekBookings = $stats['bookings_last_week'] ?? 0;
+                                                    $percentChange = $lastWeekBookings > 0 ? 
+                                                        (($currentWeekBookings - $lastWeekBookings) / $lastWeekBookings) * 100 : 0;
+                                                @endphp
+                                                <span class="badge badge-phoenix badge-phoenix-{{ $percentChange >= 0 ? 'success' : 'warning' }} rounded-pill fs-9 ms-2">
+                                                    <span class="badge-label">{{ $percentChange >= 0 ? '+' : '' }}{{ number_format($percentChange, 1) }}%</span>
+                                                </span>
+                                            </h5>
                                             <h6 class="text-body-tertiary">7 ngày qua</h6>
                                         </div>
-                                        <h4>16,247</h4>
+                                        <h4>{{ $stats['bookings_last_7_days_summary']->total ?? 0 }}</h4>
                                     </div>
                                     <div class="d-flex justify-content-center px-4 py-6">
                                         <div class="echart-total-orders" style="height:85px;width:115px"></div>
@@ -240,12 +248,12 @@
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="bullet-item bg-primary me-2"></div>
                                             <h6 class="text-body fw-semibold flex-1 mb-0">Hoàn thành</h6>
-                                            <h6 class="text-body fw-semibold mb-0">52%</h6>
+                                            <h6 class="text-body fw-semibold mb-0">{{ $stats['bookings_last_7_days_summary']->completed ?? 0 }}</h6>
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <div class="bullet-item bg-primary-subtle me-2"></div>
                                             <h6 class="text-body fw-semibold flex-1 mb-0">Đang chờ thanh toán</h6>
-                                            <h6 class="text-body fw-semibold mb-0">48%</h6>
+                                            <h6 class="text-body fw-semibold mb-0">{{ $stats['bookings_last_7_days_summary']->pending ?? 0 }}</h6>
                                         </div>
                                     </div>
                                 </div>

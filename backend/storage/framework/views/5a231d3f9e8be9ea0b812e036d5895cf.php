@@ -22,8 +22,14 @@
                                 <li class="nav-item"><a
                                         class="nav-link <?php echo e(request()->routeIs('home') ? 'active' : ''); ?>"
                                         href="<?php echo e(route('home')); ?>">
-                                        <div class="d-flex align-items-center"><span
-                                                class="nav-link-text">Dashboard</span></div>
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-text">Dashboard</span>
+                                            <?php if(request()->routeIs('home') && isset($stats['new_bookings']) && $stats['new_bookings'] > 0): ?>
+                                                <span class="badge ms-2 badge badge-phoenix badge-phoenix-warning">
+                                                    new
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
                                     </a><!-- more inner pages-->
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="#!">
@@ -44,9 +50,11 @@
                                     </a><!-- more inner pages-->
                                 </li>
                                 <li class="nav-item"><a class="nav-link" href="#!">
-                                        <div class="d-flex align-items-center"><span class="nav-link-text">Quản lý
-                                                kho</span><span
-                                                class="badge ms-2 badge badge-phoenix badge-phoenix-warning ">new</span>
+                                        <div class="d-flex align-items-center">
+                                            <span class="nav-link-text">Quản lý kho</span>
+                                            <span class="badge ms-2 badge badge-phoenix badge-phoenix-warning">
+                                                new
+                                            </span>
                                         </div>
                                     </a><!-- more inner pages-->
                                 </li>
@@ -186,12 +194,12 @@
                             aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
-                                    <span data-feather="calendar"></span>
+                                    <span data-feather="video"></span>
                                 </span>
                                 <span class="nav-link-text-wrapper"><span class="nav-link-text">Video</span></span>
                             </div>
                         </a>
-                    
+                        
                 </li>
                 
             </ul>
@@ -201,8 +209,8 @@
         <button
             class="btn navbar-vertical-toggle border-0 fw-semibold w-100 white-space-nowrap d-flex align-items-center"><span
                 class="uil uil-left-arrow-to-left fs-8"></span><span
-                class="uil uil-arrow-from-right fs-8"></span><span
-                class="navbar-vertical-footer-text ms-2">Collapsed View</span>
+                class="uil uil-arrow-from-right fs-8"></span><span class="navbar-vertical-footer-text ms-2">Collapsed
+                View</span>
         </button>
     </div>
 </nav>
