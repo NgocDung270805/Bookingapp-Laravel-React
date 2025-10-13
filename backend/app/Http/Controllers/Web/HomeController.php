@@ -28,7 +28,7 @@ class HomeController extends Controller
         } catch (\Exception $e) {
             Log::error('Failed to broadcast stats', ['error' => $e->getMessage()]);
         }
-        // dd($stats['latest_comments']);
+        // dd($stats['new_users_last_7_days']);
         return view('index', compact('stats'));
     }
 

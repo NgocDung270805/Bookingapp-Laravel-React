@@ -61,6 +61,11 @@ class StatsService
                 ->orderBy('comments.created_at', 'desc')
                 ->get(),
 
+            // Thống kê số users mới nhất trong 7 ngày gần đây
+            'new_users_last_7_days' => DB::table('users')
+                ->where('created_at', '>=', now()->subDays(7))
+                ->count(),
+
             // Sản phẩm hết hàng
             'out_of_stock' => DB::table('product_variants')->where('quantity', 0)->count(),
         ];

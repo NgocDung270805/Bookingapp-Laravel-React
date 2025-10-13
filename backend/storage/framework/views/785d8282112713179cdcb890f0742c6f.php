@@ -125,8 +125,8 @@
                     <div class="row flex-between-center mb-4 g-3">
                         <div class="col-auto">
                             <h3>Số lượt yêu cầu(booking)<span class="fs-9 ms-2">
-                                <i class="fas fa-circle text-success"></i>
-                            </span></h3>
+                                    <i class="fas fa-circle text-success"></i>
+                                </span></h3>
                             <p class="text-body-tertiary lh-sm mb-0">Thanh toán nhận được trên tất cả các kênh</p>
                         </div>
                         <div class="col-8 col-sm-4"><select class="form-select form-select-sm" id="booking-filter">
@@ -280,12 +280,24 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-1">Khách hàng mới<span
-                                                    class="badge badge-phoenix badge-phoenix-warning rounded-pill fs-9 ms-2">
-                                                    <span class="badge-label">+26.5%</span></span></h5>
+                                            <h5 class="mb-1">Khách hàng mới<span class="fs-9 ms-2">
+                                                    <i class="fas fa-circle text-success"></i>
+                                                </span>
+                                                <?php
+                                                    $currentNewUsers = $stats['new_users_last_7_days'] ?? 0;
+                                                    $prevNewUsers = $stats['new_users_previous_7_days'] ?? 0;
+                                                    $userPercentChange = $prevNewUsers > 0 
+                                                        ? (($currentNewUsers - $prevNewUsers) / $prevNewUsers) * 100 
+                                                        : 0;
+                                                ?>
+                                                <span
+                                                    class="badge badge-phoenix badge-phoenix-<?php echo e($userPercentChange >= 0 ? 'success' : 'warning'); ?> rounded-pill fs-9 ms-2">
+                                                    <span class="badge-label"><?php echo e($userPercentChange >= 0 ? '+' : ''); ?><?php echo e(number_format($userPercentChange, 1)); ?>%</span>
+                                                </span>
+                                            </h5>
                                             <h6 class="text-body-tertiary">7 ngày qua</h6>
                                         </div>
-                                        <h4>356</h4>
+                                        <h4><?php echo e($stats['new_users_last_7_days']); ?></h4>
                                     </div>
                                     <div class="pb-0 pt-4">
                                         <div class="echarts-new-customers" style="height:180px;width:100%;"></div>
@@ -442,7 +454,8 @@
                                     <td class="align-middle product white-space-nowrap"><a
                                             class="d-flex align-items-center text-body"
                                             href="apps/e-commerce/landing/profile.html">
-                                            <img src="<?php echo e(asset('storage/' . ($comment->user_avatar ? $comment->user_avatar : 'uploads/avatars/admin.png'))); ?>" alt="" width="53" />
+                                            <img src="<?php echo e(asset('storage/' . ($comment->user_avatar ? $comment->user_avatar : 'uploads/avatars/admin.png'))); ?>"
+                                                alt="" width="53" />
                                             <h6 class="mb-0 ms-3 text-body"><?php echo e($comment->user_name); ?></h6>
                                         </a></td>
                                     <td class="align-middle rating white-space-nowrap fs-10"><span
@@ -463,7 +476,10 @@
                                     </td>
                                     <td class="align-middle text-end time white-space-nowrap">
                                         <div class="hover-hide">
-                                            <h6 class="text-body-highlight mb-0"><?php echo e(\Carbon\Carbon::parse($comment->created_at)->format('H:i:s d/m/Y')); ?></h6>
+                                            <h6 class="text-body-highlight mb-0">
+                                                <?php echo e(\Carbon\Carbon::parse($comment->created_at)->format('H:i:s d/m/Y')); ?>
+
+                                            </h6>
                                         </div>
                                     </td>
                                     <td class="align-middle white-space-nowrap text-end pe-0">
