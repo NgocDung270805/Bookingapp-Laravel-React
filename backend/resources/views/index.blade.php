@@ -121,7 +121,9 @@
                     <hr class="bg-body-secondary mb-6 mt-4" />
                     <div class="row flex-between-center mb-4 g-3">
                         <div class="col-auto">
-                            <h3>Số lượt yêu cầu(booking)</h3>
+                            <h3>Số lượt yêu cầu(booking)<span class="fs-9 ms-2">
+                                <i class="fas fa-circle text-success"></i>
+                            </span></h3>
                             <p class="text-body-tertiary lh-sm mb-0">Thanh toán nhận được trên tất cả các kênh</p>
                         </div>
                         <div class="col-8 col-sm-4"><select class="form-select form-select-sm" id="booking-filter">
@@ -140,10 +142,10 @@
                                 'month': @json($stats['bookings_by_month']),
                                 'day': @json($stats['bookings_by_day'])
                             };
-                            
+
                             let data;
                             try {
-                                
+
                                 data = {
                                     labels: bookingStats[filter].map(item => {
                                         return item.year || item.month || item.date;
@@ -155,7 +157,7 @@
                             } catch (error) {
                                 return;
                             }
-                            
+
                             if (!data) {
                                 return;
                             }
@@ -227,14 +229,23 @@
                                     <div class="d-flex justify-content-between">
                                         <div>
                                             <h5 class="mb-1">Tổng số đơn yêu cầu(booking)
+                                                <span class="fs-9 ms-2">
+                                                    <i class="fas fa-circle text-success"></i>
+                                                </span>
                                                 @php
                                                     $currentWeekBookings = $stats['bookings_current_week'] ?? 0;
                                                     $lastWeekBookings = $stats['bookings_last_week'] ?? 0;
-                                                    $percentChange = $lastWeekBookings > 0 ? 
-                                                        (($currentWeekBookings - $lastWeekBookings) / $lastWeekBookings) * 100 : 0;
+                                                    $percentChange =
+                                                        $lastWeekBookings > 0
+                                                            ? (($currentWeekBookings - $lastWeekBookings) /
+                                                                    $lastWeekBookings) *
+                                                                100
+                                                            : 0;
                                                 @endphp
-                                                <span class="badge badge-phoenix badge-phoenix-{{ $percentChange >= 0 ? 'success' : 'warning' }} rounded-pill fs-9 ms-2">
-                                                    <span class="badge-label">{{ $percentChange >= 0 ? '+' : '' }}{{ number_format($percentChange, 1) }}%</span>
+                                                <span
+                                                    class="badge badge-phoenix badge-phoenix-{{ $percentChange >= 0 ? 'success' : 'warning' }} rounded-pill fs-9 ms-2">
+                                                    <span
+                                                        class="badge-label">{{ $percentChange >= 0 ? '+' : '' }}{{ number_format($percentChange, 1) }}%</span>
                                                 </span>
                                             </h5>
                                             <h6 class="text-body-tertiary">7 ngày qua</h6>
@@ -248,12 +259,14 @@
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="bullet-item bg-primary me-2"></div>
                                             <h6 class="text-body fw-semibold flex-1 mb-0">Hoàn thành</h6>
-                                            <h6 class="text-body fw-semibold mb-0">{{ $stats['bookings_last_7_days_summary']->completed ?? 0 }}</h6>
+                                            <h6 class="text-body fw-semibold mb-0">
+                                                {{ $stats['bookings_last_7_days_summary']->completed ?? 0 }}</h6>
                                         </div>
                                         <div class="d-flex align-items-center">
                                             <div class="bullet-item bg-primary-subtle me-2"></div>
-                                            <h6 class="text-body fw-semibold flex-1 mb-0">Đang chờ thanh toán</h6>
-                                            <h6 class="text-body fw-semibold mb-0">{{ $stats['bookings_last_7_days_summary']->pending ?? 0 }}</h6>
+                                            <h6 class="text-body fw-semibold flex-1 mb-0">Đang chờ xử lý</h6>
+                                            <h6 class="text-body fw-semibold mb-0">
+                                                {{ $stats['bookings_last_7_days_summary']->pending ?? 0 }}</h6>
                                         </div>
                                     </div>
                                 </div>
@@ -346,7 +359,11 @@
             <div data-list='{"valueNames":["product","customer","rating","review","time"],"page":6}'>
                 <div class="row align-items-end justify-content-between pb-5 g-3">
                     <div class="col-auto">
-                        <h3>Đánh giá mới nhất</h3>
+                        <h3>Bình luận mới nhất
+                            <span class="fs-9 ms-2">
+                                <i class="fas fa-circle text-success"></i>
+                            </span>
+                        </h3>
                         <p class="text-body-tertiary lh-sm mb-0">Thanh toán đã nhận trên tất cả các kênh</p>
                     </div>
                     <div class="col-12 col-md-auto">
@@ -394,7 +411,7 @@
                                 <th class="sort align-middle" scope="col" data-sort="rating"
                                     style="min-width:110px;">ĐÁNH GIÁ</th>
                                 <th class="sort align-middle" scope="col" style="max-width:350px;"
-                                    data-sort="review">NHẬN XÉT</th>
+                                    data-sort="review">BÌNH LUẬN</th>
                                 <th class="sort text-start ps-5 align-middle" scope="col" data-sort="status">TRẠNG
                                     THÁI
                                 </th>
@@ -403,73 +420,75 @@
                             </tr>
                         </thead>
                         <tbody class="list" id="table-latest-review-body">
-                            <tr class="hover-actions-trigger btn-reveal-trigger position-static">
-                                <td class="fs-9 align-middle ps-0">
-                                    <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox"
-                                            data-bulk-select-row='{"product":"Fitbit Sense Advanced Smartwatch with Tools for Heart Health, Stress Management & Skin Temperature Trends, Carbon/Graphite, One Size (S & L Bands)","productImage":"/products/60x60/1.png","customer":{"name":"Richard Dawkins","avatar":""},"rating":5,"review":"This Fitbit is fantastic! I was trying to be in better shape and needed some motivation, so I decided to treat myself to a new Fitbit.","status":{"title":"Approved","badge":"success","icon":"check"},"time":"Just now"}' />
-                                    </div>
-                                </td>
-                                <td class="align-middle product white-space-nowrap py-0"><a
-                                        class="d-block rounded-2 border border-translucent"
-                                        href="apps/e-commerce/landing/product-details.html"><img
-                                            src="assets/img//products/60x60/1.png" alt="" width="53" /></a>
-                                </td>
-                                <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
-                                        href="apps/e-commerce/landing/product-details.html">Fitbit Sense Advanced
-                                        Smartwatch with Tools
-                                        fo...</a></td>
-                                <td class="align-middle customer white-space-nowrap"><a
-                                        class="d-flex align-items-center text-body"
-                                        href="apps/e-commerce/landing/profile.html">
-                                        <div class="avatar avatar-l">
-                                            <div class="avatar-name rounded-circle"><span>R</span></div>
+                            @foreach ($stats['latest_comments'] as $comment)
+                                <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+                                    <td class="fs-9 align-middle ps-0">
+                                        <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox"
+                                                data-bulk-select-row='{"product":"Fitbit Sense Advanced Smartwatch with Tools for Heart Health, Stress Management & Skin Temperature Trends, Carbon/Graphite, One Size (S & L Bands)","productImage":"/products/60x60/1.png","customer":{"name":"Richard Dawkins","avatar":""},"rating":5,"review":"This Fitbit is fantastic! I was trying to be in better shape and needed some motivation, so I decided to treat myself to a new Fitbit.","status":{"title":"Approved","badge":"success","icon":"check"},"time":"Just now"}' />
                                         </div>
-                                        <h6 class="mb-0 ms-3 text-body">Richard Dawkins</h6>
-                                    </a></td>
-                                <td class="align-middle rating white-space-nowrap fs-10"><span
-                                        class="fa fa-star text-warning"></span><span
-                                        class="fa fa-star text-warning"></span><span
-                                        class="fa fa-star text-warning"></span><span
-                                        class="fa fa-star text-warning"></span><span
-                                        class="fa fa-star text-warning"></span></td>
-                                <td class="align-middle review" style="min-width:350px;">
-                                    <p class="fs-9 fw-semibold text-body-highlight mb-0">This Fitbit is fantastic! I was
-                                        trying to be in
-                                        better shape and needed some motivation, so I decided to treat myself to a new
-                                        Fitbit.</p>
-                                </td>
-                                <td class="align-middle text-start ps-5 status"><span
-                                        class="badge badge-phoenix fs-10 badge-phoenix-success"><span
-                                            class="badge-label">Approved</span><span class="ms-1" data-feather="check"
-                                            style="height:12.8px;width:12.8px;"></span></span></td>
-                                <td class="align-middle text-end time white-space-nowrap">
-                                    <div class="hover-hide">
-                                        <h6 class="text-body-highlight mb-0">Just now</h6>
-                                    </div>
-                                </td>
-                                <td class="align-middle white-space-nowrap text-end pe-0">
-                                    <div class="position-relative">
-                                        <div class="hover-actions"><button
-                                                class="btn btn-sm btn-phoenix-secondary me-1 fs-10"><span
-                                                    class="fas fa-check"></span></button><button
-                                                class="btn btn-sm btn-phoenix-secondary fs-10"><span
-                                                    class="fas fa-trash"></span></button>
+                                    </td>
+                                    <td class="align-middle product white-space-nowrap py-0"><a
+                                            class="d-block rounded-2 border border-translucent"
+                                            href="apps/e-commerce/landing/product-details.html"><img
+                                                src="{{ asset('storage/' . $comment->product_image) }}" alt=""
+                                                width="53" /></a>
+                                    </td>
+                                    <td class="align-middle product white-space-nowrap"><a class="fw-semibold"
+                                            href="apps/e-commerce/landing/product-details.html">{{ $comment->product_name }}</a>
+                                    </td>
+                                    <td class="align-middle product white-space-nowrap"><a
+                                            class="d-flex align-items-center text-body"
+                                            href="apps/e-commerce/landing/profile.html">
+                                            <img src="{{ asset('storage/' . ($comment->user_avatar ? $comment->user_avatar : 'uploads/avatars/admin.png')) }}" alt="" width="53" />
+                                            <h6 class="mb-0 ms-3 text-body">{{ $comment->user_name }}</h6>
+                                        </a></td>
+                                    <td class="align-middle rating white-space-nowrap fs-10"><span
+                                            class="fa fa-star text-warning"></span><span
+                                            class="fa fa-star text-warning"></span><span
+                                            class="fa fa-star text-warning"></span><span
+                                            class="fa fa-star text-warning"></span><span
+                                            class="fa fa-star text-warning"></span></td>
+                                    <td class="align-middle review" style="min-width:350px;">
+                                        <p class="fs-9 fw-semibold text-body-highlight mb-0">{{ $comment->content }}</p>
+                                    </td>
+                                    <td class="align-middle text-start ps-5 status">
+                                        <span class="badge badge-phoenix fs-10 badge-phoenix-success">
+                                            <span class="badge-label">Thành công</span>
+                                            <span class="ms-1" data-feather="check"
+                                                style="height:12.8px;width:12.8px;"></span>
+                                        </span>
+                                    </td>
+                                    <td class="align-middle text-end time white-space-nowrap">
+                                        <div class="hover-hide">
+                                            <h6 class="text-body-highlight mb-0">{{ \Carbon\Carbon::parse($comment->created_at)->format('H:i:s d/m/Y') }}</h6>
                                         </div>
-                                    </div>
-                                    <div class="btn-reveal-trigger position-static"><button
-                                            class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10"
-                                            type="button" data-bs-toggle="dropdown" data-boundary="window"
-                                            aria-haspopup="true" aria-expanded="false" data-bs-reference="parent"><span
-                                                class="fas fa-ellipsis-h fs-10"></span></button>
-                                        <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item"
-                                                href="#!">View</a><a class="dropdown-item" href="#!">Export</a>
-                                            <div class="dropdown-divider"></div><a class="dropdown-item text-danger"
-                                                href="#!">Remove</a>
+                                    </td>
+                                    <td class="align-middle white-space-nowrap text-end pe-0">
+                                        <div class="position-relative">
+                                            <div class="hover-actions"><button
+                                                    class="btn btn-sm btn-phoenix-secondary me-1 fs-10"><span
+                                                        class="fas fa-check"></span></button><button
+                                                    class="btn btn-sm btn-phoenix-secondary fs-10"><span
+                                                        class="fas fa-trash"></span></button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="hover-actions-trigger btn-reveal-trigger position-static">
+                                        <div class="btn-reveal-trigger position-static"><button
+                                                class="btn btn-sm dropdown-toggle dropdown-caret-none transition-none btn-reveal fs-10"
+                                                type="button" data-bs-toggle="dropdown" data-boundary="window"
+                                                aria-haspopup="true" aria-expanded="false"
+                                                data-bs-reference="parent"><span
+                                                    class="fas fa-ellipsis-h fs-10"></span></button>
+                                            <div class="dropdown-menu dropdown-menu-end py-2"><a class="dropdown-item"
+                                                    href="#!">View</a><a class="dropdown-item"
+                                                    href="#!">Export</a>
+                                                <div class="dropdown-divider"></div><a class="dropdown-item text-danger"
+                                                    href="#!">Remove</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            {{-- <tr class="hover-actions-trigger btn-reveal-trigger position-static">
                                 <td class="fs-9 align-middle ps-0">
                                     <div class="form-check mb-0 fs-8"><input class="form-check-input" type="checkbox"
                                             data-bulk-select-row='{"product":"iPhone 13 pro max-Pacific Blue-128GB storage","productImage":"/products/60x60/2.png","customer":{"name":"Ashley Garrett","avatar":"/team/40x40/59.webp"},"rating":3,"review":"The order was delivered ahead of schedule. To give us additional time, you should leave the packaging sealed with plastic.","status":{"title":"Approved","badge":"success","icon":"check"},"time":"Just now"}' />
@@ -1384,7 +1403,7 @@
                                         </div>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> --}}
                         </tbody>
                     </table>
                 </div>
@@ -1506,8 +1525,7 @@
                                         <div class="d-flex align-items-center">
                                             <h6 class="mb-0 me-3">3. </h6><a href="#!">
                                                 <div class="d-flex align-items-center"><img
-                                                        src="assets/img/country/usa.png" alt=""
-                                                        width="24" />
+                                                        src="assets/img/country/usa.png" alt="" width="24" />
                                                     <p class="mb-0 ps-3 text-primary fw-bold fs-9">USA</p>
                                                 </div>
                                             </a>
@@ -1731,8 +1749,8 @@
                     <div class="row align-items-center py-1">
                         <div class="pagination d-none"></div>
                         <div class="col d-flex fs-9">
-                            <p class="mb-0 d-none d-sm-block me-3 fw-semibold text-body"
-                                data-list-info="data-list-info"></p>
+                            <p class="mb-0 d-none d-sm-block me-3 fw-semibold text-body" data-list-info="data-list-info">
+                            </p>
                         </div>
                         <div class="col-auto d-flex">
                             <button class="btn btn-link px-1 me-1" type="button" title="Previous"

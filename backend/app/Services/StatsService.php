@@ -51,6 +51,16 @@ class StatsService
                 ->where('created_at', '>=', now()->subDays(7))
                 ->first(),
 
+            // Thống kê commet mới nhất của tất cả sản phẩm, và kèm theo lấy tên sản phẩm kèm theo ảnh sản phẩm ở table product_variants và tên user kèm hình ảnh table users_profiles
+            'latest_comments' => DB::table('comments')
+                ->join('products', 'comments.product_id', '=', 'products.id')
+                ->join('users', 'comments.user_id', '=', 'users.id')
+                ->join('users_profiles', 'users.id', '=', 'users_profiles.user_id')
+                ->join('product_variants', 'products.id', '=', 'product_variants.product_id')
+                ->select('comments.*', 'products.name as product_name', 'users.name as user_name', 'users_profiles.avatar as user_avatar', 'product_variants.img as product_image')
+                ->orderBy('comments.created_at', 'desc')
+                ->get(),
+
             // Sản phẩm hết hàng
             'out_of_stock' => DB::table('product_variants')->where('quantity', 0)->count(),
         ];
