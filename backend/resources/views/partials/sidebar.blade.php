@@ -117,7 +117,8 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->routeIs('admin.index') ? 'active' : '' }}"
-                                        href="{{ route('admin.index') }}">
+                                        href="{{ $user->hasRole('manager') ? '#' : route('admin.index') }}"
+                                        onclick="{{ $user->hasRole('manager') ? 'return false;' : '' }}" style="{{ $user->hasRole('manager') ? 'pointer-events: none; opacity: 0.5; cursor: not-allowed;' : '' }}">
                                         <div class="d-flex align-items-center">
                                             <span class="nav-link-text">Admin Manager</span>
                                         </div>

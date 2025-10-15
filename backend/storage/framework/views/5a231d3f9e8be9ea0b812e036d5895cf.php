@@ -117,7 +117,8 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link <?php echo e(request()->routeIs('admin.index') ? 'active' : ''); ?>"
-                                        href="<?php echo e(route('admin.index')); ?>">
+                                        href="<?php echo e($user->hasRole('manager') ? '#' : route('admin.index')); ?>"
+                                        onclick="<?php echo e($user->hasRole('manager') ? 'return false;' : ''); ?>" style="<?php echo e($user->hasRole('manager') ? 'pointer-events: none; opacity: 0.5; cursor: not-allowed;' : ''); ?>">
                                         <div class="d-flex align-items-center">
                                             <span class="nav-link-text">Admin Manager</span>
                                         </div>

@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
 use App\Http\Controllers\Web\ProductAttributeValueController;
 use App\Http\Controllers\Web\ProductAttributeValueConfigController;
+use App\Http\Middleware\AdminMiddleware;
 
 // ==========================================================
 // ROUTE AUTHENTICATION
@@ -44,18 +45,14 @@ Route::get('/add-product', [HomeController::class, 'addProduct'])->middleware('a
 // ==========================================================
 // ROUTE CHO QUẢN LÝ TÀI KHOẢN
 // ==========================================================
-
-// Route cho quản lý tài khoản admin
-Route::get('/admin', [AdminController::class, 'index'])->middleware('auth')->name('admin.index'); // Admin
+Route::get('/admin', [AdminController::class, 'index'])->middleware(AdminMiddleware::class)->name('admin.index'); // Route cho quản lý tài khoản admin
 Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->middleware('auth')->name('admin.edit');
 Route::post('/admin/update/{id}', [AdminController::class, 'update'])->middleware('auth')->name('admin.update');
 Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->middleware('auth')->name('admin.assign_roles'); // Phân quyền roles
 
-// Route cho quản lý tài khoản manager
-Route::get('/manager', [AdminController::class, 'showManage'])->middleware('auth')->name('manager.index');
+Route::get('/manager', [AdminController::class, 'showManage'])->middleware('auth')->name('manager.index');// Route cho quản lý tài khoản manager
 
-// Route cho quản lý tài khoản user
-Route::get('/users', [AdminController::class, 'showUsers'])->middleware('auth')->name('users.index');
+Route::get('/users', [AdminController::class, 'showUsers'])->middleware('auth')->name('users.index');// Route cho quản lý tài khoản user
 
 
 // ==========================================================

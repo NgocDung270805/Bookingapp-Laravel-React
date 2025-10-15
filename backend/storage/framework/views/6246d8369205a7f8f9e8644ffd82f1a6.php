@@ -6,6 +6,20 @@
         <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
             integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+            toastr.options = {
+                "position": 'top-right',
+                "autoClose": 3000,
+                "hideProgressBar": false,
+                "closeOnClick": true,
+                "pauseOnHover": true,
+                "draggable": true,
+                "progress": undefined
+            };
+        </script>
     </head>
     <div class="content">
         <h2 class="mb-2 lh-sm">Accounts Manager</h2>
@@ -111,8 +125,7 @@
                                                                         <a class="dropdown-item edit-account-btn"
                                                                             href="#">Chỉnh sửa tài khoản</a>
                                                                         <div class="dropdown-divider"></div>
-                                                                        <a
-                                                                            class="dropdown-item text-danger"
+                                                                        <a class="dropdown-item text-danger"
                                                                             href="#!">Xóa</a>
                                                                     </div>
                                                                 </div>
@@ -417,6 +430,15 @@
     </div>
 
     <script>
+        // Helper function for notifications
+        function showNotification(message, type = 'success') {
+            if (type === 'success') {
+                toastr.success(message);
+            } else {
+                toastr.error(message);
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
             const editUserForm = document.getElementById('editUserForm');
@@ -574,7 +596,7 @@
                                     const div = document.createElement('div');
                                     div.classList.add('form-check');
                                     const input = document.createElement('input');
-                                    input.type = 'checkbox';
+                                    input.type = 'radio';
                                     input.classList.add('form-check-input');
                                     input.id = `role-${role.name}`;
                                     input.name =
@@ -613,7 +635,7 @@
                             if (error.message && typeof error.message === 'string') {
                                 errorMessage = error.message;
                             }
-                            alert(errorMessage);
+                            toastr.error(errorMessage);
                         });
                 });
             });
@@ -671,9 +693,11 @@
                         return response.json();
                     })
                     .then(data => {
-                        alert(data.message);
+                        showNotification(data.message, 'success');
                         editUserModal.hide();
-                        location.reload();
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
                     })
                     .catch(error => {
                         console.error('Lỗi khi cập nhật người dùng (catch block):', error);
@@ -690,7 +714,7 @@
                         } else {
                             errorMessage = 'Lỗi không xác định xảy ra.';
                         }
-                        alert(errorMessage);
+                        toastr.error(errorMessage);
                     });
             });
         });

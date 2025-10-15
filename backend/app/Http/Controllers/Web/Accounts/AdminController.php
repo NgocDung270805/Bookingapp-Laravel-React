@@ -6,7 +6,6 @@ use Throwable;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 
@@ -29,7 +28,6 @@ class AdminController extends Controller
             ELSE 4 END")
             ->with('roles') // để eager load
             ->get();
-        // dd($admins);
         return view('apps.account.admin.index', compact('admins'));
     }
 
@@ -53,7 +51,6 @@ class AdminController extends Controller
 
             return response()->json($user);
         } catch (Throwable $e) {
-            Log::error('Lỗi khi tìm nạp dữ liệu người dùng: ' . $e->getMessage());
             return response()->json(['message' => 'Đã xảy ra lỗi khi tìm nạp dữ liệu.'], 500);
         }
     }
@@ -148,10 +145,8 @@ class AdminController extends Controller
 
             return response()->json(['message' => 'Thông tin người dùng và vai trò đã được cập nhật thành công'], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Lỗi xác thực khi cập nhật người dùng: ' . json_encode($e->errors()));
             return response()->json(['message' => 'Lỗi xác thực', 'errors' => $e->errors()], 422);
         } catch (Throwable $e) {
-            Log::error('Lỗi chung khi cập nhật người dùng: ' . $e->getMessage());
             return response()->json(['message' => 'Đã xảy ra lỗi khi cập nhật dữ liệu.'], 500);
         }
     }
@@ -176,10 +171,8 @@ class AdminController extends Controller
 
             return response()->json(['message' => 'Phân quyền đã được cập nhật thành công'], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Lỗi xác thực khi phân quyền: ' . json_encode($e->errors()));
             return response()->json(['message' => 'Lỗi xác thực', 'errors' => $e->errors()], 422);
         } catch (Throwable $e) {
-            Log::error('Lỗi chung khi phân quyền: ' . $e->getMessage());
             return response()->json(['message' => 'Đã xảy ra lỗi khi phân quyền.'], 500);
         }
     }
@@ -193,8 +186,6 @@ class AdminController extends Controller
             })
             ->orderBy('id', 'desc')
             ->get();
-        
-        // dd($admins);
         return view('apps.account.manager.index', compact('admins'));
     }
 
@@ -207,8 +198,6 @@ class AdminController extends Controller
             })
             ->orderBy('id', 'desc')
             ->get();
-        
-        // dd($admins);
         return view('apps.account.users.index', compact('admins'));
     }
 }
