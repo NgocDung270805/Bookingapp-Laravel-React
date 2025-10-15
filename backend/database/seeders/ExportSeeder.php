@@ -19,6 +19,7 @@ class ExportSeeder extends Seeder
         // Danh sách bảng và thư mục lưu trữ
         $tables = [
             // Các bảng cốt lõi (không có khóa ngoại hoặc chỉ tự tham chiếu)
+            'migrations' => 'Migrations',
             'users' => 'Users',
             'permissions' => 'Permissions',
             'roles' => 'Roles',
@@ -26,6 +27,7 @@ class ExportSeeder extends Seeder
             'tags' => 'Tags',
             'product_attribute_types' => 'Product Attribute Types',
             'banners' => 'Banners',
+            'videos' => 'Videos',
 
             // Các bảng phụ thuộc Level 1
             'personal_access_tokens' => 'Personal Access Tokens', // Được giữ lại theo yêu cầu
@@ -41,6 +43,7 @@ class ExportSeeder extends Seeder
             'bookings' => 'Bookings',
             'comments' => 'Comments',
             'category_tag' => 'Category Tag',
+            'video_category' => 'Video Category',
             'product_category' => 'Product Category',
             'product_favorites' => 'Product Favorites',
             'product_images' => 'Product Images',

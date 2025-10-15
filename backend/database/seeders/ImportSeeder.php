@@ -31,6 +31,7 @@ class ImportSeeder extends Seeder
             'product_favorites',
             'product_category',
             'category_tag',
+            'video_category',
             'comments',
             'bookings',
 
@@ -45,6 +46,7 @@ class ImportSeeder extends Seeder
             'personal_access_tokens',
 
             // Các bảng cốt lõi (truncate sau cùng trong nhóm ứng dụng)
+            'videos',
             'banners',
             'product_attribute_types',
             'tags',
@@ -81,6 +83,7 @@ class ImportSeeder extends Seeder
         // Bây giờ bao gồm tất cả các bảng bạn muốn import, theo thứ tự hợp lý
         $tablesToImport = [
             // Các bảng cốt lõi (import trước tiên)
+            'migrations' => 'Migrations',
             'users' => 'Users',
             'permissions' => 'Permissions',
             'roles' => 'Roles',
@@ -88,6 +91,7 @@ class ImportSeeder extends Seeder
             'tags' => 'Tags',
             'product_attribute_types' => 'Product Attribute Types',
             'banners' => 'Banners',
+            'videos' => 'Videos',
 
             // Các bảng phụ thuộc Level 1
             'personal_access_tokens' => 'Personal Access Tokens',
@@ -103,6 +107,7 @@ class ImportSeeder extends Seeder
             'bookings' => 'Bookings',
             'comments' => 'Comments',
             'category_tag' => 'Category Tag',
+            'video_category' => 'Video Category',
             'product_category' => 'Product Category',
             'product_favorites' => 'Product Favorites',
             'product_images' => 'Product Images',

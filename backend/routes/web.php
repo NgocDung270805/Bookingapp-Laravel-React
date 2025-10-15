@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\TagController;
 use App\Http\Controllers\Web\HomeController;
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Web\VideoController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Web\BannerController;
+use App\Http\Controllers\Web\BookingController;
 use App\Http\Controllers\Web\ProductController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Web\CategoriesController;
@@ -36,8 +36,6 @@ Route::get('/auth/facebook/callback', [SocialiteController::class, 'handleFacebo
 // ROUTE CHO ỨNG DỤNG
 // ==========================================================
 Route::get('/', [HomeController::class, 'index'])->middleware('auth')->name('home');
-// Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/get-booking-stats', [DashboardController::class, 'getBookingStats']);
 Route::get('/pJM', [HomeController::class, 'pJM'])->middleware('auth')->name('pJM');
 Route::get('/product', [HomeController::class, 'product'])->middleware('auth')->name('product');
 Route::get('/add-product', [HomeController::class, 'addProduct'])->middleware('auth')->name('addProduct');
@@ -97,6 +95,22 @@ Route::prefix('tag')->name('tag.')->middleware('auth')->group(function () {
     Route::delete('/{id}', [TagController::class, 'destroy'])->name('destroy');
 });
 
+
+// ==========================================================
+// ROUTE CHO BOOKING
+// ==========================================================
+Route::prefix('bookings')->name('booking.')->middleware('auth')->group(function () {
+    Route::get('/', [BookingController::class, 'index'])->name('index');
+    Route::get('/create', [BookingController::class, 'create'])->name('create');
+    Route::post('/', [BookingController::class, 'store'])->name('store');
+    Route::get('/{id}', [BookingController::class, 'show'])->name('show');
+    Route::get('/{id}/edit', [BookingController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [BookingController::class, 'update'])->name('update');
+    Route::delete('/{id}', [BookingController::class, 'destroy'])->name('destroy');
+    Route::post('/{id}/approve', [BookingController::class, 'approve'])->name('approve');
+    Route::post('/{id}/reject', [BookingController::class, 'reject'])->name('reject');
+    Route::post('/{id}/status', [BookingController::class, 'changeStatus'])->name('bookings.status');
+});
 
 // ==========================================================
 // ROUTE CHO QUẢN LÝ SẢN PHẨM VÀ BIẾN THỂ SẢN PHẨM

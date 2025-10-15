@@ -177,7 +177,7 @@
 
                     <div class="nav-item-wrapper">
                         <a class="nav-link label-1 <?php echo e(request()->routeIs('bookings.index') ? 'active' : ''); ?>"
-                            href="<?php echo e(route('bookings.index')); ?>" role="button" data-bs-toggle=""
+                            href="<?php echo e(route('booking.index')); ?>" role="button" data-bs-toggle=""
                             aria-expanded="false">
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
