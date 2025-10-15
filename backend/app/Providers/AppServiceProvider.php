@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\MailService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(MailService::class, fn() => new MailService());
     }
 
     /**
@@ -27,7 +28,7 @@ class AppServiceProvider extends ServiceProvider
         if (App::environment('production')) {
             URL::forceScheme('https');
         }
-        
+
         View::composer('*', function ($view) {
             $view->with('user', Auth::user());
         });

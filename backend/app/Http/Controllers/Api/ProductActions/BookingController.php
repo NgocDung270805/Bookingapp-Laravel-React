@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Api\ProductActions;
 use App\Models\Booking;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Services\MailService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class BookingController extends Controller
 {
+    protected $mailService;
+
+    public function __construct(MailService $mailService)
+    {
+        $this->mailService = $mailService;
+    }
+    
     /**
      * Create a new booking for a product.
      */
@@ -30,6 +38,14 @@ class BookingController extends Controller
             'total_price' => $request->total_price,
             'status' => 'pending', // Trạng thái mặc định khi tạo
         ]);
+
+        // Gửi mail tự động cho khách + admin + manager
+        $this->mailService->send(
+            Auth::user()->email,
+            'Xác nhận đặt lịch xem xe',
+            'emails.booking',
+            ['booking' => $booking]
+        );
 
         return response()->json(['message' => 'Đặt lịch thành công!', 'booking' => $booking], 201);
     }
@@ -92,5 +108,23 @@ class BookingController extends Controller
 
         $booking->delete();
         return response()->json(['message' => 'Đặt lịch đã được hủy thành công!']);
+    }
+
+    public function confirmBooking(Booking $booking)
+    {
+        $booking->update(['status' => 'confirmed']);
+
+        // Gửi mail xác nhận đến khách + admin + manager
+        $this->mailService->send(
+            $booking->user->email,
+            'Lịch xem xe của bạn đã được xác nhận',
+            'emails.booking_approved',
+            ['booking' => $booking]
+        );
+
+        return response()->json([
+            'message' => 'Đã xác nhận lịch đặt!',
+            'booking' => $booking,
+        ]);
     }
 }
