@@ -31,10 +31,10 @@ return new class extends Migration
 
             $table->text('shipping_note')->nullable()->comment('Ghi chú giao hàng');
             $table->string('preferred_payment')->nullable()->comment('Phương thức thanh toán ưa thích');
-            $table->integer('points')->default(0)->comment('Điểm tích lũy của người dùng');
+            $table->integer('points')->default(0)->nullable()->comment('Điểm tích lũy của người dùng');
 
             $table->string('slug')->nullable()->comment('Slug URL cá nhân hóa hồ sơ');
-            $table->string('status')->default('active')->comment('Trạng thái tài khoản: active, inactive, suspended');
+            $table->string('status')->default('active')->nullable()->comment('Trạng thái tài khoản: active, inactive, suspended');
             $table->timestamp('last_login_at')->nullable()->comment('Lần đăng nhập gần nhất');
             $table->text('device_info')->nullable()->comment('Thông tin thiết bị hoặc IP khi đăng nhập');
 
