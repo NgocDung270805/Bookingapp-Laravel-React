@@ -34,6 +34,10 @@ class BookingController extends Controller
             'user_id' => Auth::id(),
             'booking_date' => $request->booking_date,
             'booking_time' => $request->booking_time,
+            'address_line' => $request->address_line,
+            'ward' => $request->ward,
+            'district' => $request->district,
+            'city' => $request->city,
             'notes' => $request->notes,
             'total_price' => $request->total_price,
             'status' => 'pending', // Trạng thái mặc định khi tạo
@@ -86,6 +90,10 @@ class BookingController extends Controller
         $request->validate([
             'booking_date' => 'nullable|date|after_or_equal:today',
             'booking_time' => 'nullable|date_format:H:i',
+            'address_line' => 'nullable|string|max:255',
+            'ward' => 'nullable|string|max:255',
+            'district' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
             'status' => 'nullable|in:pending,confirmed,cancelled,completed',
             'notes' => 'nullable|string|max:1000',
             'total_price' => 'nullable|numeric|min:0',

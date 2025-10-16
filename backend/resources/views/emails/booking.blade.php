@@ -50,6 +50,7 @@
                 </p>
                 <p><strong>Thời gian:</strong> {{ \Carbon\Carbon::parse($booking->booking_date)->format('d/m/Y') }} 
                 lúc {{ \Carbon\Carbon::parse($booking->booking_time)->format('H:i:s') }}</p>
+                <p><strong>Địa chỉ:</strong>  {{ $booking->address_line ?? 'N/A' }}, {{ $booking->ward ?? 'N/A' }},  {{ $booking->district ?? 'N/A' }}, {{ $booking->city ?? 'N/A' }}</p>
                 <p><strong>Dịch vụ:</strong> Đặt lịch xem xe, lái thử xe - Check xe</p>
                 <p><strong>Nhân viên phụ trách:</strong> Cao Văn Đại - 𝟎𝟑𝟑𝟒.𝟑𝟔𝟔.𝟗𝟕𝟐</p>
                 <p><strong>Ghi chú:</strong> {{ $booking->notes ?? 'N/A' }}</p>

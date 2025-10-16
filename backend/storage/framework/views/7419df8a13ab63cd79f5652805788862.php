@@ -43,6 +43,7 @@
                 </p>
                 <p><strong>Thời gian:</strong> <?php echo e(\Carbon\Carbon::parse($booking->booking_date)->format('d/m/Y')); ?> 
                 lúc <?php echo e(\Carbon\Carbon::parse($booking->booking_time)->format('H:i:s')); ?></p>
+                <p><strong>Địa chỉ:</strong>  <?php echo e($booking->address_line ?? 'N/A'); ?>, <?php echo e($booking->ward ?? 'N/A'); ?>,  <?php echo e($booking->district ?? 'N/A'); ?>, <?php echo e($booking->city ?? 'N/A'); ?></p>
                 <p><strong>Dịch vụ:</strong> Đặt lịch xem xe, lái thử xe - Check xe</p>
                 <p><strong>Nhân viên phụ trách:</strong> Cao Văn Đại - 𝟎𝟑𝟑𝟒.𝟑𝟔𝟔.𝟗𝟕𝟐</p>
                 <p><strong>Ghi chú:</strong> <?php echo e($booking->notes ?? 'N/A'); ?></p>
