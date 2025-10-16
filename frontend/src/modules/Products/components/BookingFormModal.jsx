@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../appRedux';
 import { createBooking } from '../slice';
 import { toast } from 'react-toastify';
+import GoogleMapAutocomplete from './GoogleMapAutocomplete';
 
 const BookingFormModal = ({ productId, onClose, onBooked }) => {
   const dispatch = useAppDispatch();
@@ -12,6 +13,12 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
   const [bookingDate, setBookingDate] = useState('');
   const [bookingTime, setBookingTime] = useState('');
   const [notes, setNotes] = useState('');
+  const [addressData, setAddressData] = useState({
+    address_line: '',
+    ward: '',
+    district: '',
+    city: ''
+  });
 
   // Lấy ngày hiện tại để giới hạn không cho chọn ngày trong quá khứ
   // Chuyển đổi sang múi giờ VN (+7)
@@ -60,6 +67,10 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
   // Gộp tất cả các khung giờ hợp lệ
   const availableTimeSlots = [...availableMorningSlots, ...availableAfternoonSlots];
 
+  const handlePlaceSelect = (place) => {
+    setAddressData(place);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -87,6 +98,10 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
       booking_date: bookingDate,
       booking_time: bookingTime,
       notes: notes.trim() || null,
+      address_line: addressData.address_line,
+      ward: addressData.ward,
+      district: addressData.district,
+      city: addressData.city
     };
 
     try {
@@ -189,6 +204,53 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                 ></textarea>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Địa chỉ</label>
+                <GoogleMapAutocomplete onPlaceSelect={handlePlaceSelect} />
+              </div>
+
+              <div className="row">
+                <div className="col-md-12 mb-3">
+                  <label className="form-label">Địa chỉ cụ thể</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={addressData.address_line}
+                    onChange={(e) => setAddressData({...addressData, address_line: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Phường/Xã</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={addressData.ward}
+                    onChange={(e) => setAddressData({...addressData, ward: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Quận/Huyện</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={addressData.district} 
+                    onChange={(e) => setAddressData({...addressData, district: e.target.value})}
+                  />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label className="form-label">Tỉnh/Thành phố</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={addressData.city}
+                    onChange={(e) => setAddressData({...addressData, city: e.target.value})}
+                    required
+                  />
+                </div>
               </div>
 
               {error && (
