@@ -19,7 +19,7 @@ const WarrantyPolicy = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>2. Phạm Vi Bảo Hành</h2>
           <ul>
             <li>Động cơ, hộp số và các bộ phận truyền động chính.</li>
@@ -28,7 +28,7 @@ const WarrantyPolicy = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>3. Điều Kiện Bảo Hành</h2>
           <p>
             Xe cần được bảo dưỡng định kỳ tại các trung tâm dịch vụ chính hãng 
@@ -37,7 +37,7 @@ const WarrantyPolicy = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>4. Trường Hợp Không Được Bảo Hành</h2>
           <ul>
             <li>Hư hỏng do tai nạn, thiên tai hoặc va chạm ngoài ý muốn.</li>
@@ -47,7 +47,7 @@ const WarrantyPolicy = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>5. Quy Trình Bảo Hành</h2>
           <ol>
             <li>Khách hàng liên hệ hotline hỗ trợ: <strong>+84 965.336.741</strong>.</li>
@@ -56,7 +56,7 @@ const WarrantyPolicy = () => {
           </ol>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>6. Cam Kết Của Văn Đại Car</h2>
           <p>
             Chúng tôi luôn đặt <strong>uy tín và sự an tâm của khách hàng </strong> 
