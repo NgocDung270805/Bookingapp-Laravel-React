@@ -18,7 +18,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: url("https://img.youtube.com/vi/bL15F7rpFJA/maxresdefault.jpg")
+  background: url("https://png.pngtree.com/background/20210715/original/pngtree-yellow-abstract-watercolor-romantic-small-fresh-banner-background-picture-image_1301462.jpg")
     center/cover;
   opacity: 0.3;
   z-index: 0;
@@ -69,6 +69,7 @@
 }
 
 .formSection {
+  margin-top: -100px;
   margin-bottom: 40px;
 }
 
@@ -110,6 +111,7 @@
 }
 
 .map h2 {
+  margin-top: -100px;
   margin-bottom: 15px;
 }
 
