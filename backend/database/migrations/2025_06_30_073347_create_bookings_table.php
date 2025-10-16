@@ -18,6 +18,10 @@ return new class extends Migration
             // Thêm các trường cần thiết cho việc đặt lịch
             $table->date('booking_date'); // Ngày đặt lịch
             $table->time('booking_time')->nullable(); // Giờ đặt lịch (nếu có)
+            $table->string('address_line')->nullable(); // Số nhà, tên đường
+            $table->string('ward')->nullable(); // Phường / Xã
+            $table->string('district')->nullable(); // Quận / Huyện
+            $table->string('city')->nullable(); // Thành phố / Tỉnh
             $table->string('status')->default('pending'); // pending, confirmed, cancelled, completed
             $table->text('notes')->nullable(); // Ghi chú thêm
             $table->decimal('total_price', 15, 2)->nullable(); // Tổng giá trị đơn đặt lịch
