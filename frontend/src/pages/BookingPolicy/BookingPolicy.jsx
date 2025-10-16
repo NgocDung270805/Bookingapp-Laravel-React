@@ -19,7 +19,7 @@ const BookingPolicy = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>2. Xác Nhận Đặt Lịch</h2>
           <p>
             Sau khi hoàn tất đặt lịch, hệ thống sẽ gửi thông báo xác nhận qua
@@ -28,7 +28,7 @@ const BookingPolicy = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>3. Thay Đổi / Hủy Lịch</h2>
           <ul>
             <li>
@@ -42,7 +42,7 @@ const BookingPolicy = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>4. Trách Nhiệm Của Văn Đại Car</h2>
           <p>
             Chúng tôi cam kết đảm bảo lịch hẹn chính xác, nhân viên tư vấn và xe
@@ -50,7 +50,7 @@ const BookingPolicy = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>5. Quyền Lợi Của Khách Hàng</h2>
           <ul>
             <li>Được lựa chọn thời gian đặt lịch linh hoạt.</li>
@@ -59,7 +59,7 @@ const BookingPolicy = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }} >
           <h2>6. Liên Hệ</h2>
           <p>
             📧 Email: Phungdung2708@gmail.com <br />
