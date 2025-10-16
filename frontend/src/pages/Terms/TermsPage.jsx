@@ -19,7 +19,7 @@ const TermsPage = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>2. Quyền & Nghĩa Vụ Của Người Dùng</h2>
           <ul>
             <li>Được quyền tham khảo thông tin, đặt lịch và trải nghiệm xe.</li>
@@ -28,7 +28,7 @@ const TermsPage = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>3. Quyền & Nghĩa Vụ Của Văn Đại Car</h2>
           <ul>
             <li>Cung cấp dịch vụ đặt lịch và hỗ trợ khách hàng một cách tốt nhất.</li>
@@ -37,7 +37,7 @@ const TermsPage = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>4. Chính Sách Thanh Toán & Hủy Lịch</h2>
           <p>
             Việc thanh toán (nếu có) sẽ được thực hiện qua các phương thức hợp lệ. 
@@ -46,7 +46,7 @@ const TermsPage = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>5. Giới Hạn Trách Nhiệm</h2>
           <p>
             Văn Đại Car không chịu trách nhiệm với các sự cố phát sinh ngoài 
@@ -55,7 +55,7 @@ const TermsPage = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>6. Sửa Đổi & Cập Nhật</h2>
           <p>
             Văn Đại Car có quyền thay đổi, chỉnh sửa điều khoản khi cần thiết. 
@@ -63,7 +63,7 @@ const TermsPage = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>7. Liên Hệ</h2>
           <p>
             Nếu bạn có bất kỳ câu hỏi nào liên quan đến điều khoản, vui lòng liên hệ qua email 
