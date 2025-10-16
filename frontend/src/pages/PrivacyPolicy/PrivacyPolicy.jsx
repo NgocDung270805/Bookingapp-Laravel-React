@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>2. Phạm Vi Sử Dụng Thông Tin</h2>
           <p>
             Thông tin khách hàng được sử dụng cho các mục đích sau:
@@ -31,7 +31,7 @@ const PrivacyPolicy = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>3. Bảo Mật Thông Tin</h2>
           <p>
             Chúng tôi cam kết bảo mật thông tin khách hàng bằng các biện pháp an
@@ -40,7 +40,7 @@ const PrivacyPolicy = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>4. Quyền Lợi Của Khách Hàng</h2>
           <p>
             Khách hàng có quyền:
@@ -52,7 +52,7 @@ const PrivacyPolicy = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>5. Liên Hệ</h2>
           <p>
             Nếu bạn có bất kỳ câu hỏi hoặc thắc mắc nào về chính sách bảo mật, vui
