@@ -12,7 +12,7 @@ const AboutPage = () => {
         {/* Ảnh đại diện bắt buộc */}
         <div className={styles.avatar}>
           <img
-            src="https://scontent.fhan14-3.fna.fbcdn.net/v/t39.30808-6/500227458_1467197764652329_3635921440474229235_n.jpg"
+            src="https://scontent.fhan14-3.fna.fbcdn.net/v/t39.30808-1/500227458_1467197764652329_3635921440474229235_n.jpg?stp=dst-jpg_s160x160_tt6&_nc_cat=110&ccb=1-7&_nc_sid=1d2534&_nc_ohc=ftRDuEwiY4MQ7kNvwEsVibt&_nc_oc=Adn4ItdcgDgCGzVmuAAd4IiQeSxAzQlPuR_Fe3U-c9TBskrgIG5262stxz-g_6xpM3I&_nc_zt=24&_nc_ht=scontent.fhan14-3.fna&_nc_gid=kOCK2Z9_xCcaHp05ijwuGw&oh=00_Afczh_A8r2WRL8X9F_ldCxCWk5v953wdRfF2hOZN3jeV8w&oe=68F691DF"
             alt=""
           />
         </div>
@@ -33,7 +33,7 @@ const AboutPage = () => {
           </p>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>Giá Trị Cốt Lõi</h2>
           <ul>
             <li>
@@ -50,7 +50,7 @@ const AboutPage = () => {
           </ul>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>Đội Ngũ Nhân Sự</h2>
           <div className={styles.team}>
             <div className={styles.teamMember}>
@@ -71,7 +71,7 @@ const AboutPage = () => {
           </div>
         </section>
 
-        <section>
+        <section style={{ marginTop: '-100px' }}>
           <h2>Thành Tựu & Đối Tác</h2>
           <p>
             Văn Đại Car đã vinh dự phục vụ hơn <strong>10,000 khách hàng</strong>{" "}
