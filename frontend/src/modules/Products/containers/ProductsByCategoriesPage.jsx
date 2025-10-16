@@ -157,7 +157,7 @@ const ProductsByCategoriesPage = () => {
 
       <div className="container-medium-md px-0 px-md-3">
         <div className="px-3 py-8 position-relative">
-          <div className="bg-holder rounded-md-2" style={{ backgroundImage: 'url(../../../../assets/img/bg/bannerProduct.jpg)', backgroundPosition: 'center', backgroundSize: 'cover' }}></div>
+          <div className="bg-holder rounded-md-2" style={{ backgroundImage: 'url(https://png.pngtree.com/background/20250102/original/pngtree-soft-orange-banner-background-vector-picture-image_16003491.jpg)', backgroundPosition: 'center', backgroundSize: 'cover' }}></div>
           <div className="row gx-0 gy-3 gy-md-0 align-items-center mx-auto p-3 bg-body-emphasis rounded-5 rounded-md-pill position-relative border w-lg-75">
             <div className="col-12 col-md">
               <div className="form-icon-container border-bottom border-bottom-md-0 border-translucent pb-3 pb-md-0">
