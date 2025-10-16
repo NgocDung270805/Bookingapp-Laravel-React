@@ -165,34 +165,52 @@
                                 return;
                             }
                             bookingChart.setOption({
+                                backgroundColor: 'transparent',
                                 tooltip: {
                                     trigger: 'axis',
-                                    formatter: function(params) {
-                                        return `${params[0].axisValue}: ${params[0].value} lượt booking`
-                                    }
+                                    backgroundColor: 'rgba(20, 20, 30, 0.9)',
+                                    borderWidth: 0,
+                                    textStyle: { color: '#fff', fontSize: 12 },
+                                    padding: 8,
+                                    formatter: function (params) {
+                                        return `<b>${params[0].axisValue}</b><br/>📅 ${params[0].value} lượt booking`;
+                                    },
                                 },
                                 grid: {
                                     left: '3%',
-                                    right: '4%',
-                                    bottom: '3%',
+                                    right: '3%',
+                                    bottom: '5%',
+                                    top: '10%',
                                     containLabel: true
                                 },
                                 xAxis: {
                                     type: 'category',
                                     data: data.labels,
                                     boundaryGap: false,
+                                    axisLine: {
+                                        lineStyle: { color: 'rgba(255,255,255,0.15)' }
+                                    },
+                                    axisTick: { show: false },
                                     axisLabel: {
+                                        color: 'rgba(255,255,255,0.6)',
+                                        fontSize: 11,
                                         formatter: (value) => {
-                                            if (filter === 'year') return value
-                                            if (filter === 'month') return dayjs(value).format('MM/YYYY')
-                                            return dayjs(value).format('DD/MM')
+                                            if (filter === 'year') return value;
+                                            if (filter === 'month') return dayjs(value).format('MM/YYYY');
+                                            return dayjs(value).format('DD/MM');
                                         }
                                     }
                                 },
                                 yAxis: {
                                     type: 'value',
+                                    axisLine: { show: false },
+                                    axisTick: { show: false },
+                                    splitLine: {
+                                        lineStyle: { color: 'rgba(255,255,255,0.05)' }
+                                    },
                                     axisLabel: {
-                                        formatter: '{value}'
+                                        color: 'rgba(255,255,255,0.5)',
+                                        fontSize: 11,
                                     }
                                 },
                                 series: [{
@@ -201,15 +219,32 @@
                                     data: data.values,
                                     smooth: true,
                                     symbol: 'circle',
-                                    symbolSize: 8,
-                                    lineStyle: {
-                                        width: 3
-                                    },
+                                    symbolSize: 5, // nhỏ hơn cho thanh mảnh
                                     itemStyle: {
-                                        borderWidth: 2
+                                        color: '#005585', // 🔹 Xanh dương sang
+                                        borderColor: '#111',
+                                        borderWidth: 1.5
+                                    },
+                                    lineStyle: {
+                                        color: '#005585',
+                                        width: 2.2, // mảnh hơn
+                                        shadowColor: 'rgba(0,85,133,0.2)',
+                                        shadowBlur: 4
                                     },
                                     areaStyle: {
-                                        opacity: 0.3
+                                        opacity: 0.15,
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                            { offset: 0, color: 'rgba(0,85,133,0.35)' },
+                                            { offset: 1, color: 'rgba(0,85,133,0)' }
+                                        ])
+                                    },
+                                    emphasis: {
+                                        focus: 'series',
+                                        itemStyle: {
+                                            color: '#00aaff',
+                                            borderColor: '#fff',
+                                            borderWidth: 2
+                                        }
                                     }
                                 }]
                             });
