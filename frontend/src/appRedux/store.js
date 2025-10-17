@@ -7,6 +7,7 @@ import productsReducer from '../modules/Products/slice';
 import bannersReducer from '../modules/Banners/slice';
 import categoriesReducer from '../modules/Categories/slice';
 import favoritesReducer from './slices/favoritesSlice';
+import bookingsReducer from '../modules/bookings/slice';
 
 export const store = configureStore({
     reducer: {
@@ -16,5 +17,6 @@ export const store = configureStore({
         banners: bannersReducer,
         categories: categoriesReducer,
         favorites: favoritesReducer,
+        bookings: bookingsReducer,
     },
 });

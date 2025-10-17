@@ -2,17 +2,28 @@
 
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../appRedux';
-import { createBooking } from '../slice';
+import { createBooking } from '../../bookings/slice';
+import { updateUserProfile } from '../../profile/slice';
 import { toast } from 'react-toastify';
 import GoogleMapAutocomplete from './GoogleMapAutocomplete';
 
 const BookingFormModal = ({ productId, onClose, onBooked }) => {
   const dispatch = useAppDispatch();
-  const { loading, error } = useAppSelector((state) => state.products);
+  const { loading: productLoading, error } = useAppSelector((state) => state.products);
+  const { loading: profileLoading } = useAppSelector((state) => state.profile);
+  const { loading: bookingLoading } = useAppSelector((state) => state.bookings);
+  const { user } = useAppSelector((state) => state.auth);
+  
+  // Combine all loading states
+  const loading = productLoading || profileLoading || bookingLoading;
 
   const [bookingDate, setBookingDate] = useState('');
   const [bookingTime, setBookingTime] = useState('');
   const [notes, setNotes] = useState('');
+  const [customerInfo, setCustomerInfo] = useState({
+    name: user?.name || '',
+    phone: user?.profile?.phone || ''
+  });
   const [addressData, setAddressData] = useState({
     address_line: '',
     ward: '',
@@ -74,6 +85,24 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate customer info
+    if (!customerInfo.name.trim()) {
+      toast.error('Vui lòng nhập tên của bạn!');
+      return;
+    }
+
+    if (!customerInfo.phone.trim()) {
+      toast.error('Vui lòng nhập số điện thoại!');
+      return;
+    }
+
+    // Basic phone number validation for Vietnam
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    if (!phoneRegex.test(customerInfo.phone)) {
+      toast.error('Số điện thoại không hợp lệ!');
+      return;
+    }
+
     // Validate dữ liệu
     if (!bookingDate) {
       toast.error('Vui lòng chọn ngày đặt lịch!');
@@ -98,6 +127,8 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
       booking_date: bookingDate,
       booking_time: bookingTime,
       notes: notes.trim() || null,
+      customer_name: customerInfo.name,
+      customer_phone: customerInfo.phone,
       address_line: addressData.address_line,
       ward: addressData.ward,
       district: addressData.district,
@@ -105,9 +136,33 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
     };
 
     try {
+      // Nếu user đã đăng nhập và thông tin khác với profile, cập nhật profile
+      if (user && (
+        customerInfo.name !== user.name || 
+        customerInfo.phone !== user?.profile?.phone
+      )) {
+        const profileData = {
+          name: customerInfo.name,
+          phone: customerInfo.phone,
+          email: user.email // Thêm email từ thông tin user hiện tại
+        };
+        
+        console.log('Sending profile update with data:', profileData);
+        const resultAction = await dispatch(updateUserProfile(profileData));
+        console.log('Profile update response:', resultAction);
+        
+        if (updateUserProfile.fulfilled.match(resultAction)) {
+          toast.success('Đã cập nhật thông tin cá nhân!');
+        } else {
+          console.error('Profile update error:', resultAction.error);
+          toast.error('Không thể cập nhật thông tin: ' + (resultAction.error?.message || 'Lỗi không xác định'));
+        }
+      }
+
       const resultAction = await dispatch(createBooking({ productId, bookingData }));
 
       if (createBooking.fulfilled.match(resultAction)) {
+        toast.success('Đặt lịch thành công!');
         onBooked(resultAction.payload);
         onClose();
       } else {
@@ -138,9 +193,40 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
               aria-label="Close"
             ></button>
           </div>
-          
           <div className="modal-body">
             <form onSubmit={handleSubmit}>
+              {/* Thông tin khách hàng */}
+              <div className="row mb-3">
+                <div className="col-md-6">
+                  <label htmlFor="customerName" className="form-label">
+                    Họ tên <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="customerName"
+                    placeholder="Nhập họ tên của bạn"
+                    value={customerInfo.name}
+                    onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
+                    required
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="customerPhone" className="form-label">
+                    Số điện thoại <span className="text-danger">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    className="form-control"
+                    id="customerPhone"
+                    placeholder="Nhập số điện thoại"
+                    value={customerInfo.phone}
+                    onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
+                    required
+                  />
+                </div>
+              </div>
+
               <div className="mb-3">
                 <label htmlFor="bookingDate" className="form-label">
                   Ngày xem xe <span className="text-danger">*</span>
@@ -158,7 +244,7 @@ const BookingFormModal = ({ productId, onClose, onBooked }) => {
 
               <div className="mb-3">
                 <label htmlFor="bookingTime" className="form-label">
-                  Thời gian <span className="text-danger">*</span>
+                  Thời gian <span className="text-danger">*</span>(Từ 07:00 - 19:30)
                 </label>
                 <select
                   className="form-select"
