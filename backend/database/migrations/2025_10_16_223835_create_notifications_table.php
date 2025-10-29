@@ -22,7 +22,8 @@ return new class extends Migration
             $table->tinyInteger('priority')->default(2)->comment('1-Quan trọng, 2-Bình thường, 3-Thấp');
             $table->boolean('is_active')->default(true)->comment('Trạng thái hoạt động');
             $table->boolean('is_popup')->default(false)->comment('Hiển thị dạng popup');
-            $table->boolean('is_displayed')->default(true)->comment('Hiển thị trong danh sách');
+            $table->boolean('is_banner')->default(false)->comment('Hiển thị dạng banner đầu trang');
+            $table->string('is_displayed')->default(true)->comment('Hiển thị trong danh sách');
 
             // Đối tượng & kênh gửi
             $table->enum('audience', ['admin', 'user', 'both'])->default('user')->comment('Đối tượng nhận thông báo');

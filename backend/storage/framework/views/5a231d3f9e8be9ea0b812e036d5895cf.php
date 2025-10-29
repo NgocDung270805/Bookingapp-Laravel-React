@@ -200,7 +200,22 @@
                                 <span class="nav-link-text-wrapper"><span class="nav-link-text">Video</span></span>
                             </div>
                         </a>
-                        
+                    </div><!-- parent pages-->
+
+                    <div class="nav-item-wrapper">
+                        <a class="nav-link label-1 <?php echo e(request()->routeIs('notifications.index') ? 'active' : ''); ?>"
+                            href="<?php echo e(route('notifications.index')); ?>" role="button" data-bs-toggle=""
+                            aria-expanded="false">
+                            <div class="d-flex align-items-center">
+                                <span class="nav-link-icon">
+                                    <span data-feather="calendar"></span>
+                                </span>
+                                <span class="nav-link-text-wrapper"><span class="nav-link-text">Notifications</span></span>
+                            </div>
+                        </a>
+                    </div><!-- parent pages-->
+
+                    
                 </li>
                 
             </ul>

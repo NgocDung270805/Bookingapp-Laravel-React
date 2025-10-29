@@ -15,6 +15,7 @@ use App\Http\Controllers\Web\ProductVariantController;
 use App\Http\Controllers\Web\ProductAttributeTypeController;
 use App\Http\Controllers\Web\ProductAttributeValueController;
 use App\Http\Controllers\Web\ProductAttributeValueConfigController;
+use App\Http\Controllers\Web\NotificationController;
 use App\Http\Middleware\AdminMiddleware;
 
 // ==========================================================
@@ -23,13 +24,9 @@ use App\Http\Middleware\AdminMiddleware;
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-// Routes cho Google Login
-Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->name('auth.google');// Routes cho Google Login
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback']);
-
-// Routes cho Facebook Login
-Route::get('/auth/facebook', [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');
+Route::get('/auth/facebook', [SocialiteController::class, 'redirectToFacebook'])->name('auth.facebook');// Routes cho Facebook Login
 Route::get('/auth/facebook/callback', [SocialiteController::class, 'handleFacebookCallback']);
 
 
@@ -49,9 +46,7 @@ Route::get('/admin', [AdminController::class, 'index'])->middleware(AdminMiddlew
 Route::get('/admin/edit/{id}', [AdminController::class, 'edit'])->middleware('auth')->name('admin.edit');
 Route::post('/admin/update/{id}', [AdminController::class, 'update'])->middleware('auth')->name('admin.update');
 Route::post('/admin/assign-roles/{id}', [AdminController::class, 'assignRoles'])->middleware('auth')->name('admin.assign_roles'); // Phân quyền roles
-
 Route::get('/manager', [AdminController::class, 'showManage'])->middleware('auth')->name('manager.index');// Route cho quản lý tài khoản manager
-
 Route::get('/users', [AdminController::class, 'showUsers'])->middleware('auth')->name('users.index');// Route cho quản lý tài khoản user
 
 
@@ -108,6 +103,22 @@ Route::prefix('bookings')->name('booking.')->middleware('auth')->group(function 
     Route::post('/{id}/reject', [BookingController::class, 'reject'])->name('reject');
     Route::post('/{id}/status', [BookingController::class, 'changeStatus'])->name('bookings.status');
 });
+
+
+// Nhóm Route cho thông báo
+Route::prefix('notifications')->name('notifications.')->middleware('auth')->group(function () {
+    Route::get('/', [NotificationController::class, 'index'])->name('index');
+    Route::get('/create', [NotificationController::class, 'create'])->name('create');
+    Route::post('/', [NotificationController::class, 'store'])->name('store');
+    Route::get('/{id}', [NotificationController::class, 'show'])->name('show');
+    Route::get('/{id}/edit', [NotificationController::class, 'edit'])->name('edit');
+    Route::put('/{id}', [NotificationController::class, 'update'])->name('update');
+    Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
+    Route::post('/{id}/toggle-active', [NotificationController::class, 'toggleActive'])->name('toggle-active');
+});
+// Route::resource('notifications', NotificationController::class)->middleware('auth')->except(['show']);
+// Route::post('/notifications/{notification}/toggle-active', [NotificationController::class, 'toggleActive'])->name('notifications.toggle-active')->middleware('auth');
+
 
 // ==========================================================
 // ROUTE CHO QUẢN LÝ SẢN PHẨM VÀ BIẾN THỂ SẢN PHẨM
