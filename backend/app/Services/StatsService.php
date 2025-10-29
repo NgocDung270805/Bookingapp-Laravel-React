@@ -13,6 +13,10 @@ class StatsService
 {
     public function getStats()
     {
+        // Xác định khoảng thời gian
+        $currentWeekStart = now()->subDays(7); // Bắt đầu từ 7 ngày trước (ví dụ: 22/10 11:48)
+        $lastWeekStart = now()->subDays(14); // Bắt đầu từ 14 ngày trước (ví dụ: 15/10 11:48)
+
         // Lấy thời gian 24h trước (tự động theo timezone đã cấu hình)
         $last24Hours = now()->subHours(24);
         
@@ -48,8 +52,17 @@ class StatsService
             // Thống kê booking hoàn thành và chưa hoàn thành trong 7 ngày gần đây
             'bookings_last_7_days_summary' => DB::table('bookings')
                 ->select(DB::raw('COUNT(*) as total'), DB::raw('SUM(CASE WHEN status = "completed" THEN 1 ELSE 0 END) as completed'), DB::raw('SUM(CASE WHEN status = "pending" THEN 1 ELSE 0 END) as pending'))
-                ->where('created_at', '>=', now()->subDays(7))
+                ->where('created_at', '>=', $currentWeekStart) // Sử dụng biến đã định nghĩa
                 ->first(),
+
+            'bookings_current_week' => DB::table('bookings')
+                ->where('created_at', '>=', $currentWeekStart)
+                ->count(),
+
+            'bookings_last_week' => DB::table('bookings')
+                ->where('created_at', '>=', $lastWeekStart)
+                ->where('created_at', '<', $currentWeekStart) // Giới hạn đến thời điểm bắt đầu tuần hiện tại
+                ->count(),
 
             // Thống kê commet mới nhất của tất cả sản phẩm, và kèm theo lấy tên sản phẩm kèm theo ảnh sản phẩm ở table product_variants và tên user kèm hình ảnh table users_profiles
             'latest_comments' => DB::table('comments')
@@ -63,8 +76,22 @@ class StatsService
 
             // Thống kê số users mới nhất trong 7 ngày gần đây
             'new_users_last_7_days' => DB::table('users')
-                ->where('created_at', '>=', now()->subDays(7))
+                ->where('created_at', '>=', $currentWeekStart) // Dùng biến cho nhất quán
                 ->count(),
+            
+            // 1. Lấy tổng user của 7 ngày TRƯỚC ĐÓ (để tính % tăng/giảm)
+            'new_users_previous_7_days' => DB::table('users')
+                ->where('created_at', '>=', $lastWeekStart)
+                ->where('created_at', '<', $currentWeekStart)
+                ->count(),
+
+            // 2. Lấy user mới THEO NGÀY (cho biểu đồ đường)
+            'new_users_by_day_last_7_days' => DB::table('users')
+                ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
+                ->where('created_at', '>=', $currentWeekStart)
+                ->groupBy('date')
+                ->orderBy('date', 'asc') // Sắp xếp tăng dần cho biểu đồ đường
+                ->get(),
 
             // Sản phẩm hết hàng
             'out_of_stock' => DB::table('product_variants')->where('quantity', 0)->count(),

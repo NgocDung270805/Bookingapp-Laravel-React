@@ -129,17 +129,19 @@
                                 </span></h3>
                             <p class="text-body-tertiary lh-sm mb-0">Thanh toán nhận được trên tất cả các kênh</p>
                         </div>
-                        <div class="col-8 col-sm-4"><select class="form-select form-select-sm" id="booking-filter">
-                                <option value="year">Năm</option>
+                        <div class="col-8 col-sm-4">
+                            <select class="form-select form-select-sm" id="booking-filter">
+                                <option value="day" selected>Ngày</option>
                                 <option value="month">Tháng</option>
-                                <option value="day">Ngày</option>
-                            </select></div>
+                                <option value="year">Năm</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="booking-stats-chart" style="min-height:320px;width:100%"></div>
                     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
                     <script>
                         const bookingChart = echarts.init(document.querySelector('.booking-stats-chart'));
-                        const loadBookingData = (filter = 'year') => {
+                        const loadBookingData = (filter = 'day') => { // **Thay đổi giá trị mặc định tại đây**
                             let bookingStats = {
                                 'year': <?php echo json_encode($stats['bookings_by_year'], 15, 512) ?>,
                                 'month': <?php echo json_encode($stats['bookings_by_month'], 15, 512) ?>,
@@ -170,9 +172,12 @@
                                     trigger: 'axis',
                                     backgroundColor: 'rgba(20, 20, 30, 0.9)',
                                     borderWidth: 0,
-                                    textStyle: { color: '#fff', fontSize: 12 },
+                                    textStyle: {
+                                        color: '#fff',
+                                        fontSize: 12
+                                    },
                                     padding: 8,
-                                    formatter: function (params) {
+                                    formatter: function(params) {
                                         return `<b>${params[0].axisValue}</b><br/>📅 ${params[0].value} lượt booking`;
                                     },
                                 },
@@ -188,9 +193,13 @@
                                     data: data.labels,
                                     boundaryGap: false,
                                     axisLine: {
-                                        lineStyle: { color: 'rgba(255,255,255,0.15)' }
+                                        lineStyle: {
+                                            color: 'rgba(255,255,255,0.15)'
+                                        }
                                     },
-                                    axisTick: { show: false },
+                                    axisTick: {
+                                        show: false
+                                    },
                                     axisLabel: {
                                         color: 'rgba(255,255,255,0.6)',
                                         fontSize: 11,
@@ -203,10 +212,16 @@
                                 },
                                 yAxis: {
                                     type: 'value',
-                                    axisLine: { show: false },
-                                    axisTick: { show: false },
+                                    axisLine: {
+                                        show: false
+                                    },
+                                    axisTick: {
+                                        show: false
+                                    },
                                     splitLine: {
-                                        lineStyle: { color: 'rgba(255,255,255,0.05)' }
+                                        lineStyle: {
+                                            color: 'rgba(255,255,255,0.05)'
+                                        }
                                     },
                                     axisLabel: {
                                         color: 'rgba(255,255,255,0.5)',
@@ -217,7 +232,7 @@
                                     name: 'Số lượt booking',
                                     type: 'line',
                                     data: data.values,
-                                    smooth: true,
+                                    smooth: false, // Giữ lại smooth: false như bạn đã sửa trước đó
                                     symbol: 'circle',
                                     symbolSize: 5, // nhỏ hơn cho thanh mảnh
                                     itemStyle: {
@@ -233,9 +248,14 @@
                                     },
                                     areaStyle: {
                                         opacity: 0.15,
-                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                            { offset: 0, color: 'rgba(0,85,133,0.35)' },
-                                            { offset: 1, color: 'rgba(0,85,133,0)' }
+                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                                offset: 0,
+                                                color: 'rgba(0,85,133,0.35)'
+                                            },
+                                            {
+                                                offset: 1,
+                                                color: 'rgba(0,85,133,0)'
+                                            }
                                         ])
                                     },
                                     emphasis: {
@@ -251,7 +271,11 @@
                         };
 
                         // Load initial data
-                        loadBookingData('year');
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const initialFilter = document.getElementById('booking-filter').value;
+                            loadBookingData(initialFilter); // Sử dụng giá trị đã chọn ban đầu
+                        });
+
 
                         // Handle filter change
                         document.getElementById('booking-filter').addEventListener('change', (e) => {
@@ -266,24 +290,58 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-1">Tổng số đơn yêu cầu(booking)
+                                            <h5 class="mb-1">Tổng số đơn(booking)
                                                 <span class="fs-9 ms-2">
                                                     <i class="fas fa-circle text-success"></i>
                                                 </span>
                                                 <?php
                                                     $currentWeekBookings = $stats['bookings_current_week'] ?? 0;
                                                     $lastWeekBookings = $stats['bookings_last_week'] ?? 0;
-                                                    $percentChange =
-                                                        $lastWeekBookings > 0
-                                                            ? (($currentWeekBookings - $lastWeekBookings) /
-                                                                    $lastWeekBookings) *
-                                                                100
-                                                            : 0;
+
+                                                    $percentChange = 0;
+                                                    $percentDisplayValue = 0.0;
+                                                    $sign = '';
+                                                    $badgeType = 'secondary'; // Mặc định
+
+                                                    if ($lastWeekBookings > 0) {
+                                                        // Trường hợp bình thường: Tính % tăng/giảm
+                                                        $percentChange =
+                                                            (($currentWeekBookings - $lastWeekBookings) /
+                                                                $lastWeekBookings) *
+                                                            100;
+
+                                                        // --- SỬA LỖI Ở ĐÂY ---
+                                                        $percentDisplayValue = abs($percentChange); // Lấy trị tuyệt đối để hiển thị số dương
+                                                        $badgeType = $percentChange >= 0 ? 'success' : 'warning';
+                                                        $sign = $percentChange >= 0 ? '+' : '-'; // Thêm dấu '-' khi giảm
+                                                        // --- KẾT THÚC SỬA LỖI ---
+                                                    } elseif ($currentWeekBookings > 0) {
+                                                        // Trường hợp đặc biệt: Tuần trước = 0, Tuần này > 0 (Tăng trưởng từ 0)
+                                                        $percentDisplayValue = 100; // Hoặc một số lớn để hiển thị tăng
+                                                        $badgeType = 'success';
+                                                        $sign = '+';
+                                                    } else {
+                                                        // Cả hai đều bằng 0
+                                                        $sign = '';
+                                                    }
+
+                                                    // Định dạng chuỗi hiển thị
+                                                    $percentDisplay = number_format($percentDisplayValue, 1) . '%';
+
+                                                    // Xử lý hiển thị Inf% và giảm 100%
+                                                    if ($lastWeekBookings == 0 && $currentWeekBookings > 0) {
+                                                        $percentDisplay = 'Inf%';
+                                                    } elseif ($currentWeekBookings == 0 && $lastWeekBookings > 0) {
+                                                        $percentDisplay = '100.0%';
+                                                        $sign = '-';
+                                                        $badgeType = 'danger';
+                                                    }
                                                 ?>
+
                                                 <span
-                                                    class="badge badge-phoenix badge-phoenix-<?php echo e($percentChange >= 0 ? 'success' : 'warning'); ?> rounded-pill fs-9 ms-2">
+                                                    class="badge badge-phoenix badge-phoenix-<?php echo e($badgeType); ?> rounded-pill fs-9 ms-2">
                                                     <span
-                                                        class="badge-label"><?php echo e($percentChange >= 0 ? '+' : ''); ?><?php echo e(number_format($percentChange, 1)); ?>%</span>
+                                                        class="badge-label"><?php echo e($sign); ?><?php echo e($percentDisplay); ?></span>
                                                 </span>
                                             </h5>
                                             <h6 class="text-body-tertiary">7 ngày qua</h6>
@@ -291,8 +349,92 @@
                                         <h4><?php echo e($stats['bookings_last_7_days_summary']->total ?? 0); ?></h4>
                                     </div>
                                     <div class="d-flex justify-content-center px-4 py-6">
-                                        <div class="echart-total-orders" style="height:85px;width:115px"></div>
+                                        
+                                        <div class="echart-total-bookings" style="height:85px;width:115px"></div>
                                     </div>
+
+                                    
+                                    <script>
+                                        // Lấy dữ liệu 7 ngày từ biến $stats (dạng JSON)
+                                        const rawBookingData = <?php echo json_encode($stats['bookings_last_7_days'], 15, 512) ?>;
+
+                                        // Chuẩn bị dữ liệu cho ECharts
+                                        // rawBookingData có cấu trúc [{date: 'YYYY-MM-DD', count: X}, ...]
+                                        const chartLabels = rawBookingData.map(item => item.date);
+                                        const chartValues = rawBookingData.map(item => item.count);
+
+                                        const barChart = echarts.init(document.querySelector('.echart-total-bookings'));
+
+                                        const barOption = {
+                                            grid: {
+                                                left: 0,
+                                                right: 0,
+                                                top: 0,
+                                                bottom: 0
+                                            },
+                                            xAxis: {
+                                                type: 'category',
+                                                data: chartLabels,
+                                                show: false,
+                                            },
+                                            yAxis: {
+                                                type: 'value',
+                                                show: false,
+                                                min: 0,
+                                                // Đặt max cao hơn giá trị lớn nhất một chút
+                                                max: Math.max(...chartValues) * 1.5 || 5,
+                                            },
+                                            series: [{
+                                                type: 'bar',
+                                                data: chartValues,
+                                                itemStyle: {
+                                                    color: '#6aa8c5',
+                                                    borderRadius: [2, 2, 0, 0]
+                                                },
+                                                barWidth: '35%',
+                                                barCategoryGap: '20%',
+                                                // Mô phỏng cột nền mờ (Đang chờ xử lý)
+                                                markLine: {
+                                                    symbol: ['none', 'none'],
+                                                    data: [{
+                                                        type: 'max',
+                                                        name: 'Max Value',
+                                                        lineStyle: {
+                                                            color: '#343a40'
+                                                        },
+                                                        label: {
+                                                            show: false
+                                                        }
+                                                    }],
+                                                    animation: false,
+                                                    silent: true
+                                                },
+                                                z: 10
+                                            }],
+                                            // >> ĐÃ CHỈNH SỬA: BẬT TOOLTIP VÀ THÊM FORMATTER <<
+                                            tooltip: {
+                                                trigger: 'item',
+                                                backgroundColor: 'rgba(20, 20, 30, 0.9)',
+                                                borderWidth: 0,
+                                                textStyle: {
+                                                    color: '#fff',
+                                                    fontSize: 12
+                                                },
+                                                padding: 8,
+                                                formatter: function(params) {
+                                                    // params.name là ngày, params.value là giá trị (count)
+                                                    // Định dạng lại ngày hiển thị cho dễ đọc
+                                                    const date = dayjs(params.name).format('DD/MM');
+                                                    return `<b>${date}</b><br/>${params.value} đơn`;
+                                                }
+                                            }
+                                        };
+
+                                        barChart.setOption(barOption);
+
+                                        // Đảm bảo biểu đồ tự điều chỉnh khi thay đổi kích thước
+                                        window.addEventListener('resize', barChart.resize);
+                                    </script>
                                     <div class="mt-2">
                                         <div class="d-flex align-items-center mb-2">
                                             <div class="bullet-item bg-primary me-2"></div>
@@ -310,33 +452,159 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="col-12 col-md-6">
                             <div class="card h-100">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <div>
-                                            <h5 class="mb-1">Khách hàng mới<span class="fs-9 ms-2">
+                                            <h5 class="mb-1">Khách hàng mới
+                                                <span class="fs-9 ms-2">
                                                     <i class="fas fa-circle text-success"></i>
                                                 </span>
+
+                                                
                                                 <?php
                                                     $currentNewUsers = $stats['new_users_last_7_days'] ?? 0;
+                                                    // Biến này giờ đã có nhờ Bước 1
                                                     $prevNewUsers = $stats['new_users_previous_7_days'] ?? 0;
-                                                    $userPercentChange = $prevNewUsers > 0 
-                                                        ? (($currentNewUsers - $prevNewUsers) / $prevNewUsers) * 100 
-                                                        : 0;
+
+                                                    $userPercentChange = 0;
+                                                    $userSign = '+';
+                                                    $userBadgeType = 'secondary';
+
+                                                    if ($prevNewUsers > 0) {
+                                                        $userPercentChange =
+                                                            (($currentNewUsers - $prevNewUsers) / $prevNewUsers) * 100;
+                                                        $userBadgeType =
+                                                            $userPercentChange >= 0 ? 'success' : 'warning';
+                                                        $userSign = $userPercentChange >= 0 ? '+' : '';
+                                                    } elseif ($currentNewUsers > 0) {
+                                                        $userPercentChange = 100; // Tăng từ 0
+                                                        $userBadgeType = 'success';
+                                                    } else {
+                                                        $userPercentChange = 0; // Cả 2 đều là 0
+                                                        $userSign = '';
+                                                    }
                                                 ?>
                                                 <span
-                                                    class="badge badge-phoenix badge-phoenix-<?php echo e($userPercentChange >= 0 ? 'success' : 'warning'); ?> rounded-pill fs-9 ms-2">
-                                                    <span class="badge-label"><?php echo e($userPercentChange >= 0 ? '+' : ''); ?><?php echo e(number_format($userPercentChange, 1)); ?>%</span>
+                                                    class="badge badge-phoenix badge-phoenix-<?php echo e($userBadgeType); ?> rounded-pill fs-9 ms-2">
+                                                    <span
+                                                        class="badge-label"><?php echo e($userSign); ?><?php echo e(number_format($userPercentChange, 1)); ?>%</span>
                                                 </span>
                                             </h5>
                                             <h6 class="text-body-tertiary">7 ngày qua</h6>
                                         </div>
+                                        
                                         <h4><?php echo e($stats['new_users_last_7_days']); ?></h4>
                                     </div>
                                     <div class="pb-0 pt-4">
-                                        <div class="echarts-new-customers" style="height:180px;width:100%;"></div>
+                                        
+                                        <div class="echarts-new-users" style="height:180px;width:100%;"></div>
                                     </div>
+
+                                    <script>
+                                        // Bọc toàn bộ script trong DOMContentLoaded
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            // Lấy dữ liệu user mới theo ngày
+                                            const newUsersData = <?php echo json_encode($stats['new_users_by_day_last_7_days'], 15, 512) ?>;
+                                            const userLabels = newUsersData.map(item => dayjs(item.date).format('DD/MM'));
+                                            const userValues = newUsersData.map(item => item.count);
+
+                                            const newUsersChart = echarts.init(document.querySelector('.echarts-new-users'));
+
+                                            const newUsersOption = {
+                                                grid: {
+                                                    left: '3%',
+                                                    right: '4%',
+                                                    bottom: '3%',
+                                                    top: '5%',
+                                                    containLabel: true
+                                                },
+                                                xAxis: {
+                                                    type: 'category',
+                                                    data: userLabels,
+                                                    boundaryGap: false,
+                                                    axisLine: {
+                                                        lineStyle: {
+                                                            color: 'rgba(255,255,255,0.15)'
+                                                        }
+                                                    },
+                                                    axisTick: {
+                                                        show: false
+                                                    },
+                                                    axisLabel: {
+                                                        color: 'rgba(255,255,255,0.6)',
+                                                        fontSize: 11
+                                                    }
+                                                },
+                                                yAxis: {
+                                                    type: 'value',
+                                                    axisLine: {
+                                                        show: false
+                                                    },
+                                                    axisTick: {
+                                                        show: false
+                                                    },
+                                                    splitLine: {
+                                                        lineStyle: {
+                                                            color: 'rgba(255,255,255,0.05)'
+                                                        }
+                                                    },
+                                                    axisLabel: {
+                                                        color: 'rgba(255,255,255,0.5)',
+                                                        fontSize: 11
+                                                    }
+                                                },
+                                                series: [{
+                                                    name: 'Khách hàng mới',
+                                                    type: 'line',
+                                                    data: userValues,
+                                                    smooth: true,
+                                                    symbol: 'circle',
+                                                    symbolSize: 5,
+                                                    itemStyle: {
+                                                        color: '#00aaff'
+                                                    },
+                                                    lineStyle: {
+                                                        color: '#00aaff',
+                                                        width: 2.2
+                                                    },
+                                                    areaStyle: {
+                                                        opacity: 0.15,
+                                                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                                                offset: 0,
+                                                                color: 'rgba(0, 170, 255, 0.35)'
+                                                            },
+                                                            {
+                                                                offset: 1,
+                                                                color: 'rgba(0, 170, 255, 0)'
+                                                            }
+                                                        ])
+                                                    }
+                                                }],
+                                                tooltip: {
+                                                    trigger: 'axis',
+                                                    backgroundColor: 'rgba(20, 20, 30, 0.9)',
+                                                    borderWidth: 0,
+                                                    textStyle: {
+                                                        color: '#fff',
+                                                        fontSize: 12
+                                                    },
+                                                    padding: 8,
+                                                    formatter: function(params) {
+                                                        const date = params[0].name;
+                                                        const value = params[0].value;
+                                                        return `<b>Ngày: ${date}</b><br/>${value} khách hàng mới`;
+                                                    }
+                                                }
+                                            };
+
+                                            newUsersChart.setOption(newUsersOption);
+                                            window.addEventListener('resize', newUsersChart.resize);
+                                        });
+                                    </script>
+
                                 </div>
                             </div>
                         </div>
